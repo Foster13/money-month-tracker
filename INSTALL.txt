@@ -1,0 +1,104 @@
+================================================================================
+  PERSONAL FINANCE MANAGER - INSTALLATION GUIDE
+================================================================================
+
+QUICK START (3 Commands)
+------------------------
+
+1. npm install
+2. npm run dev
+3. Open http://localhost:3000
+
+
+DETAILED INSTRUCTIONS
+---------------------
+
+Step 1: Install Dependencies
+   Command: npm install
+   Time: ~2-3 minutes
+   What it does: Installs all required packages
+
+Step 2: Verify Installation (Optional)
+   Command: npm run verify
+   What it does: Checks all files are present
+
+Step 3: Start Development Server
+   Command: npm run dev
+   What it does: Starts the app on port 3000
+
+Step 4: Open Browser
+   URL: http://localhost:3000
+   What you'll see: Your finance dashboard
+
+
+WHAT'S INCLUDED
+---------------
+
+✓ Transaction tracking (income & expenses)
+✓ Category management with colors
+✓ Monthly summaries
+✓ 6-month trend charts
+✓ Simulation mode for projections
+✓ Data export/import (JSON)
+✓ localStorage persistence
+✓ Responsive design
+
+
+SYSTEM REQUIREMENTS
+-------------------
+
+- Node.js 18 or higher
+- npm 9 or higher
+- Modern web browser (Chrome, Firefox, Safari, Edge)
+- ~200MB disk space
+
+
+TROUBLESHOOTING
+---------------
+
+Problem: Port 3000 already in use
+Solution: npm run dev -- -p 3001
+
+Problem: npm install fails
+Solution: Delete node_modules and package-lock.json, then npm install
+
+Problem: TypeScript errors
+Solution: These are normal before npm install. Run npm install to fix.
+
+Problem: Build fails
+Solution: Ensure Node.js 18+ is installed: node --version
+
+
+PRODUCTION DEPLOYMENT
+---------------------
+
+Build for production:
+   npm run build
+   npm start
+
+Deploy to Vercel:
+   npm i -g vercel
+   vercel
+
+
+DOCUMENTATION
+-------------
+
+- README.md - Full documentation
+- QUICKSTART.md - Quick start guide
+- SETUP.md - Detailed setup
+- DEPLOYMENT_CHECKLIST.md - Deployment guide
+- PROJECT_STATUS.md - Technical details
+- FINAL_REPORT.md - Complete project report
+
+
+SUPPORT
+-------
+
+All documentation is included in the project files.
+Check the markdown files for detailed information.
+
+
+================================================================================
+  Ready to start? Run: npm install
+================================================================================
