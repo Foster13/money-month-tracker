@@ -27,6 +27,7 @@ Navigate to [http://localhost:3000](http://localhost:3000)
 - ✅ Track income and expenses with customizable categories
 - ✅ **Multi-currency support (IDR, USD, SGD, GBP, EUR, JPY, AUD, CNY)**
 - ✅ **Real-time exchange rates with automatic IDR conversion**
+- ✅ **Dark mode support with smooth toggle**
 - ✅ View financial summaries (income, expenses, balance)
 - ✅ Visualize trends with 6-month charts
 - ✅ Paginated transaction list
