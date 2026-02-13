@@ -103,10 +103,12 @@ export function Dashboard() {
   };
 
   return (
-    <div className="container mx-auto py-8 space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="container mx-auto py-8 space-y-6 animate-fade-in">
+      <div className="flex items-center justify-between animate-slide-down">
         <div>
-          <h1 className="text-4xl font-bold">Personal Finance Manager</h1>
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+            Personal Finance Manager
+          </h1>
           <p className="text-muted-foreground mt-2">
             Track your income and expenses in multiple currencies
           </p>
@@ -123,16 +125,16 @@ export function Dashboard() {
       </div>
 
       <Tabs defaultValue="dashboard" className="space-y-6">
-        <TabsList>
-          <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-          <TabsTrigger value="rates">Exchange Rates</TabsTrigger>
-          <TabsTrigger value="simulation">Simulation</TabsTrigger>
+        <TabsList className="transition-all duration-200">
+          <TabsTrigger value="dashboard" className="transition-all duration-200">Dashboard</TabsTrigger>
+          <TabsTrigger value="rates" className="transition-all duration-200">Exchange Rates</TabsTrigger>
+          <TabsTrigger value="simulation" className="transition-all duration-200">Simulation</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="dashboard" className="space-y-6">
+        <TabsContent value="dashboard" className="space-y-6 animate-slide-up">
           <Summary transactions={currentMonthTransactions} exchangeRates={exchangeRates} />
 
-          <Card>
+          <Card className="hover-glow animate-scale-in">
             <CardHeader>
               <CardTitle>Income vs Expenses (Last 6 Months)</CardTitle>
             </CardHeader>
@@ -141,7 +143,7 @@ export function Dashboard() {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="hover-glow animate-scale-in" style={{ animationDelay: '0.1s' }}>
             <CardHeader>
               <CardTitle>
                 {editingTransaction ? "Edit Transaction" : "Add Transaction"}
@@ -157,7 +159,7 @@ export function Dashboard() {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="hover-glow animate-scale-in" style={{ animationDelay: '0.2s' }}>
             <CardHeader>
               <CardTitle>Recent Transactions</CardTitle>
             </CardHeader>
@@ -173,7 +175,7 @@ export function Dashboard() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="rates" className="space-y-6">
+        <TabsContent value="rates" className="space-y-6 animate-slide-up">
           <ExchangeRateDisplay
             exchangeRates={exchangeRates}
             lastUpdate={lastRateUpdate}
@@ -181,7 +183,7 @@ export function Dashboard() {
           />
         </TabsContent>
 
-        <TabsContent value="simulation">
+        <TabsContent value="simulation" className="animate-slide-up">
           <SimulationMode />
         </TabsContent>
       </Tabs>

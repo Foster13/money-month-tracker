@@ -78,7 +78,7 @@ export function TransactionForm({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4 animate-fade-in">
         <FormField
           control={form.control}
           name="type"
@@ -201,12 +201,12 @@ export function TransactionForm({
           )}
         />
 
-        <div className="flex gap-2">
-          <Button type="submit" className="flex-1">
+        <div className="flex gap-2 animate-slide-up">
+          <Button type="submit" className="flex-1 transition-all duration-200 hover:scale-105 active:scale-95">
             {editingTransaction ? "Update" : "Add"} Transaction
           </Button>
           {editingTransaction && onCancel && (
-            <Button type="button" variant="outline" onClick={onCancel}>
+            <Button type="button" variant="outline" onClick={onCancel} className="transition-all duration-200 hover:scale-105 active:scale-95">
               Cancel
             </Button>
           )}

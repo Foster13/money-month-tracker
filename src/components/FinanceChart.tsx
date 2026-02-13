@@ -52,18 +52,26 @@ export function FinanceChart({ transactions, exchangeRates }: FinanceChartProps)
   });
 
   return (
-    <ResponsiveContainer width="100%" height={300}>
-      <BarChart data={chartData}>
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="month" />
-        <YAxis label={{ value: "Amount (IDR thousands)", angle: -90, position: "insideLeft" }} />
-        <Tooltip
-          formatter={(value: number) => `Rp ${(value * 1000).toLocaleString("id-ID")}`}
-        />
-        <Legend />
-        <Bar dataKey="income" fill="#10b981" name="Income" />
-        <Bar dataKey="expenses" fill="#ef4444" name="Expenses" />
-      </BarChart>
-    </ResponsiveContainer>
+    <div className="animate-fade-in">
+      <ResponsiveContainer width="100%" height={300}>
+        <BarChart data={chartData}>
+          <CartesianGrid strokeDasharray="3 3" className="opacity-50" />
+          <XAxis dataKey="month" />
+          <YAxis label={{ value: "Amount (IDR thousands)", angle: -90, position: "insideLeft" }} />
+          <Tooltip
+            formatter={(value: number) => `Rp ${(value * 1000).toLocaleString("id-ID")}`}
+            contentStyle={{ 
+              backgroundColor: 'hsl(var(--card))',
+              border: '1px solid hsl(var(--border))',
+              borderRadius: '0.5rem',
+              transition: 'all 0.2s ease'
+            }}
+          />
+          <Legend />
+          <Bar dataKey="income" fill="#10b981" name="Income" radius={[4, 4, 0, 0]} />
+          <Bar dataKey="expenses" fill="#ef4444" name="Expenses" radius={[4, 4, 0, 0]} />
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
   );
 }

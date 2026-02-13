@@ -89,12 +89,12 @@ export function CategoryManager({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">
+        <Button variant="outline" className="transition-all duration-200 hover:scale-105 active:scale-95">
           <Settings className="mr-2 h-4 w-4" />
           Manage Categories
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto animate-scale-in">
         <DialogHeader>
           <DialogTitle>Manage Categories</DialogTitle>
           <DialogDescription>
@@ -104,7 +104,7 @@ export function CategoryManager({
 
         <div className="space-y-6">
           {/* Add New Category */}
-          <div className="space-y-4 border-b pb-4">
+          <div className="space-y-4 border-b pb-4 animate-slide-down">
             <h3 className="font-semibold">Add New Category</h3>
             <div className="grid gap-4">
               <div className="grid gap-2">
@@ -114,6 +114,7 @@ export function CategoryManager({
                   value={newCategoryName}
                   onChange={(e) => setNewCategoryName(e.target.value)}
                   placeholder="Enter category name"
+                  className="transition-all duration-200"
                 />
               </div>
 
@@ -125,7 +126,7 @@ export function CategoryManager({
                     setNewCategoryType(value)
                   }
                 >
-                  <SelectTrigger id="category-type">
+                  <SelectTrigger id="category-type" className="transition-all duration-200">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -143,17 +144,18 @@ export function CategoryManager({
                     type="color"
                     value={newCategoryColor}
                     onChange={(e) => setNewCategoryColor(e.target.value)}
-                    className="w-20 h-10"
+                    className="w-20 h-10 transition-all duration-200 cursor-pointer"
                   />
                   <Input
                     value={newCategoryColor}
                     onChange={(e) => setNewCategoryColor(e.target.value)}
                     placeholder="#000000"
+                    className="transition-all duration-200"
                   />
                 </div>
               </div>
 
-              <Button onClick={handleAddCategory}>
+              <Button onClick={handleAddCategory} className="transition-all duration-200 hover:scale-105 active:scale-95">
                 <Plus className="mr-2 h-4 w-4" />
                 Add Category
               </Button>
@@ -161,17 +163,18 @@ export function CategoryManager({
           </div>
 
           {/* Income Categories */}
-          <div className="space-y-2">
+          <div className="space-y-2 animate-fade-in" style={{ animationDelay: '0.1s' }}>
             <h3 className="font-semibold text-green-600">Income Categories</h3>
             <div className="space-y-2">
-              {incomeCategories.map((category) => (
+              {incomeCategories.map((category, index) => (
                 <div
                   key={category.id}
-                  className="flex items-center justify-between p-2 border rounded"
+                  className="flex items-center justify-between p-2 border rounded hover-lift animate-slide-up"
+                  style={{ animationDelay: `${index * 0.05}s` }}
                 >
                   <div className="flex items-center gap-2">
                     <span
-                      className="w-4 h-4 rounded-full"
+                      className="w-4 h-4 rounded-full transition-transform duration-200 hover:scale-125"
                       style={{ backgroundColor: category.color }}
                     />
                     <span>{category.name}</span>
@@ -182,6 +185,7 @@ export function CategoryManager({
                     onClick={() =>
                       handleDeleteCategory(category.id, category.name)
                     }
+                    className="transition-all duration-200 hover:bg-red-100 dark:hover:bg-red-900/30"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
@@ -191,17 +195,18 @@ export function CategoryManager({
           </div>
 
           {/* Expense Categories */}
-          <div className="space-y-2">
+          <div className="space-y-2 animate-fade-in" style={{ animationDelay: '0.2s' }}>
             <h3 className="font-semibold text-red-600">Expense Categories</h3>
             <div className="space-y-2">
-              {expenseCategories.map((category) => (
+              {expenseCategories.map((category, index) => (
                 <div
                   key={category.id}
-                  className="flex items-center justify-between p-2 border rounded"
+                  className="flex items-center justify-between p-2 border rounded hover-lift animate-slide-up"
+                  style={{ animationDelay: `${index * 0.05}s` }}
                 >
                   <div className="flex items-center gap-2">
                     <span
-                      className="w-4 h-4 rounded-full"
+                      className="w-4 h-4 rounded-full transition-transform duration-200 hover:scale-125"
                       style={{ backgroundColor: category.color }}
                     />
                     <span>{category.name}</span>
@@ -212,6 +217,7 @@ export function CategoryManager({
                     onClick={() =>
                       handleDeleteCategory(category.id, category.name)
                     }
+                    className="transition-all duration-200 hover:bg-red-100 dark:hover:bg-red-900/30"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
