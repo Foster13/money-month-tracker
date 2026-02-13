@@ -13,6 +13,7 @@ import { DataControls } from "./DataControls";
 import { FinanceChart } from "./FinanceChart";
 import { SimulationMode } from "./SimulationMode";
 import { ExchangeRateDisplay } from "./ExchangeRateDisplay";
+import { ThemeToggle } from "./theme-toggle";
 import { Transaction } from "@/types";
 import { fetchExchangeRates } from "@/lib/currency";
 import { useToast } from "@/hooks/use-toast";
@@ -111,6 +112,7 @@ export function Dashboard() {
           </p>
         </div>
         <div className="flex gap-2">
+          <ThemeToggle />
           <CategoryManager
             categories={categories}
             onAddCategory={addCategory}
