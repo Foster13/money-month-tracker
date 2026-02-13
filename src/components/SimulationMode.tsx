@@ -81,7 +81,7 @@ export function SimulationMode() {
 
   if (!isActive) {
     return (
-      <Card>
+      <Card className="animate-scale-in">
         <CardHeader>
           <CardTitle>Simulation Mode</CardTitle>
         </CardHeader>
@@ -90,7 +90,7 @@ export function SimulationMode() {
             Use simulation mode to project future finances without affecting your actual data.
             Your current transactions will be loaded as a starting point.
           </p>
-          <Button onClick={startSimulation}>
+          <Button onClick={startSimulation} className="transition-all duration-200 hover:scale-105 active:scale-95">
             <PlayCircle className="mr-2 h-4 w-4" />
             Start Simulation
           </Button>
@@ -100,14 +100,14 @@ export function SimulationMode() {
   }
 
   return (
-    <div className="space-y-6">
-      <Card className="border-blue-500 border-2">
+    <div className="space-y-6 animate-fade-in">
+      <Card className="border-blue-500 border-2 animate-slide-down">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="text-blue-600">
+            <CardTitle className="text-blue-600 animate-pulse-soft">
               Simulation Mode Active
             </CardTitle>
-            <Button variant="outline" onClick={resetSimulation}>
+            <Button variant="outline" onClick={resetSimulation} className="transition-all duration-200 hover:scale-105 active:scale-95">
               <RotateCcw className="mr-2 h-4 w-4" />
               Reset Simulation
             </Button>
@@ -120,9 +120,11 @@ export function SimulationMode() {
         </CardContent>
       </Card>
 
-      <Summary transactions={simTransactions} exchangeRates={exchangeRates} />
+      <div className="animate-slide-up">
+        <Summary transactions={simTransactions} exchangeRates={exchangeRates} />
+      </div>
 
-      <Card>
+      <Card className="hover-glow animate-scale-in" style={{ animationDelay: '0.1s' }}>
         <CardHeader>
           <CardTitle>Income vs Expenses (Simulation)</CardTitle>
         </CardHeader>
@@ -131,7 +133,7 @@ export function SimulationMode() {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="hover-glow animate-scale-in" style={{ animationDelay: '0.2s' }}>
         <CardHeader>
           <CardTitle>
             {editingTransaction ? "Edit Transaction" : "Add Projected Transaction"}
@@ -147,7 +149,7 @@ export function SimulationMode() {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="hover-glow animate-scale-in" style={{ animationDelay: '0.3s' }}>
         <CardHeader>
           <CardTitle>Simulated Transactions</CardTitle>
         </CardHeader>

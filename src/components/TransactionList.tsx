@@ -65,10 +65,10 @@ export function TransactionList({
 
   return (
     <div className="space-y-4">
-      <div className="rounded-md border">
+      <div className="rounded-md border overflow-hidden">
         <Table>
           <TableHeader>
-            <TableRow>
+            <TableRow className="hover:bg-muted/50 transition-colors">
               <TableHead>Date</TableHead>
               <TableHead>Description</TableHead>
               <TableHead>Category</TableHead>
@@ -78,19 +78,23 @@ export function TransactionList({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {currentTransactions.map((transaction) => (
-              <TableRow key={transaction.id}>
+            {currentTransactions.map((transaction, index) => (
+              <TableRow 
+                key={transaction.id}
+                className="hover:bg-muted/50 transition-all duration-200 animate-fade-in"
+                style={{ animationDelay: `${index * 0.05}s` }}
+              >
                 <TableCell>
                   {format(parseISO(transaction.date), "MMM dd, yyyy")}
                 </TableCell>
-                <TableCell>{transaction.description}</TableCell>
+                <TableCell className="font-medium">{transaction.description}</TableCell>
                 <TableCell>
                   <span
-                    className="inline-flex items-center gap-2"
+                    className="inline-flex items-center gap-2 transition-all duration-200"
                     style={{ color: getCategoryColor(transaction.categoryId) }}
                   >
                     <span
-                      className="w-3 h-3 rounded-full"
+                      className="w-3 h-3 rounded-full transition-transform duration-200 hover:scale-125"
                       style={{
                         backgroundColor: getCategoryColor(
                           transaction.categoryId
@@ -102,17 +106,17 @@ export function TransactionList({
                 </TableCell>
                 <TableCell>
                   <span
-                    className={`capitalize ${
+                    className={`capitalize px-2 py-1 rounded-full text-xs font-medium transition-all duration-200 ${
                       transaction.type === "income"
-                        ? "text-green-600"
-                        : "text-red-600"
+                        ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                        : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
                     }`}
                   >
                     {transaction.type}
                   </span>
                 </TableCell>
                 <TableCell
-                  className={`text-right font-medium ${
+                  className={`text-right font-medium transition-all duration-200 ${
                     transaction.type === "income"
                       ? "text-green-600"
                       : "text-red-600"
@@ -145,6 +149,7 @@ export function TransactionList({
                       variant="ghost"
                       size="icon"
                       onClick={() => onEdit(transaction)}
+                      className="hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-all duration-200"
                     >
                       <Edit className="h-4 w-4" />
                     </Button>
@@ -152,6 +157,7 @@ export function TransactionList({
                       variant="ghost"
                       size="icon"
                       onClick={() => onDelete(transaction.id)}
+                      className="hover:bg-red-100 dark:hover:bg-red-900/30 transition-all duration-200"
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
@@ -164,7 +170,7 @@ export function TransactionList({
       </div>
 
       {totalPages > 1 && (
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between animate-fade-in">
           <div className="text-sm text-muted-foreground">
             Showing {startIndex + 1} to {Math.min(endIndex, transactions.length)}{" "}
             of {transactions.length} transactions
@@ -175,6 +181,7 @@ export function TransactionList({
               size="sm"
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={currentPage === 1}
+              className="transition-all duration-200"
             >
               <ChevronLeft className="h-4 w-4" />
               Previous
@@ -184,6 +191,7 @@ export function TransactionList({
               size="sm"
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
+              className="transition-all duration-200"
             >
               Next
               <ChevronRight className="h-4 w-4" />
