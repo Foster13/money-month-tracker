@@ -57,7 +57,7 @@ export function TransactionList({
 
   if (transactions.length === 0) {
     return (
-      <div className="text-center py-8 text-muted-foreground">
+      <div className="text-center py-8 text-sm sm:text-base text-muted-foreground">
         No transactions yet. Add your first transaction above!
       </div>
     );
@@ -65,7 +65,8 @@ export function TransactionList({
 
   return (
     <div className="space-y-4">
-      <div className="rounded-md border overflow-hidden">
+      {/* Desktop Table View */}
+      <div className="hidden md:block rounded-md border overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow className="hover:bg-muted/50 transition-colors">
@@ -169,9 +170,98 @@ export function TransactionList({
         </Table>
       </div>
 
+      {/* Mobile Card View */}
+      <div className="md:hidden space-y-3">
+        {currentTransactions.map((transaction, index) => (
+          <div
+            key={transaction.id}
+            className="border rounded-lg p-4 space-y-3 hover:bg-muted/50 transition-all duration-200 animate-fade-in"
+            style={{ animationDelay: `${index * 0.05}s` }}
+          >
+            <div className="flex items-start justify-between gap-2">
+              <div className="flex-1 min-w-0">
+                <div className="font-medium text-sm truncate">{transaction.description}</div>
+                <div className="text-xs text-muted-foreground mt-1">
+                  {format(parseISO(transaction.date), "MMM dd, yyyy")}
+                </div>
+              </div>
+              <span
+                className={`capitalize px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${
+                  transaction.type === "income"
+                    ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                    : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
+                }`}
+              >
+                {transaction.type}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <span
+                className="w-3 h-3 rounded-full flex-shrink-0"
+                style={{
+                  backgroundColor: getCategoryColor(transaction.categoryId),
+                }}
+              />
+              <span
+                className="text-sm truncate"
+                style={{ color: getCategoryColor(transaction.categoryId) }}
+              >
+                {getCategoryName(transaction.categoryId)}
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between gap-2">
+              <div
+                className={`font-bold text-base ${
+                  transaction.type === "income"
+                    ? "text-green-600"
+                    : "text-red-600"
+                }`}
+              >
+                {transaction.type === "income" ? "+" : "-"}
+                {formatCurrency(
+                  transaction.amount,
+                  transaction.currency,
+                  false
+                )}
+                {transaction.currency !== "IDR" && (
+                  <div className="text-xs text-muted-foreground font-normal mt-1">
+                    {formatCurrency(
+                      transaction.amount,
+                      transaction.currency,
+                      true,
+                      exchangeRates
+                    ).split("(")[1]?.replace(")", "")}
+                  </div>
+                )}
+              </div>
+              <div className="flex gap-1">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => onEdit(transaction)}
+                  className="h-8 w-8 hover:bg-blue-100 dark:hover:bg-blue-900/30"
+                >
+                  <Edit className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => onDelete(transaction.id)}
+                  className="h-8 w-8 hover:bg-red-100 dark:hover:bg-red-900/30"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
       {totalPages > 1 && (
-        <div className="flex items-center justify-between animate-fade-in">
-          <div className="text-sm text-muted-foreground">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 animate-fade-in">
+          <div className="text-xs sm:text-sm text-muted-foreground text-center sm:text-left">
             Showing {startIndex + 1} to {Math.min(endIndex, transactions.length)}{" "}
             of {transactions.length} transactions
           </div>
@@ -184,7 +274,7 @@ export function TransactionList({
               className="transition-all duration-200"
             >
               <ChevronLeft className="h-4 w-4" />
-              Previous
+              <span className="hidden sm:inline ml-1">Previous</span>
             </Button>
             <Button
               variant="outline"
@@ -193,7 +283,7 @@ export function TransactionList({
               disabled={currentPage === totalPages}
               className="transition-all duration-200"
             >
-              Next
+              <span className="hidden sm:inline mr-1">Next</span>
               <ChevronRight className="h-4 w-4" />
             </Button>
           </div>

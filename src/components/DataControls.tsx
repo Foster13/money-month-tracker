@@ -71,18 +71,20 @@ export function DataControls({ onExport, onImport }: DataControlsProps) {
   };
 
   return (
-    <div className="flex gap-2">
-      <Button variant="outline" onClick={handleExport} className="transition-all duration-200 hover:scale-105 active:scale-95">
-        <Download className="mr-2 h-4 w-4" />
-        Export Data
+    <div className="flex flex-wrap gap-2">
+      <Button variant="outline" onClick={handleExport} className="transition-all duration-200 hover:scale-105 active:scale-95 text-xs sm:text-sm flex-1 sm:flex-initial">
+        <Download className="mr-0 sm:mr-2 h-4 w-4" />
+        <span className="hidden sm:inline">Export Data</span>
+        <span className="sm:hidden">Export</span>
       </Button>
       <Button
         variant="outline"
         onClick={() => fileInputRef.current?.click()}
-        className="transition-all duration-200 hover:scale-105 active:scale-95"
+        className="transition-all duration-200 hover:scale-105 active:scale-95 text-xs sm:text-sm flex-1 sm:flex-initial"
       >
-        <Upload className="mr-2 h-4 w-4" />
-        Import Data
+        <Upload className="mr-0 sm:mr-2 h-4 w-4" />
+        <span className="hidden sm:inline">Import Data</span>
+        <span className="sm:hidden">Import</span>
       </Button>
       <input
         ref={fileInputRef}
