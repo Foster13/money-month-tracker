@@ -1,6 +1,6 @@
 # Personal Finance Manager
 
-A modern, full-stack Personal Finance Management web application built with Next.js, TypeScript, and Tailwind CSS.
+A modern, full-stack Personal Finance Management web application. Still to be updated. To find out where your money is going...
 
 ## 🚀 Quick Start
 
@@ -49,40 +49,6 @@ Navigate to [http://localhost:3000](http://localhost:3000)
 - **Charts**: Recharts
 - **Date Handling**: date-fns
 - **Icons**: Lucide React
-
-## 📁 Project Structure
-
-```
-├── src/
-│   ├── app/
-│   │   ├── layout.tsx          # Root layout
-│   │   ├── page.tsx            # Home page
-│   │   └── globals.css         # Global styles
-│   ├── components/
-│   │   ├── ui/                 # Shadcn/UI components
-│   │   ├── Dashboard.tsx       # Main dashboard
-│   │   ├── TransactionForm.tsx # Transaction form
-│   │   ├── TransactionList.tsx # Transaction list
-│   │   ├── Summary.tsx         # Financial summary
-│   │   ├── FinanceChart.tsx    # Chart component
-│   │   ├── CategoryManager.tsx # Category management
-│   │   ├── DataControls.tsx    # Import/export
-│   │   └── SimulationMode.tsx  # Simulation feature
-│   ├── stores/
-│   │   ├── transactionStore.ts # Main store (persistent)
-│   │   └── simulationStore.ts  # Simulation store (non-persistent)
-│   ├── types/
-│   │   └── index.ts            # Type definitions
-│   ├── lib/
-│   │   ├── utils.ts            # Utility functions
-│   │   └── schemas.ts          # Zod schemas
-│   └── hooks/
-│       └── use-toast.ts        # Toast hook
-├── package.json
-├── tsconfig.json
-├── tailwind.config.ts
-└── next.config.js
-```
 
 ## 🎯 Usage
 
@@ -169,10 +135,6 @@ npm install
 
 This project is open source and available for personal and commercial use.
 
-## 🤝 Contributing
-
-Feel free to fork, modify, and use this project for your needs!
-
 ## ⚡ Performance
 
 - Optimized with Next.js App Router
@@ -187,12 +149,4 @@ Feel free to fork, modify, and use this project for your needs!
 - Extend transaction types in `src/types/index.ts`
 - Customize charts in `src/components/FinanceChart.tsx`
 
-## 📚 Documentation
-
-- See `SETUP.md` for detailed setup instructions
-- See `DEPLOYMENT_CHECKLIST.md` for deployment guide
-- All components are well-commented
-
 ---
-
-Built with ❤️ using Next.js and TypeScript
