@@ -101,7 +101,7 @@ export function TransactionForm({
           )}
         />
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <FormField
             control={form.control}
             name="amount"
@@ -201,12 +201,12 @@ export function TransactionForm({
           )}
         />
 
-        <div className="flex gap-2 animate-slide-up">
+        <div className="flex flex-col sm:flex-row gap-2 animate-slide-up">
           <Button type="submit" className="flex-1 transition-all duration-200 hover:scale-105 active:scale-95">
             {editingTransaction ? "Update" : "Add"} Transaction
           </Button>
           {editingTransaction && onCancel && (
-            <Button type="button" variant="outline" onClick={onCancel} className="transition-all duration-200 hover:scale-105 active:scale-95">
+            <Button type="button" variant="outline" onClick={onCancel} className="transition-all duration-200 hover:scale-105 active:scale-95 sm:flex-initial">
               Cancel
             </Button>
           )}

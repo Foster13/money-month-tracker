@@ -89,24 +89,25 @@ export function CategoryManager({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="transition-all duration-200 hover:scale-105 active:scale-95">
-          <Settings className="mr-2 h-4 w-4" />
-          Manage Categories
+        <Button variant="outline" className="transition-all duration-200 hover:scale-105 active:scale-95 text-xs sm:text-sm">
+          <Settings className="mr-0 sm:mr-2 h-4 w-4" />
+          <span className="hidden sm:inline">Manage Categories</span>
+          <span className="sm:hidden">Categories</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto animate-scale-in">
+      <DialogContent className="max-w-[95vw] sm:max-w-2xl max-h-[85vh] sm:max-h-[80vh] overflow-y-auto animate-scale-in">
         <DialogHeader>
-          <DialogTitle>Manage Categories</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-lg sm:text-xl">Manage Categories</DialogTitle>
+          <DialogDescription className="text-sm">
             Add new categories or delete existing ones
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {/* Add New Category */}
-          <div className="space-y-4 border-b pb-4 animate-slide-down">
-            <h3 className="font-semibold">Add New Category</h3>
-            <div className="grid gap-4">
+          <div className="space-y-3 sm:space-y-4 border-b pb-4 animate-slide-down">
+            <h3 className="font-semibold text-sm sm:text-base">Add New Category</h3>
+            <div className="grid gap-3 sm:gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="category-name">Category Name</Label>
                 <Input
