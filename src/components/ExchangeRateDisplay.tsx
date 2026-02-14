@@ -45,7 +45,7 @@ export function ExchangeRateDisplay({
   };
 
   return (
-    <Card className="animate-fade-in">
+    <Card className="glass-card animate-fade-in overflow-hidden">
       <CardHeader>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <CardTitle className="text-lg sm:text-xl">Exchange Rates (to IDR)</CardTitle>
@@ -70,7 +70,7 @@ export function ExchangeRateDisplay({
               return (
                 <div
                   key={currency}
-                  className="flex flex-col p-3 border rounded-lg hover-lift transition-all duration-300 animate-scale-in"
+                  className="glass-subtle flex flex-col p-3 rounded-lg hover-lift transition-all duration-300 animate-scale-in"
                   style={{ animationDelay: `${index * 0.05}s` }}
                 >
                   <div className="text-xs sm:text-sm font-medium text-muted-foreground">

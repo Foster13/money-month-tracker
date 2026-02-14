@@ -46,7 +46,7 @@ export function Summary({ transactions, exchangeRates }: SummaryProps) {
         </CardContent>
       </Card>
 
-      <Card className="hover-lift animate-fade-in" style={{ animationDelay: '0.1s' }}>
+      <Card className="glass-card animate-fade-in overflow-hidden" style={{ animationDelay: '0.1s' }}>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-xs sm:text-sm font-medium">Total Expenses</CardTitle>
           <TrendingDown className="h-4 w-4 sm:h-5 sm:w-5 text-red-600 animate-bounce-subtle" style={{ animationDelay: '0.1s' }} />
