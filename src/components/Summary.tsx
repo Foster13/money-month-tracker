@@ -31,10 +31,12 @@ export function Summary({ transactions, exchangeRates }: SummaryProps) {
 
   return (
     <div className="grid gap-4 md:grid-cols-3">
-      <Card className="hover-lift animate-fade-in">
+      <Card className="glass-card animate-fade-in overflow-hidden">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Total Income</CardTitle>
-          <TrendingUp className="h-4 w-4 text-green-600 animate-bounce-subtle" />
+          <div className="p-2 rounded-full bg-green-500/10 backdrop-blur-sm">
+            <TrendingUp className="h-4 w-4 text-green-600 animate-bounce-subtle" />
+          </div>
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold text-green-600 transition-all duration-300">
@@ -46,10 +48,12 @@ export function Summary({ transactions, exchangeRates }: SummaryProps) {
         </CardContent>
       </Card>
 
-      <Card className="hover-lift animate-fade-in" style={{ animationDelay: '0.1s' }}>
+      <Card className="glass-card animate-fade-in overflow-hidden" style={{ animationDelay: '0.1s' }}>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Total Expenses</CardTitle>
-          <TrendingDown className="h-4 w-4 text-red-600 animate-bounce-subtle" style={{ animationDelay: '0.1s' }} />
+          <div className="p-2 rounded-full bg-red-500/10 backdrop-blur-sm">
+            <TrendingDown className="h-4 w-4 text-red-600 animate-bounce-subtle" style={{ animationDelay: '0.1s' }} />
+          </div>
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold text-red-600 transition-all duration-300">
@@ -61,10 +65,12 @@ export function Summary({ transactions, exchangeRates }: SummaryProps) {
         </CardContent>
       </Card>
 
-      <Card className="hover-lift animate-fade-in" style={{ animationDelay: '0.2s' }}>
+      <Card className="glass-card animate-fade-in overflow-hidden" style={{ animationDelay: '0.2s' }}>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Balance</CardTitle>
-          <Wallet className="h-4 w-4 text-blue-600 animate-bounce-subtle" style={{ animationDelay: '0.2s' }} />
+          <div className="p-2 rounded-full bg-blue-500/10 backdrop-blur-sm">
+            <Wallet className="h-4 w-4 text-blue-600 animate-bounce-subtle" style={{ animationDelay: '0.2s' }} />
+          </div>
         </CardHeader>
         <CardContent>
           <div

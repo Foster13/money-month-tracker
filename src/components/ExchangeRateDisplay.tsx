@@ -45,7 +45,7 @@ export function ExchangeRateDisplay({
   };
 
   return (
-    <Card className="animate-fade-in">
+    <Card className="glass-card animate-fade-in overflow-hidden">
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle>Exchange Rates (to IDR)</CardTitle>
@@ -54,7 +54,7 @@ export function ExchangeRateDisplay({
             size="sm"
             onClick={handleUpdateRates}
             disabled={isUpdating}
-            className="transition-all duration-200"
+            className="glass-subtle transition-all duration-200"
           >
             <RefreshCw className={`h-4 w-4 mr-2 transition-transform duration-500 ${isUpdating ? "animate-spin" : ""}`} />
             {isUpdating ? "Updating..." : "Update Rates"}
@@ -70,7 +70,7 @@ export function ExchangeRateDisplay({
               return (
                 <div
                   key={currency}
-                  className="flex flex-col p-3 border rounded-lg hover-lift transition-all duration-300 animate-scale-in"
+                  className="glass-subtle flex flex-col p-3 rounded-lg hover-lift transition-all duration-300 animate-scale-in"
                   style={{ animationDelay: `${index * 0.05}s` }}
                 >
                   <div className="text-sm font-medium text-muted-foreground">

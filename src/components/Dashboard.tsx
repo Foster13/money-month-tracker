@@ -134,7 +134,7 @@ export function Dashboard() {
         <TabsContent value="dashboard" className="space-y-6 animate-slide-up">
           <Summary transactions={currentMonthTransactions} exchangeRates={exchangeRates} />
 
-          <Card className="hover-glow animate-scale-in">
+          <Card className="glass-card animate-scale-in overflow-hidden">
             <CardHeader>
               <CardTitle>Income vs Expenses (Last 6 Months)</CardTitle>
             </CardHeader>
@@ -143,7 +143,7 @@ export function Dashboard() {
             </CardContent>
           </Card>
 
-          <Card className="hover-glow animate-scale-in" style={{ animationDelay: '0.1s' }}>
+          <Card className="glass-card animate-scale-in overflow-hidden" style={{ animationDelay: '0.1s' }}>
             <CardHeader>
               <CardTitle>
                 {editingTransaction ? "Edit Transaction" : "Add Transaction"}
@@ -159,7 +159,7 @@ export function Dashboard() {
             </CardContent>
           </Card>
 
-          <Card className="hover-glow animate-scale-in" style={{ animationDelay: '0.2s' }}>
+          <Card className="glass-card animate-scale-in overflow-hidden" style={{ animationDelay: '0.2s' }}>
             <CardHeader>
               <CardTitle>Recent Transactions</CardTitle>
             </CardHeader>
