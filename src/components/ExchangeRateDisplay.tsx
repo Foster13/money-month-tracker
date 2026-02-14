@@ -47,14 +47,14 @@ export function ExchangeRateDisplay({
   return (
     <Card className="glass-card animate-fade-in overflow-hidden">
       <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle>Exchange Rates (to IDR)</CardTitle>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <CardTitle className="text-lg sm:text-xl">Exchange Rates (to IDR)</CardTitle>
           <Button
             variant="outline"
             size="sm"
             onClick={handleUpdateRates}
             disabled={isUpdating}
-            className="glass-subtle transition-all duration-200"
+            className="transition-all duration-200 w-full sm:w-auto"
           >
             <RefreshCw className={`h-4 w-4 mr-2 transition-transform duration-500 ${isUpdating ? "animate-spin" : ""}`} />
             {isUpdating ? "Updating..." : "Update Rates"}
@@ -62,7 +62,7 @@ export function ExchangeRateDisplay({
         </div>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
           {Object.entries(exchangeRates)
             .filter(([currency]) => currency !== "IDR")
             .map(([currency, rate], index) => {
@@ -73,10 +73,10 @@ export function ExchangeRateDisplay({
                   className="glass-subtle flex flex-col p-3 rounded-lg hover-lift transition-all duration-300 animate-scale-in"
                   style={{ animationDelay: `${index * 0.05}s` }}
                 >
-                  <div className="text-sm font-medium text-muted-foreground">
+                  <div className="text-xs sm:text-sm font-medium text-muted-foreground">
                     {currencyInfo.symbol} {currency}
                   </div>
-                  <div className="text-lg font-bold transition-all duration-300">
+                  <div className="text-base sm:text-lg font-bold transition-all duration-300 break-words">
                     Rp {rate.toLocaleString("id-ID", {
                       minimumFractionDigits: 0,
                       maximumFractionDigits: 0,
@@ -96,7 +96,7 @@ export function ExchangeRateDisplay({
         )}
         {!lastUpdate && (
           <div className="mt-4 text-xs text-muted-foreground text-center animate-fade-in">
-            Click &quotUpdate Rates&quot to fetch real-time exchange rates
+            Click "Update Rates" to fetch real-time exchange rates
           </div>
         )}
       </CardContent>

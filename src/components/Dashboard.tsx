@@ -103,17 +103,17 @@ export function Dashboard() {
   };
 
   return (
-    <div className="container mx-auto py-8 space-y-6 animate-fade-in">
-      <div className="flex items-center justify-between animate-slide-down">
-        <div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 space-y-4 sm:space-y-6 animate-fade-in">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 animate-slide-down">
+        <div className="flex-1 min-w-0">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent truncate">
             Personal Finance Manager
           </h1>
-          <p className="text-muted-foreground mt-2">
+          <p className="text-sm sm:text-base text-muted-foreground mt-1 sm:mt-2">
             Track your income and expenses in multiple currencies
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap sm:flex-nowrap gap-2">
           <ThemeToggle />
           <CategoryManager
             categories={categories}
@@ -124,28 +124,28 @@ export function Dashboard() {
         </div>
       </div>
 
-      <Tabs defaultValue="dashboard" className="space-y-6">
-        <TabsList className="transition-all duration-200">
-          <TabsTrigger value="dashboard" className="transition-all duration-200">Dashboard</TabsTrigger>
-          <TabsTrigger value="rates" className="transition-all duration-200">Exchange Rates</TabsTrigger>
-          <TabsTrigger value="simulation" className="transition-all duration-200">Simulation</TabsTrigger>
+      <Tabs defaultValue="dashboard" className="space-y-4 sm:space-y-6">
+        <TabsList className="transition-all duration-200 w-full sm:w-auto grid grid-cols-3 sm:inline-grid">
+          <TabsTrigger value="dashboard" className="transition-all duration-200 text-xs sm:text-sm">Dashboard</TabsTrigger>
+          <TabsTrigger value="rates" className="transition-all duration-200 text-xs sm:text-sm">Rates</TabsTrigger>
+          <TabsTrigger value="simulation" className="transition-all duration-200 text-xs sm:text-sm">Simulation</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="dashboard" className="space-y-6 animate-slide-up">
+        <TabsContent value="dashboard" className="space-y-4 sm:space-y-6 animate-slide-up">
           <Summary transactions={currentMonthTransactions} exchangeRates={exchangeRates} />
 
           <Card className="glass-card animate-scale-in overflow-hidden">
             <CardHeader>
-              <CardTitle>Income vs Expenses (Last 6 Months)</CardTitle>
+              <CardTitle className="text-lg sm:text-xl">Income vs Expenses (Last 6 Months)</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="px-2 sm:px-6">
               <FinanceChart transactions={transactions} exchangeRates={exchangeRates} />
             </CardContent>
           </Card>
 
           <Card className="glass-card animate-scale-in overflow-hidden" style={{ animationDelay: '0.1s' }}>
             <CardHeader>
-              <CardTitle>
+              <CardTitle className="text-lg sm:text-xl">
                 {editingTransaction ? "Edit Transaction" : "Add Transaction"}
               </CardTitle>
             </CardHeader>
@@ -161,9 +161,9 @@ export function Dashboard() {
 
           <Card className="glass-card animate-scale-in overflow-hidden" style={{ animationDelay: '0.2s' }}>
             <CardHeader>
-              <CardTitle>Recent Transactions</CardTitle>
+              <CardTitle className="text-lg sm:text-xl">Recent Transactions</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="px-2 sm:px-6">
               <TransactionList
                 transactions={transactions}
                 categories={categories}
@@ -175,7 +175,7 @@ export function Dashboard() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="rates" className="space-y-6 animate-slide-up">
+        <TabsContent value="rates" className="space-y-4 sm:space-y-6 animate-slide-up">
           <ExchangeRateDisplay
             exchangeRates={exchangeRates}
             lastUpdate={lastRateUpdate}

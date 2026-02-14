@@ -30,16 +30,14 @@ export function Summary({ transactions, exchangeRates }: SummaryProps) {
   };
 
   return (
-    <div className="grid gap-4 md:grid-cols-3">
-      <Card className="glass-card animate-fade-in overflow-hidden">
+    <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+      <Card className="hover-lift animate-fade-in">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Total Income</CardTitle>
-          <div className="p-2 rounded-full bg-green-500/10 backdrop-blur-sm">
-            <TrendingUp className="h-4 w-4 text-green-600 animate-bounce-subtle" />
-          </div>
+          <CardTitle className="text-xs sm:text-sm font-medium">Total Income</CardTitle>
+          <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 text-green-600 animate-bounce-subtle" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold text-green-600 transition-all duration-300">
+          <div className="text-xl sm:text-2xl font-bold text-green-600 transition-all duration-300 break-words">
             {formatIDR(totalIncome)}
           </div>
           <p className="text-xs text-muted-foreground mt-1">
@@ -50,13 +48,11 @@ export function Summary({ transactions, exchangeRates }: SummaryProps) {
 
       <Card className="glass-card animate-fade-in overflow-hidden" style={{ animationDelay: '0.1s' }}>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Total Expenses</CardTitle>
-          <div className="p-2 rounded-full bg-red-500/10 backdrop-blur-sm">
-            <TrendingDown className="h-4 w-4 text-red-600 animate-bounce-subtle" style={{ animationDelay: '0.1s' }} />
-          </div>
+          <CardTitle className="text-xs sm:text-sm font-medium">Total Expenses</CardTitle>
+          <TrendingDown className="h-4 w-4 sm:h-5 sm:w-5 text-red-600 animate-bounce-subtle" style={{ animationDelay: '0.1s' }} />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold text-red-600 transition-all duration-300">
+          <div className="text-xl sm:text-2xl font-bold text-red-600 transition-all duration-300 break-words">
             {formatIDR(totalExpenses)}
           </div>
           <p className="text-xs text-muted-foreground mt-1">
@@ -65,16 +61,14 @@ export function Summary({ transactions, exchangeRates }: SummaryProps) {
         </CardContent>
       </Card>
 
-      <Card className="glass-card animate-fade-in overflow-hidden" style={{ animationDelay: '0.2s' }}>
+      <Card className="hover-lift animate-fade-in sm:col-span-2 lg:col-span-1" style={{ animationDelay: '0.2s' }}>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Balance</CardTitle>
-          <div className="p-2 rounded-full bg-blue-500/10 backdrop-blur-sm">
-            <Wallet className="h-4 w-4 text-blue-600 animate-bounce-subtle" style={{ animationDelay: '0.2s' }} />
-          </div>
+          <CardTitle className="text-xs sm:text-sm font-medium">Balance</CardTitle>
+          <Wallet className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600 animate-bounce-subtle" style={{ animationDelay: '0.2s' }} />
         </CardHeader>
         <CardContent>
           <div
-            className={`text-2xl font-bold transition-all duration-300 ${
+            className={`text-xl sm:text-2xl font-bold transition-all duration-300 break-words ${
               balance >= 0 ? "text-blue-600" : "text-red-600"
             }`}
           >

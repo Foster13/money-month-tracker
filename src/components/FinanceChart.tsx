@@ -52,22 +52,37 @@ export function FinanceChart({ transactions, exchangeRates }: FinanceChartProps)
   });
 
   return (
-    <div className="animate-fade-in">
-      <ResponsiveContainer width="100%" height={300}>
+    <div className="animate-fade-in w-full">
+      <ResponsiveContainer width="100%" height={250} className="sm:h-[300px]">
         <BarChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" className="opacity-50" />
-          <XAxis dataKey="month" />
-          <YAxis label={{ value: "Amount (IDR thousands)", angle: -90, position: "insideLeft" }} />
+          <XAxis 
+            dataKey="month" 
+            tick={{ fontSize: 12 }}
+            angle={-45}
+            textAnchor="end"
+            height={80}
+          />
+          <YAxis 
+            label={{ 
+              value: "Amount (IDR thousands)", 
+              angle: -90, 
+              position: "insideLeft",
+              style: { fontSize: 12 }
+            }}
+            tick={{ fontSize: 12 }}
+          />
           <Tooltip
             formatter={(value: number) => `Rp ${(value * 1000).toLocaleString("id-ID")}`}
             contentStyle={{ 
               backgroundColor: 'hsl(var(--card))',
               border: '1px solid hsl(var(--border))',
               borderRadius: '0.5rem',
-              transition: 'all 0.2s ease'
+              transition: 'all 0.2s ease',
+              fontSize: '12px'
             }}
           />
-          <Legend />
+          <Legend wrapperStyle={{ fontSize: '12px' }} />
           <Bar dataKey="income" fill="#10b981" name="Income" radius={[4, 4, 0, 0]} />
           <Bar dataKey="expenses" fill="#ef4444" name="Expenses" radius={[4, 4, 0, 0]} />
         </BarChart>
