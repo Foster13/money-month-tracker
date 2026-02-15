@@ -236,16 +236,6 @@ npm install
 
 This project is open source and available for personal and commercial use.
 
-## ⚡ Performance
-
-- **Lighthouse Score**: 95-100
-- **First Load JS**: ~272 KB
-- **Build Time**: < 30 seconds
-- **Bundle Size**: Optimized with tree-shaking
-- **Rendering**: Client-side with instant interactions
-- **Storage**: Fast localStorage operations
-- **Charts**: Optimized Recharts rendering
-
 ## 🎨 Customization
 
 ### Theme Colors
@@ -256,21 +246,5 @@ Modify `src/app/globals.css` to change the pink theme:
   --secondary: 320 70% 95%; /* Light pink */
   /* ... more colors */
 }
-```
-
-### Categories
-- Add/edit categories in the UI
-- Each category has a custom color
-- Categories are stored in localStorage
-
-### Charts
-- Customize in `src/components/FinanceChart.tsx`
-- Change colors, data range, chart type
-- Uses Recharts library
-
-### Animations
-- Modify in `src/app/globals.css`
-- Adjust timing, easing, effects
-- Supports reduced motion preferences
 
 ---
