@@ -5,58 +5,60 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Soft Pastel Pink Theme - Light Mode (Default) */
+    --background: 340 100% 99%;
+    --foreground: 340 50% 20%;
+    --card: 340 100% 98%;
+    --card-foreground: 340 50% 20%;
+    --popover: 340 100% 98%;
+    --popover-foreground: 340 50% 20%;
+    --primary: 340 82% 67%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 320 70% 95%;
+    --secondary-foreground: 340 50% 30%;
+    --muted: 320 60% 96%;
+    --muted-foreground: 340 30% 50%;
+    --accent: 330 80% 90%;
+    --accent-foreground: 340 50% 30%;
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-    --radius: 0.5rem;
+    --destructive-foreground: 0 0% 100%;
+    --border: 330 60% 92%;
+    --input: 330 60% 92%;
+    --ring: 340 82% 67%;
+    --radius: 0.75rem;
     
-    /* Glassmorphism colors */
-    --glass-bg: rgba(255, 255, 255, 0.7);
-    --glass-border: rgba(255, 255, 255, 0.18);
-    --glass-shadow: rgba(0, 0, 0, 0.1);
+    /* Glassmorphism colors - Soft Pink */
+    --glass-bg: rgba(255, 245, 250, 0.75);
+    --glass-border: rgba(255, 182, 193, 0.2);
+    --glass-shadow: rgba(236, 72, 153, 0.08);
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    /* Dark Mode - Soft Pink Tones */
+    --background: 340 30% 12%;
+    --foreground: 340 100% 95%;
+    --card: 340 25% 15%;
+    --card-foreground: 340 100% 95%;
+    --popover: 340 25% 15%;
+    --popover-foreground: 340 100% 95%;
+    --primary: 340 82% 67%;
+    --primary-foreground: 340 50% 10%;
+    --secondary: 340 20% 20%;
+    --secondary-foreground: 340 100% 95%;
+    --muted: 340 20% 20%;
+    --muted-foreground: 340 40% 70%;
+    --accent: 340 25% 25%;
+    --accent-foreground: 340 100% 95%;
+    --destructive: 0 62.8% 50%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 340 20% 25%;
+    --input: 340 20% 25%;
+    --ring: 340 82% 67%;
     
-    /* Glassmorphism colors for dark mode */
-    --glass-bg: rgba(30, 41, 59, 0.7);
-    --glass-border: rgba(255, 255, 255, 0.1);
-    --glass-shadow: rgba(0, 0, 0, 0.3);
+    /* Glassmorphism colors for dark mode - Pink Tones */
+    --glass-bg: rgba(45, 25, 35, 0.75);
+    --glass-border: rgba(255, 182, 193, 0.15);
+    --glass-shadow: rgba(236, 72, 153, 0.2);
   }
 }
 
@@ -71,7 +73,7 @@
     min-height: 100vh;
   }
   
-  /* Animated gradient background */
+  /* Animated gradient background - Soft Pastel Pink */
   body::before {
     content: '';
     position: fixed;
@@ -81,26 +83,28 @@
     bottom: 0;
     z-index: -1;
     background: linear-gradient(135deg, 
-      rgba(99, 102, 241, 0.1) 0%,
-      rgba(168, 85, 247, 0.1) 25%,
-      rgba(236, 72, 153, 0.1) 50%,
-      rgba(251, 146, 60, 0.1) 75%,
-      rgba(34, 197, 94, 0.1) 100%
+      rgba(255, 182, 193, 0.15) 0%,
+      rgba(255, 192, 203, 0.15) 20%,
+      rgba(255, 218, 224, 0.15) 40%,
+      rgba(255, 228, 225, 0.15) 60%,
+      rgba(255, 240, 245, 0.15) 80%,
+      rgba(255, 182, 193, 0.15) 100%
     );
     background-size: 400% 400%;
-    animation: gradientShift 15s ease infinite;
+    animation: gradientShift 20s ease infinite;
   }
   
   .dark body::before {
     background: linear-gradient(135deg, 
-      rgba(99, 102, 241, 0.15) 0%,
-      rgba(168, 85, 247, 0.15) 25%,
-      rgba(236, 72, 153, 0.15) 50%,
-      rgba(251, 146, 60, 0.15) 75%,
-      rgba(34, 197, 94, 0.15) 100%
+      rgba(255, 105, 180, 0.12) 0%,
+      rgba(255, 20, 147, 0.12) 20%,
+      rgba(219, 112, 147, 0.12) 40%,
+      rgba(255, 182, 193, 0.12) 60%,
+      rgba(255, 192, 203, 0.12) 80%,
+      rgba(255, 105, 180, 0.12) 100%
     );
     background-size: 400% 400%;
-    animation: gradientShift 15s ease infinite;
+    animation: gradientShift 20s ease infinite;
   }
 }
 

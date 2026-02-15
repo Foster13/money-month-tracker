@@ -13,6 +13,9 @@ import { DataControls } from "./DataControls";
 import { FinanceChart } from "./FinanceChart";
 import { SimulationMode } from "./SimulationMode";
 import { ExchangeRateDisplay } from "./ExchangeRateDisplay";
+import { ExpensesSection } from "./ExpensesSection";
+import { IncomeSection } from "./IncomeSection";
+import { BudgetSection } from "./BudgetSection";
 import { ThemeToggle } from "./theme-toggle";
 import { Transaction } from "@/types";
 import { fetchExchangeRates } from "@/lib/currency";
@@ -106,11 +109,11 @@ export function Dashboard() {
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 space-y-4 sm:space-y-6 animate-fade-in">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 animate-slide-down">
         <div className="flex-1 min-w-0">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent truncate">
-            Personal Finance Manager
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-pink-400 via-pink-500 to-rose-400 bg-clip-text text-transparent truncate">
+            💖 Personal Finance
           </h1>
           <p className="text-sm sm:text-base text-muted-foreground mt-1 sm:mt-2">
-            Track your income and expenses in multiple currencies
+            ✨ Track your income and expenses
           </p>
         </div>
         <div className="flex flex-wrap sm:flex-nowrap gap-2">
@@ -125,10 +128,13 @@ export function Dashboard() {
       </div>
 
       <Tabs defaultValue="dashboard" className="space-y-4 sm:space-y-6">
-        <TabsList className="transition-all duration-200 w-full sm:w-auto grid grid-cols-3 sm:inline-grid">
-          <TabsTrigger value="dashboard" className="transition-all duration-200 text-xs sm:text-sm">Dashboard</TabsTrigger>
-          <TabsTrigger value="rates" className="transition-all duration-200 text-xs sm:text-sm">Rates</TabsTrigger>
-          <TabsTrigger value="simulation" className="transition-all duration-200 text-xs sm:text-sm">Simulation</TabsTrigger>
+        <TabsList className="transition-all duration-200 w-full sm:w-auto grid grid-cols-3 sm:grid-cols-6 gap-1">
+          <TabsTrigger value="dashboard" className="transition-all duration-200 text-xs sm:text-sm">🏠 Home</TabsTrigger>
+          <TabsTrigger value="income" className="transition-all duration-200 text-xs sm:text-sm">💰 Income</TabsTrigger>
+          <TabsTrigger value="expenses" className="transition-all duration-200 text-xs sm:text-sm">💸 Expenses</TabsTrigger>
+          <TabsTrigger value="budget" className="transition-all duration-200 text-xs sm:text-sm">💝 Budget</TabsTrigger>
+          <TabsTrigger value="rates" className="transition-all duration-200 text-xs sm:text-sm">💱 Rates</TabsTrigger>
+          <TabsTrigger value="simulation" className="transition-all duration-200 text-xs sm:text-sm">🎯 Sim</TabsTrigger>
         </TabsList>
 
         <TabsContent value="dashboard" className="space-y-4 sm:space-y-6 animate-slide-up">
@@ -173,6 +179,34 @@ export function Dashboard() {
               />
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="income" className="animate-slide-up">
+          <IncomeSection
+            transactions={transactions}
+            categories={categories}
+            exchangeRates={exchangeRates}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
+        </TabsContent>
+
+        <TabsContent value="expenses" className="animate-slide-up">
+          <ExpensesSection
+            transactions={transactions}
+            categories={categories}
+            exchangeRates={exchangeRates}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
+        </TabsContent>
+
+        <TabsContent value="budget" className="animate-slide-up">
+          <BudgetSection
+            transactions={transactions}
+            categories={categories}
+            exchangeRates={exchangeRates}
+          />
         </TabsContent>
 
         <TabsContent value="rates" className="space-y-4 sm:space-y-6 animate-slide-up">
