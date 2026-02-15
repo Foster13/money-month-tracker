@@ -96,7 +96,7 @@ export function ExchangeRateDisplay({
         )}
         {!lastUpdate && (
           <div className="mt-4 text-xs text-muted-foreground text-center animate-fade-in">
-            Click "Update Rates" to fetch real-time exchange rates
+            Click &quot;Update Rates&quot; to fetch real-time exchange rates
           </div>
         )}
       </CardContent>
