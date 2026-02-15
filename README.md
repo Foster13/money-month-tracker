@@ -20,14 +20,6 @@ A beautiful, modern Personal Finance Management web application with soft pastel
 - ✅ Data import/export as JSON for backup
 - ✅ Category management with color coding
 
-### 🎨 Beautiful Design
-- ✅ **Soft pastel pink theme (cute & attractive)**
-- ✅ **Dark mode support with smooth toggle**
-- ✅ **Glassmorphism effects**
-- ✅ **Smooth animations and transitions**
-- ✅ **Fully responsive (mobile, tablet, desktop)**
-- ✅ Modern UI with Shadcn/UI components
-
 ### 🔧 Technical Features
 - ✅ Fully client-side with localStorage persistence
 - ✅ Form validation with Zod
@@ -67,17 +59,6 @@ Navigate to [http://localhost:3000](http://localhost:3000)
 - **Icons**: Lucide React
 - **Theme**: next-themes
 
-## 📱 Navigation
-
-The app features 6 main sections:
-
-1. **🏠 Home** - Dashboard overview with summary cards and 6-month chart
-2. **💰 Income** - Dedicated income view with sorting options
-3. **💸 Expenses** - Dedicated expenses view with sorting options
-4. **💝 Budget** - Monthly budget tracking with insights
-5. **💱 Rates** - Exchange rates management
-6. **🎯 Sim** - Financial simulation mode
-
 ## 🎯 Usage
 
 1. **Adding Transactions**
@@ -95,59 +76,6 @@ The app features 6 main sections:
 - `npm start` - Start production server
 - `npm run lint` - Run ESLint
 - `npm run verify` - Verify all files exist
-
-## 🌐 Deployment
-
-### Quick Deploy to Vercel (Recommended) ⭐
-
-```bash
-# Push to GitHub
-git init
-git add .
-git commit -m "Personal Finance Manager"
-git push
-
-# Deploy
-npm i -g vercel
-vercel
-```
-
-**Or use Vercel Dashboard:**
-1. Go to [vercel.com](https://vercel.com)
-2. Import your GitHub repository
-3. Click "Deploy"
-4. Done! 🎉
-
-### Other Platforms
-
-**Netlify:**
-- Build command: `npm run build`
-- Publish directory: `.next`
-
-**Railway / Render:**
-- Auto-detects Next.js
-- One-click deploy
-
-**Self-Hosted:**
-- Requires Node.js 18+
-- Run `npm install && npm run build && npm start`
-
-## 📝 Notes
-
-- **Data Storage**: All data is stored in browser localStorage
-- **First Run**: Application pre-populates with default categories
-- **Simulation Mode**: Uses separate non-persistent store
-- **No Backend**: Fully client-side application
-- **No Authentication**: Single-user application
-- **Privacy First**: All data stays in your browser
-- **Multi-Device**: Export/import to sync between devices
-
-## 🔒 Privacy
-
-- All data stays in your browser
-- No data sent to external servers
-- No tracking or analytics
-- Export your data anytime
 
 ## 🐛 Troubleshooting
 
