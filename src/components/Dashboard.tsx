@@ -106,8 +106,8 @@ export function Dashboard() {
   };
 
   return (
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 space-y-4 sm:space-y-6 animate-fade-in">
-      <div className="flex flex-col gap-3 animate-slide-down">
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 space-y-6 sm:space-y-8 animate-fade-in">
+      <div className="flex flex-col gap-3 sm:gap-4 animate-slide-down">
         <div className="flex items-start justify-between gap-2">
           <div className="flex-1 min-w-0">
             <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-pink-400 via-pink-500 to-rose-400 bg-clip-text text-transparent">
@@ -129,8 +129,8 @@ export function Dashboard() {
         </div>
       </div>
 
-      <Tabs defaultValue="dashboard" className="space-y-4 sm:space-y-6">
-        <TabsList className="transition-all duration-200 w-full grid grid-cols-3 sm:grid-cols-6 gap-0.5 sm:gap-1 p-1">
+      <Tabs defaultValue="dashboard" className="space-y-6 sm:space-y-8">
+        <TabsList className="transition-all duration-200 w-full grid grid-cols-3 sm:grid-cols-6 gap-0.5 sm:gap-1 p-1.5 sm:p-2 bg-muted/50 backdrop-blur-sm">
           <TabsTrigger value="dashboard" className="transition-all duration-200 text-[10px] sm:text-xs md:text-sm px-1 sm:px-3">
             <span className="hidden sm:inline">🏠 Home</span>
             <span className="sm:hidden">🏠</span>
@@ -157,7 +157,7 @@ export function Dashboard() {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="dashboard" className="space-y-4 sm:space-y-6 animate-slide-up">
+        <TabsContent value="dashboard" className="space-y-5 sm:space-y-6 animate-slide-up mt-6 sm:mt-8">
           <Summary transactions={currentMonthTransactions} exchangeRates={exchangeRates} />
 
           <Card className="glass-card animate-scale-in overflow-hidden">
@@ -201,7 +201,7 @@ export function Dashboard() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="income" className="animate-slide-up">
+        <TabsContent value="income" className="animate-slide-up mt-6 sm:mt-8">
           <IncomeSection
             transactions={transactions}
             categories={categories}
@@ -211,7 +211,7 @@ export function Dashboard() {
           />
         </TabsContent>
 
-        <TabsContent value="expenses" className="animate-slide-up">
+        <TabsContent value="expenses" className="animate-slide-up mt-6 sm:mt-8">
           <ExpensesSection
             transactions={transactions}
             categories={categories}
@@ -221,7 +221,7 @@ export function Dashboard() {
           />
         </TabsContent>
 
-        <TabsContent value="budget" className="animate-slide-up">
+        <TabsContent value="budget" className="animate-slide-up mt-6 sm:mt-8">
           <BudgetSection
             transactions={transactions}
             categories={categories}
@@ -229,7 +229,7 @@ export function Dashboard() {
           />
         </TabsContent>
 
-        <TabsContent value="rates" className="space-y-4 sm:space-y-6 animate-slide-up">
+        <TabsContent value="rates" className="space-y-4 sm:space-y-6 animate-slide-up mt-6 sm:mt-8">
           <ExchangeRateDisplay
             exchangeRates={exchangeRates}
             lastUpdate={lastRateUpdate}
@@ -237,7 +237,7 @@ export function Dashboard() {
           />
         </TabsContent>
 
-        <TabsContent value="simulation" className="animate-slide-up">
+        <TabsContent value="simulation" className="animate-slide-up mt-6 sm:mt-8">
           <SimulationMode />
         </TabsContent>
       </Tabs>
