@@ -107,17 +107,19 @@ export function Dashboard() {
 
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 space-y-4 sm:space-y-6 animate-fade-in">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 animate-slide-down">
-        <div className="flex-1 min-w-0">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-pink-400 via-pink-500 to-rose-400 bg-clip-text text-transparent truncate">
-            💖 Personal Finance
-          </h1>
-          <p className="text-sm sm:text-base text-muted-foreground mt-1 sm:mt-2">
-            ✨ Track your income and expenses
-          </p>
-        </div>
-        <div className="flex flex-wrap sm:flex-nowrap gap-2">
+      <div className="flex flex-col gap-3 animate-slide-down">
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex-1 min-w-0">
+            <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-pink-400 via-pink-500 to-rose-400 bg-clip-text text-transparent">
+              💖 Personal Finance
+            </h1>
+            <p className="text-xs sm:text-sm text-muted-foreground mt-1">
+              ✨ Track your income and expenses
+            </p>
+          </div>
           <ThemeToggle />
+        </div>
+        <div className="flex flex-wrap gap-2">
           <CategoryManager
             categories={categories}
             onAddCategory={addCategory}
@@ -128,13 +130,31 @@ export function Dashboard() {
       </div>
 
       <Tabs defaultValue="dashboard" className="space-y-4 sm:space-y-6">
-        <TabsList className="transition-all duration-200 w-full sm:w-auto grid grid-cols-3 sm:grid-cols-6 gap-1">
-          <TabsTrigger value="dashboard" className="transition-all duration-200 text-xs sm:text-sm">🏠 Home</TabsTrigger>
-          <TabsTrigger value="income" className="transition-all duration-200 text-xs sm:text-sm">💰 Income</TabsTrigger>
-          <TabsTrigger value="expenses" className="transition-all duration-200 text-xs sm:text-sm">💸 Expenses</TabsTrigger>
-          <TabsTrigger value="budget" className="transition-all duration-200 text-xs sm:text-sm">💝 Budget</TabsTrigger>
-          <TabsTrigger value="rates" className="transition-all duration-200 text-xs sm:text-sm">💱 Rates</TabsTrigger>
-          <TabsTrigger value="simulation" className="transition-all duration-200 text-xs sm:text-sm">🎯 Sim</TabsTrigger>
+        <TabsList className="transition-all duration-200 w-full grid grid-cols-3 sm:grid-cols-6 gap-0.5 sm:gap-1 p-1">
+          <TabsTrigger value="dashboard" className="transition-all duration-200 text-[10px] sm:text-xs md:text-sm px-1 sm:px-3">
+            <span className="hidden sm:inline">🏠 Home</span>
+            <span className="sm:hidden">🏠</span>
+          </TabsTrigger>
+          <TabsTrigger value="income" className="transition-all duration-200 text-[10px] sm:text-xs md:text-sm px-1 sm:px-3">
+            <span className="hidden sm:inline">💰 Income</span>
+            <span className="sm:hidden">💰</span>
+          </TabsTrigger>
+          <TabsTrigger value="expenses" className="transition-all duration-200 text-[10px] sm:text-xs md:text-sm px-1 sm:px-3">
+            <span className="hidden sm:inline">💸 Expenses</span>
+            <span className="sm:hidden">💸</span>
+          </TabsTrigger>
+          <TabsTrigger value="budget" className="transition-all duration-200 text-[10px] sm:text-xs md:text-sm px-1 sm:px-3">
+            <span className="hidden sm:inline">💝 Budget</span>
+            <span className="sm:hidden">💝</span>
+          </TabsTrigger>
+          <TabsTrigger value="rates" className="transition-all duration-200 text-[10px] sm:text-xs md:text-sm px-1 sm:px-3">
+            <span className="hidden sm:inline">💱 Rates</span>
+            <span className="sm:hidden">💱</span>
+          </TabsTrigger>
+          <TabsTrigger value="simulation" className="transition-all duration-200 text-[10px] sm:text-xs md:text-sm px-1 sm:px-3">
+            <span className="hidden sm:inline">🎯 Sim</span>
+            <span className="sm:hidden">🎯</span>
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="dashboard" className="space-y-4 sm:space-y-6 animate-slide-up">

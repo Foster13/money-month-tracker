@@ -113,25 +113,23 @@ export function BudgetSection({
     <div className="space-y-6 animate-fade-in">
       {/* Budget Overview */}
       <Card className="glass-card overflow-hidden border-purple-200">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="p-3 rounded-full bg-purple-100 backdrop-blur-sm">
-                <Target className="h-6 w-6 text-purple-500" />
-              </div>
-              <div>
-                <CardTitle className="text-2xl text-purple-700">💝 Monthly Budget</CardTitle>
-                <p className="text-sm text-muted-foreground mt-1">
-                  {format(now, "MMMM yyyy")}
-                </p>
-              </div>
+        <CardHeader className="p-4 sm:p-6">
+          <div className="flex items-center gap-3">
+            <div className="p-2 sm:p-3 rounded-full bg-purple-100 backdrop-blur-sm flex-shrink-0">
+              <Target className="h-5 w-5 sm:h-6 sm:w-6 text-purple-500" />
+            </div>
+            <div className="min-w-0">
+              <CardTitle className="text-xl sm:text-2xl text-purple-700 truncate">💝 Monthly Budget</CardTitle>
+              <p className="text-xs sm:text-sm text-muted-foreground mt-1">
+                {format(now, "MMMM yyyy")}
+              </p>
             </div>
           </div>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 p-4 sm:p-6">
           {/* Budget Setting */}
           <div className="space-y-2">
-            <Label>Set Monthly Budget</Label>
+            <Label className="text-sm">Set Monthly Budget</Label>
             {isEditing ? (
               <div className="flex gap-2">
                 <Input
@@ -139,9 +137,9 @@ export function BudgetSection({
                   value={tempBudget}
                   onChange={(e) => setTempBudget(e.target.value)}
                   placeholder="Enter budget amount"
-                  className="flex-1"
+                  className="flex-1 text-sm"
                 />
-                <Button size="icon" onClick={handleSaveBudget} className="bg-purple-500 hover:bg-purple-600">
+                <Button size="icon" onClick={handleSaveBudget} className="bg-purple-500 hover:bg-purple-600 flex-shrink-0">
                   <Check className="h-4 w-4" />
                 </Button>
                 <Button
@@ -151,14 +149,15 @@ export function BudgetSection({
                     setIsEditing(false);
                     setTempBudget(monthlyBudget.toString());
                   }}
+                  className="flex-shrink-0"
                 >
                   <X className="h-4 w-4" />
                 </Button>
               </div>
             ) : (
-              <div className="flex items-center justify-between p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
-                <div>
-                  <p className="text-2xl font-bold text-purple-600">
+              <div className="flex items-center justify-between p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg gap-2">
+                <div className="min-w-0 flex-1">
+                  <p className="text-lg sm:text-2xl font-bold text-purple-600 break-words">
                     Rp {monthlyBudget.toLocaleString("id-ID")}
                   </p>
                   <p className="text-xs text-muted-foreground">Monthly Budget</p>
@@ -170,6 +169,7 @@ export function BudgetSection({
                     setIsEditing(true);
                     setTempBudget(monthlyBudget.toString());
                   }}
+                  className="flex-shrink-0"
                 >
                   <Edit2 className="h-4 w-4" />
                 </Button>
@@ -198,16 +198,16 @@ export function BudgetSection({
                   style={{ width: `${Math.min(budgetPercentage, 100)}%` }}
                 />
               </div>
-              <div className="flex justify-between items-center">
-                <div>
+              <div className="flex justify-between items-center gap-2">
+                <div className="min-w-0 flex-1">
                   <p className="text-xs text-muted-foreground">Spent</p>
-                  <p className="font-semibold text-rose-600">
+                  <p className="font-semibold text-sm sm:text-base text-rose-600 break-words">
                     Rp {totalExpenses.toLocaleString("id-ID")}
                   </p>
                 </div>
-                <div className="text-right">
+                <div className="text-right min-w-0 flex-1">
                   <p className="text-xs text-muted-foreground">Remaining</p>
-                  <p className={`font-semibold ${budgetRemaining >= 0 ? "text-purple-600" : "text-rose-600"}`}>
+                  <p className={`font-semibold text-sm sm:text-base break-words ${budgetRemaining >= 0 ? "text-purple-600" : "text-rose-600"}`}>
                     Rp {Math.abs(budgetRemaining).toLocaleString("id-ID")}
                     {budgetRemaining < 0 && " over"}
                   </p>
@@ -217,25 +217,25 @@ export function BudgetSection({
           )}
 
           {/* Quick Stats */}
-          <div className="grid grid-cols-3 gap-3 pt-4 border-t">
+          <div className="grid grid-cols-3 gap-2 sm:gap-3 pt-4 border-t">
             <div className="text-center">
-              <TrendingUp className="h-5 w-5 text-pink-500 mx-auto mb-1" />
-              <p className="text-xs text-muted-foreground">Income</p>
-              <p className="font-semibold text-sm text-pink-600">
+              <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 text-pink-500 mx-auto mb-1" />
+              <p className="text-[10px] sm:text-xs text-muted-foreground">Income</p>
+              <p className="font-semibold text-xs sm:text-sm text-pink-600 break-words">
                 Rp {(totalIncome / 1000).toFixed(0)}k
               </p>
             </div>
             <div className="text-center">
-              <TrendingDown className="h-5 w-5 text-rose-500 mx-auto mb-1" />
-              <p className="text-xs text-muted-foreground">Expenses</p>
-              <p className="font-semibold text-sm text-rose-600">
+              <TrendingDown className="h-4 w-4 sm:h-5 sm:w-5 text-rose-500 mx-auto mb-1" />
+              <p className="text-[10px] sm:text-xs text-muted-foreground">Expenses</p>
+              <p className="font-semibold text-xs sm:text-sm text-rose-600 break-words">
                 Rp {(totalExpenses / 1000).toFixed(0)}k
               </p>
             </div>
             <div className="text-center">
-              <Wallet className="h-5 w-5 text-purple-500 mx-auto mb-1" />
-              <p className="text-xs text-muted-foreground">Balance</p>
-              <p className={`font-semibold text-sm ${balance >= 0 ? "text-purple-600" : "text-rose-600"}`}>
+              <Wallet className="h-4 w-4 sm:h-5 sm:w-5 text-purple-500 mx-auto mb-1" />
+              <p className="text-[10px] sm:text-xs text-muted-foreground">Balance</p>
+              <p className={`font-semibold text-xs sm:text-sm break-words ${balance >= 0 ? "text-purple-600" : "text-rose-600"}`}>
                 Rp {(balance / 1000).toFixed(0)}k
               </p>
             </div>
@@ -245,10 +245,10 @@ export function BudgetSection({
 
       {/* Top 3 Categories */}
       <Card className="glass-subtle">
-        <CardHeader>
-          <CardTitle className="text-lg">🏆 Top 3 Categories</CardTitle>
+        <CardHeader className="p-4 sm:p-6">
+          <CardTitle className="text-base sm:text-lg">🏆 Top 3 Categories</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-3">
+        <CardContent className="space-y-3 p-4 sm:p-6">
           {topCategories.length === 0 ? (
             <p className="text-sm text-muted-foreground text-center py-4">
               No transactions yet this month
@@ -257,24 +257,24 @@ export function BudgetSection({
             topCategories.map((item, index) => (
               <div
                 key={item.categoryId}
-                className="flex items-center justify-between p-3 bg-background/50 rounded-lg hover-lift transition-all"
+                className="flex items-center justify-between p-2 sm:p-3 bg-background/50 rounded-lg hover-lift transition-all gap-2"
               >
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-purple-100 dark:bg-purple-900/30 font-bold text-purple-600">
+                <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                  <div className="flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-purple-100 dark:bg-purple-900/30 font-bold text-purple-600 text-xs sm:text-base flex-shrink-0">
                     {index + 1}
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1 sm:gap-2 min-w-0">
                     <span
-                      className="w-3 h-3 rounded-full"
+                      className="w-2 h-2 sm:w-3 sm:h-3 rounded-full flex-shrink-0"
                       style={{ backgroundColor: item.category?.color || "#64748b" }}
                     />
-                    <span className="font-medium">{item.category?.name || "Unknown"}</span>
+                    <span className="font-medium text-sm sm:text-base truncate">{item.category?.name || "Unknown"}</span>
                   </div>
                 </div>
-                <div className="text-right">
-                  <p className="font-semibold">{item.count} transactions</p>
-                  <p className="text-xs text-muted-foreground">
-                    Rp {item.total.toLocaleString("id-ID")}
+                <div className="text-right flex-shrink-0">
+                  <p className="font-semibold text-xs sm:text-sm">{item.count} txn</p>
+                  <p className="text-[10px] sm:text-xs text-muted-foreground whitespace-nowrap">
+                    Rp {(item.total / 1000).toFixed(0)}k
                   </p>
                 </div>
               </div>
@@ -285,10 +285,10 @@ export function BudgetSection({
 
       {/* Latest Transactions */}
       <Card className="glass-subtle">
-        <CardHeader>
-          <CardTitle className="text-lg">📋 Latest Transactions</CardTitle>
+        <CardHeader className="p-4 sm:p-6">
+          <CardTitle className="text-base sm:text-lg">📋 Latest Transactions</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-2">
+        <CardContent className="space-y-2 p-4 sm:p-6">
           {latestTransactions.length === 0 ? (
             <p className="text-sm text-muted-foreground text-center py-4">
               No transactions yet this month
@@ -297,22 +297,22 @@ export function BudgetSection({
             latestTransactions.map((transaction) => (
               <div
                 key={transaction.id}
-                className="flex items-center justify-between p-3 bg-background/50 rounded-lg hover-lift transition-all"
+                className="flex items-center justify-between p-2 sm:p-3 bg-background/50 rounded-lg hover-lift transition-all gap-2"
               >
-                <div className="flex items-center gap-3 flex-1 min-w-0">
+                <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
                   <span
                     className="w-2 h-2 rounded-full flex-shrink-0"
                     style={{ backgroundColor: getCategoryColor(transaction.categoryId) }}
                   />
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium truncate">{transaction.description}</p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="font-medium text-sm sm:text-base truncate">{transaction.description}</p>
+                    <p className="text-[10px] sm:text-xs text-muted-foreground truncate">
                       {getCategoryName(transaction.categoryId)} • {format(parseISO(transaction.date), "MMM dd")}
                     </p>
                   </div>
                 </div>
                 <p
-                  className={`font-semibold flex-shrink-0 ${
+                  className={`font-semibold text-xs sm:text-sm flex-shrink-0 ${
                     transaction.type === "income" ? "text-pink-600" : "text-rose-600"
                   }`}
                 >
