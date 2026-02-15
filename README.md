@@ -2,10 +2,6 @@
 
 A beautiful, modern Personal Finance Management web application with soft pastel pink theme. Track your income, expenses, and budget with style! ✨
 
-## 🌟 Live Demo
-
-**Ready to deploy!** See [DEPLOY.md](DEPLOY.md) for quick deployment guide.
-
 ## ✨ Features
 
 ### 💰 Financial Tracking
@@ -54,10 +50,9 @@ npm run dev
 ### 3. Open Browser
 Navigate to [http://localhost:3000](http://localhost:3000)
 
-### 4. Start Tracking! 💖
+### 4. Start Tracking!
 - Add your first transaction
 - Set your monthly budget
-- Explore all 6 sections
 
 ## 🛠️ Tech Stack
 
@@ -136,9 +131,6 @@ vercel
 **Self-Hosted:**
 - Requires Node.js 18+
 - Run `npm install && npm run build && npm start`
-
-📖 **Full deployment guide:** [docs/DEPLOYMENT_GUIDE.md](docs/DEPLOYMENT_GUIDE.md)
-📋 **Quick guide:** [DEPLOY.md](DEPLOY.md)
 
 ## 📝 Notes
 
