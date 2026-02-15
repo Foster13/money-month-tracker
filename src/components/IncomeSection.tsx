@@ -70,22 +70,22 @@ export function IncomeSection({
     <div className="space-y-6 animate-fade-in">
       {/* Header with Stats */}
       <Card className="glass-card overflow-hidden border-pink-200">
-        <CardHeader>
-          <div className="flex items-center justify-between">
+        <CardHeader className="p-4 sm:p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="p-3 rounded-full bg-pink-100 backdrop-blur-sm">
-                <TrendingUp className="h-6 w-6 text-pink-500" />
+              <div className="p-2 sm:p-3 rounded-full bg-pink-100 backdrop-blur-sm flex-shrink-0">
+                <TrendingUp className="h-5 w-5 sm:h-6 sm:w-6 text-pink-500" />
               </div>
-              <div>
-                <CardTitle className="text-2xl text-pink-700">💰 Income</CardTitle>
-                <p className="text-sm text-muted-foreground mt-1">
+              <div className="min-w-0">
+                <CardTitle className="text-xl sm:text-2xl text-pink-700 truncate">💰 Income</CardTitle>
+                <p className="text-xs sm:text-sm text-muted-foreground mt-1">
                   {income.length} transactions
                 </p>
               </div>
             </div>
-            <div className="text-right">
-              <p className="text-sm text-muted-foreground">Total Income</p>
-              <p className="text-2xl font-bold text-pink-600">
+            <div className="text-left sm:text-right">
+              <p className="text-xs sm:text-sm text-muted-foreground">Total Income</p>
+              <p className="text-xl sm:text-2xl font-bold text-pink-600 break-words">
                 Rp {totalIncome.toLocaleString("id-ID")}
               </p>
             </div>
@@ -95,10 +95,10 @@ export function IncomeSection({
 
       {/* Sort Controls */}
       <Card className="glass-subtle">
-        <CardContent className="pt-6">
-          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+        <CardContent className="pt-4 pb-4 px-4 sm:pt-6 sm:pb-6 sm:px-6">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start sm:items-center justify-between">
             <div className="flex items-center gap-2">
-              <ArrowUpDown className="h-4 w-4 text-muted-foreground" />
+              <ArrowUpDown className="h-4 w-4 text-muted-foreground flex-shrink-0" />
               <span className="text-sm font-medium">Sort by:</span>
             </div>
             <Select value={sortBy} onValueChange={(value) => setSortBy(value as SortOption)}>
