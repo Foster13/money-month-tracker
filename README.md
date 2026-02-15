@@ -83,59 +83,15 @@ The app features 6 main sections:
 5. **💱 Rates** - Exchange rates management
 6. **🎯 Sim** - Financial simulation mode
 
-### Sorting Options (Income & Expenses)
-- 📅 Newest First / Oldest First
-- 💵 Highest Amount / Lowest Amount
-- 🏷️ By Category
-- 🔤 Alphabetical
-
-### Budget Section Features
-- Set monthly budget with inline editing
-- Progress bar with color warnings (purple → orange → red)
-- Quick stats (Income, Expenses, Balance)
-- Top 3 categories by transaction count
-- Latest 5 transactions
-
 ## 🎯 Usage
 
-### Adding Transactions
-1. Go to 🏠 Home tab
-2. Fill in the transaction form
-3. Select type (Income/Expense), amount, category, date
-4. Click "Add Transaction"
-
-### Managing Budget
-1. Go to 💝 Budget tab
-2. Click edit icon to set monthly budget
-3. Monitor progress bar and spending
-4. Review top categories and latest transactions
-
-### Viewing Income/Expenses
-1. Go to 💰 Income or 💸 Expenses tab
-2. Use sort dropdown to organize transactions
-3. View totals and transaction counts
-4. Review spending patterns
-
-### Managing Categories
-1. Click "Manage Categories" button (top right)
-2. Add new categories with custom colors
-3. Delete categories (removes associated transactions)
-
-### Exchange Rates
-1. Go to 💱 Rates tab
-2. Click "Update Rates" for latest rates
-3. All amounts auto-convert to IDR
-
-### Simulation Mode
-1. Go to 🎯 Sim tab
-2. Click "Start Simulation" to load current data
-3. Add projected transactions
-4. View projected finances
-5. Reset to clear simulation data
-
-### Data Backup
-1. Click "Export Data" to download JSON backup
-2. Click "Import Data" to restore from backup
+**1. Adding Transactions**
+**2. Managing Budget**
+**3. Viewing Income/Expenses**
+**4. Managing Categories**
+**5. Exchange Rates**
+**6. Simulation Mode**
+**7. Data Backup**
 
 ## 🔧 Available Scripts
 
@@ -184,19 +140,6 @@ vercel
 📖 **Full deployment guide:** [docs/DEPLOYMENT_GUIDE.md](docs/DEPLOYMENT_GUIDE.md)
 📋 **Quick guide:** [DEPLOY.md](DEPLOY.md)
 
-## � Documentation
-
-- 📖 [Full Documentation Index](docs/INDEX.md)
-- 🚀 [Quick Deployment Guide](DEPLOY.md)
-- 🌐 [Complete Deployment Guide](docs/DEPLOYMENT_GUIDE.md)
-- 🧭 [Navigation & Features](docs/NAVIGATION_FEATURES.md)
-- 🎨 [Pink Theme Guide](docs/PINK_THEME.md)
-- 💱 [Currency Features](docs/CURRENCY_FEATURE.md)
-- 🌙 [Dark Mode Guide](docs/DARKMODE_FEATURE.md)
-- 📱 [Responsive Design](docs/RESPONSIVE_DESIGN.md)
-- ✨ [Animations Guide](docs/ANIMATIONS_FEATURE.md)
-- 🔮 [Glassmorphism Effects](docs/GLASSMORPHISM_FEATURE.md)
-
 ## 📝 Notes
 
 - **Data Storage**: All data is stored in browser localStorage
@@ -235,16 +178,5 @@ npm install
 ## 📄 License
 
 This project is open source and available for personal and commercial use.
-
-## 🎨 Customization
-
-### Theme Colors
-Modify `src/app/globals.css` to change the pink theme:
-```css
-:root {
-  --primary: 340 82% 67%; /* Main pink color */
-  --secondary: 320 70% 95%; /* Light pink */
-  /* ... more colors */
-}
 
 ---
