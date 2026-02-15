@@ -85,13 +85,13 @@ The app features 6 main sections:
 
 ## 🎯 Usage
 
-**1. Adding Transactions**
-**2. Managing Budget**
-**3. Viewing Income/Expenses**
-**4. Managing Categories**
-**5. Exchange Rates**
-**6. Simulation Mode**
-**7. Data Backup**
+1. **Adding Transactions**
+2. **Managing Budget**
+3. **Viewing Income/Expenses**
+4. **Managing Categories**
+5. **Exchange Rates**
+6. **Simulation Mode**
+7. **Export and Import Data**
 
 ## 🔧 Available Scripts
 
