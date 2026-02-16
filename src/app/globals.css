@@ -73,8 +73,8 @@
     min-height: 100vh;
   }
   
-  /* Animated gradient background - Soft Pastel Pink */
-  body::before {
+  /* Remove old static gradient - now using animated component */
+  .dark body::before {
     content: '';
     position: fixed;
     top: 0;
@@ -82,19 +82,6 @@
     right: 0;
     bottom: 0;
     z-index: -1;
-    background: linear-gradient(135deg, 
-      rgba(255, 182, 193, 0.15) 0%,
-      rgba(255, 192, 203, 0.15) 20%,
-      rgba(255, 218, 224, 0.15) 40%,
-      rgba(255, 228, 225, 0.15) 60%,
-      rgba(255, 240, 245, 0.15) 80%,
-      rgba(255, 182, 193, 0.15) 100%
-    );
-    background-size: 400% 400%;
-    animation: gradientShift 20s ease infinite;
-  }
-  
-  .dark body::before {
     background: linear-gradient(135deg, 
       rgba(255, 105, 180, 0.12) 0%,
       rgba(255, 20, 147, 0.12) 20%,
