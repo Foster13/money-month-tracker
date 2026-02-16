@@ -24,6 +24,7 @@ import { startOfMonth, endOfMonth, parseISO } from "date-fns";
 
 export function Dashboard() {
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
+  const [showChart, setShowChart] = useState(true); // Toggle between chart and column view
   const { toast } = useToast();
 
   const transactions = useTransactionStore((state) => state.transactions);
@@ -162,15 +163,6 @@ export function Dashboard() {
 
           <Card className="glass-card animate-scale-in overflow-hidden">
             <CardHeader>
-              <CardTitle className="text-lg sm:text-xl">Income vs Expenses (Last 6 Months)</CardTitle>
-            </CardHeader>
-            <CardContent className="px-2 sm:px-6">
-              <FinanceChart transactions={transactions} exchangeRates={exchangeRates} />
-            </CardContent>
-          </Card>
-
-          <Card className="glass-card animate-scale-in overflow-hidden" style={{ animationDelay: '0.1s' }}>
-            <CardHeader>
               <CardTitle className="text-lg sm:text-xl">
                 {editingTransaction ? "Edit Transaction" : "Add Transaction"}
               </CardTitle>
@@ -182,6 +174,118 @@ export function Dashboard() {
                 editingTransaction={editingTransaction}
                 onCancel={() => setEditingTransaction(null)}
               />
+            </CardContent>
+          </Card>
+
+          <Card className="glass-card animate-scale-in overflow-hidden" style={{ animationDelay: '0.1s' }}>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+              <CardTitle className="text-lg sm:text-xl">Income vs Expenses (Last 6 Months)</CardTitle>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setShowChart(true)}
+                  className={`px-3 py-1.5 text-xs sm:text-sm rounded-md transition-all duration-200 ${
+                    showChart
+                      ? "bg-gradient-to-r from-pink-400 to-rose-400 text-white shadow-md"
+                      : "bg-muted text-muted-foreground hover:bg-muted/80"
+                  }`}
+                >
+                  Chart
+                </button>
+                <button
+                  onClick={() => setShowChart(false)}
+                  className={`px-3 py-1.5 text-xs sm:text-sm rounded-md transition-all duration-200 ${
+                    !showChart
+                      ? "bg-gradient-to-r from-pink-400 to-rose-400 text-white shadow-md"
+                      : "bg-muted text-muted-foreground hover:bg-muted/80"
+                  }`}
+                >
+                  Table
+                </button>
+              </div>
+            </CardHeader>
+            <CardContent className="px-2 sm:px-6">
+              {showChart ? (
+                <FinanceChart transactions={transactions} exchangeRates={exchangeRates} />
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-pink-200">
+                        <th className="text-left py-3 px-2 sm:px-4 font-semibold text-pink-700">Month</th>
+                        <th className="text-right py-3 px-2 sm:px-4 font-semibold text-pink-600">Income</th>
+                        <th className="text-right py-3 px-2 sm:px-4 font-semibold text-rose-600">Expenses</th>
+                        <th className="text-right py-3 px-2 sm:px-4 font-semibold text-purple-600">Balance</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {(() => {
+                        const monthlyData: Record<string, { income: number; expenses: number }> = {};
+                        // Start from February 2026 and show last 6 months
+                        const startDate = new Date(2026, 1, 1); // February 2026 (month is 0-indexed)
+                        const now = new Date();
+                        
+                        // Use the later date between February 2026 and current date
+                        const baseDate = startDate > now ? startDate : now;
+                        
+                        // Initialize last 6 months from base date
+                        for (let i = 5; i >= 0; i--) {
+                          const date = new Date(baseDate.getFullYear(), baseDate.getMonth() - i, 1);
+                          // Only include months from February 2026 onwards
+                          if (date >= startDate) {
+                            const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+                            monthlyData[key] = { income: 0, expenses: 0 };
+                          }
+                        }
+                        
+                        // Aggregate transactions (only from February 2026 onwards)
+                        transactions.forEach((t) => {
+                          const date = parseISO(t.date);
+                          // Only include transactions from February 2026 onwards
+                          if (date >= startDate) {
+                            const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+                            if (monthlyData[key]) {
+                              const amount = t.currency === "IDR" 
+                                ? t.amount 
+                                : t.amount * (exchangeRates[t.currency] || 1);
+                              if (t.type === "income") {
+                                monthlyData[key].income += amount;
+                              } else {
+                                monthlyData[key].expenses += amount;
+                              }
+                            }
+                          }
+                        });
+                        
+                        return Object.entries(monthlyData).map(([key, data], index) => {
+                          const [year, month] = key.split('-');
+                          const date = new Date(parseInt(year), parseInt(month) - 1);
+                          const monthName = date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+                          const balance = data.income - data.expenses;
+                          
+                          return (
+                            <tr 
+                              key={key} 
+                              className="border-b border-pink-100 hover:bg-pink-50/50 transition-colors"
+                              style={{ animationDelay: `${index * 0.05}s` }}
+                            >
+                              <td className="py-3 px-2 sm:px-4 font-medium">{monthName}</td>
+                              <td className="py-3 px-2 sm:px-4 text-right font-semibold text-pink-600">
+                                Rp {data.income.toLocaleString('id-ID', { maximumFractionDigits: 0 })}
+                              </td>
+                              <td className="py-3 px-2 sm:px-4 text-right font-semibold text-rose-600">
+                                Rp {data.expenses.toLocaleString('id-ID', { maximumFractionDigits: 0 })}
+                              </td>
+                              <td className={`py-3 px-2 sm:px-4 text-right font-bold ${balance >= 0 ? 'text-purple-600' : 'text-rose-600'}`}>
+                                Rp {balance.toLocaleString('id-ID', { maximumFractionDigits: 0 })}
+                              </td>
+                            </tr>
+                          );
+                        });
+                      })()}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </CardContent>
           </Card>
 

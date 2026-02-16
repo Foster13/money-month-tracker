@@ -21,11 +21,21 @@ interface FinanceChartProps {
 }
 
 export function FinanceChart({ transactions, exchangeRates }: FinanceChartProps) {
-  // Get last 6 months including current month
-  const endDate = new Date();
+  // Start from February 2026 and show last 6 months
+  const feb2026 = new Date(2026, 1, 1); // February 2026 (month is 0-indexed)
+  const now = new Date();
+  
+  // Use the later date between February 2026 and current date
+  const baseDate = feb2026 > now ? feb2026 : now;
+  
+  // Get last 6 months from base date
+  const endDate = baseDate;
   const startDate = subMonths(endDate, 5);
   
-  const months = eachMonthOfInterval({ start: startDate, end: endDate });
+  // Only include months from February 2026 onwards
+  const effectiveStartDate = startDate < feb2026 ? feb2026 : startDate;
+  
+  const months = eachMonthOfInterval({ start: effectiveStartDate, end: endDate });
 
   const chartData = months.map((month) => {
     const monthStart = startOfMonth(month);
@@ -33,7 +43,8 @@ export function FinanceChart({ transactions, exchangeRates }: FinanceChartProps)
 
     const monthTransactions = transactions.filter((t) => {
       const transactionDate = parseISO(t.date);
-      return transactionDate >= monthStart && transactionDate <= monthEnd;
+      // Only include transactions from February 2026 onwards
+      return transactionDate >= feb2026 && transactionDate >= monthStart && transactionDate <= monthEnd;
     });
 
     const income = monthTransactions
