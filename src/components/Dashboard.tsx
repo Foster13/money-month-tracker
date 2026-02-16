@@ -159,8 +159,6 @@ export function Dashboard() {
         </TabsList>
 
         <TabsContent value="dashboard" className="space-y-5 sm:space-y-6 animate-slide-up mt-6 sm:mt-8">
-          <Summary transactions={currentMonthTransactions} exchangeRates={exchangeRates} />
-
           <Card className="glass-card animate-scale-in overflow-hidden">
             <CardHeader>
               <CardTitle className="text-lg sm:text-xl">
@@ -176,6 +174,8 @@ export function Dashboard() {
               />
             </CardContent>
           </Card>
+
+          <Summary transactions={currentMonthTransactions} exchangeRates={exchangeRates} />
 
           <Card className="glass-card animate-scale-in overflow-hidden" style={{ animationDelay: '0.1s' }}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
