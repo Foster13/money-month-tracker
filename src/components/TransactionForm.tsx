@@ -223,6 +223,9 @@ export function TransactionForm({
                           // For EUR, show with comma as decimal separator
                           if (selectedCurrency === 'EUR') {
                             setDisplayValue(rawValue.replace('.', ','));
+                          } else if (selectedCurrency === 'IDR') {
+                            // For IDR, show with period separators while editing
+                            setDisplayValue(Math.round(field.value).toLocaleString('id-ID'));
                           } else {
                             setDisplayValue(rawValue);
                           }
@@ -234,22 +237,40 @@ export function TransactionForm({
                       }}
                       onChange={(e) => {
                         const inputValue = e.target.value;
-                        setDisplayValue(inputValue);
                         
                         // Validate input based on currency
                         let isValid = false;
-                        if (selectedCurrency === 'IDR' || selectedCurrency === 'JPY') {
-                          // Only digits allowed (no decimals)
+                        let processedValue = inputValue;
+                        
+                        if (selectedCurrency === 'IDR') {
+                          // Allow digits and periods for IDR
                           isValid = /^[\d.]*$/.test(inputValue);
+                          if (isValid) {
+                            // Remove all periods to get raw number
+                            const rawNumber = inputValue.replace(/\./g, '');
+                            // Format with periods as thousand separators
+                            if (rawNumber) {
+                              processedValue = parseInt(rawNumber).toLocaleString('id-ID');
+                            } else {
+                              processedValue = '';
+                            }
+                          }
+                        } else if (selectedCurrency === 'JPY') {
+                          // Only digits allowed (no decimals)
+                          isValid = /^[\d]*$/.test(inputValue);
+                          processedValue = inputValue;
                         } else if (selectedCurrency === 'EUR') {
                           // Digits, periods (thousands), and comma (decimal)
                           isValid = /^[\d.,]*$/.test(inputValue);
+                          processedValue = inputValue;
                         } else {
                           // Digits, commas (thousands), and period (decimal)
                           isValid = /^[\d,.]*$/.test(inputValue);
+                          processedValue = inputValue;
                         }
                         
                         if (isValid || inputValue === '') {
+                          setDisplayValue(processedValue);
                           const numValue = parseInputToNumber(inputValue, selectedCurrency);
                           field.onChange(numValue);
                         }
