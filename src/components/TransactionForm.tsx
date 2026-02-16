@@ -1,6 +1,7 @@
 // File: src/components/TransactionForm.tsx
 "use client";
 
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { transactionSchema, TransactionFormData } from "@/lib/schemas";
@@ -40,24 +41,38 @@ export function TransactionForm({
 }: TransactionFormProps) {
   const form = useForm<TransactionFormData>({
     resolver: zodResolver(transactionSchema),
-    defaultValues: editingTransaction
-      ? {
-          amount: editingTransaction.amount,
-          currency: editingTransaction.currency || "IDR",
-          categoryId: editingTransaction.categoryId,
-          date: editingTransaction.date,
-          description: editingTransaction.description,
-          type: editingTransaction.type,
-        }
-      : {
-          amount: 0,
-          currency: "IDR",
-          categoryId: "",
-          date: format(new Date(), "yyyy-MM-dd"),
-          description: "",
-          type: "expense",
-        },
+    defaultValues: {
+      amount: 0,
+      currency: "IDR",
+      categoryId: "",
+      date: format(new Date(), "yyyy-MM-dd"),
+      description: "",
+      type: "expense",
+    },
   });
+
+  // Update form when editingTransaction changes
+  useEffect(() => {
+    if (editingTransaction) {
+      form.reset({
+        amount: editingTransaction.amount,
+        currency: editingTransaction.currency || "IDR",
+        categoryId: editingTransaction.categoryId,
+        date: editingTransaction.date,
+        description: editingTransaction.description,
+        type: editingTransaction.type,
+      });
+    } else {
+      form.reset({
+        amount: 0,
+        currency: "IDR",
+        categoryId: "",
+        date: format(new Date(), "yyyy-MM-dd"),
+        description: "",
+        type: "expense",
+      });
+    }
+  }, [editingTransaction, form]);
 
   const selectedType = form.watch("type");
   const filteredCategories = categories.filter((c) => c.type === selectedType);
@@ -85,7 +100,7 @@ export function TransactionForm({
           render={({ field }) => (
             <FormItem>
               <FormLabel>Type</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select type" />
