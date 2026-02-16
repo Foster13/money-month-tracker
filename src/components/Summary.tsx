@@ -266,9 +266,8 @@ export function Summary({ transactions, exchangeRates }: SummaryProps) {
       <div className="flex justify-end">
         <Button
           onClick={exportToPDF}
-          variant="outline"
           size="sm"
-          className="transition-all duration-200 hover:scale-105 active:scale-95 bg-gradient-to-r from-pink-50 to-purple-50 hover:from-pink-100 hover:to-purple-100 border-pink-200"
+          className="transition-all duration-200 hover:scale-105 active:scale-95 bg-gradient-to-r from-pink-400 via-pink-500 to-rose-400 hover:from-pink-500 hover:via-pink-600 hover:to-rose-500 text-white shadow-md hover:shadow-lg"
         >
           <FileDown className="mr-2 h-4 w-4" />
           Export PDF
