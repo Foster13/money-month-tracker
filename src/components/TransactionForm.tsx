@@ -75,7 +75,11 @@ export function TransactionForm({
   }, [editingTransaction, form]);
 
   const selectedType = form.watch("type");
+  const selectedCurrency = form.watch("currency");
   const filteredCategories = categories.filter((c) => c.type === selectedType);
+  
+  // Get currency symbol for the selected currency
+  const currencySymbol = CURRENCIES[selectedCurrency as Currency]?.symbol || "Rp";
 
   const handleSubmit = (data: TransactionFormData) => {
     onSubmit(data);
@@ -124,13 +128,27 @@ export function TransactionForm({
               <FormItem>
                 <FormLabel>Amount</FormLabel>
                 <FormControl>
-                  <Input
-                    type="number"
-                    step="0.01"
-                    placeholder="0.00"
-                    {...field}
-                    onChange={(e) => field.onChange(parseFloat(e.target.value))}
-                  />
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground font-medium">
+                      {currencySymbol}
+                    </span>
+                    <Input
+                      type="text"
+                      placeholder="0"
+                      className="pl-12"
+                      value={field.value ? field.value.toLocaleString('id-ID') : ''}
+                      onChange={(e) => {
+                        // Remove all non-digit characters except comma for decimals
+                        const rawValue = e.target.value.replace(/[^\d,]/g, '');
+                        // Replace comma with dot for decimal parsing
+                        const normalizedValue = rawValue.replace(',', '.');
+                        // Parse to number
+                        const numValue = parseFloat(normalizedValue) || 0;
+                        field.onChange(numValue);
+                      }}
+                      onBlur={field.onBlur}
+                    />
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
