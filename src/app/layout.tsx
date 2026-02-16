@@ -4,6 +4,8 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
+import { GradientBackground } from "@/components/GradientBackground";
+import { ThemeTransition } from "@/components/ThemeTransition";
 
 const inter = Inter({ 
   subsets: ["latin"],
@@ -30,7 +32,15 @@ export default function RootLayout({
           enableSystem={false}
           disableTransitionOnChange
         >
-          {children}
+          <ThemeTransition>
+            <div className="relative min-h-screen">
+              {/* Animated gradient background - only visible in light mode */}
+              <div className="dark:hidden">
+                <GradientBackground />
+              </div>
+              {children}
+            </div>
+          </ThemeTransition>
           <Toaster />
         </ThemeProvider>
       </body>

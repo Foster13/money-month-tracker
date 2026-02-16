@@ -17,7 +17,7 @@ import { ExchangeRateDisplay } from "./ExchangeRateDisplay";
 import { ExpensesSection } from "./ExpensesSection";
 import { IncomeSection } from "./IncomeSection";
 import { BudgetSection } from "./BudgetSection";
-import { ThemeToggle } from "./theme-toggle";
+import { AnimatedThemeToggle } from "./AnimatedThemeToggle";
 import { Transaction } from "@/types";
 import { fetchExchangeRates } from "@/lib/currency";
 import { useToast } from "@/hooks/use-toast";
@@ -120,7 +120,7 @@ export function Dashboard() {
               ✨ Track your income and expenses
             </p>
           </div>
-          <ThemeToggle />
+          <AnimatedThemeToggle />
         </div>
         <div className="flex flex-wrap gap-2">
           <CategoryManager
