@@ -2,6 +2,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useTransactionStore } from "@/stores/transactionStore";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -25,6 +26,7 @@ import { startOfMonth, endOfMonth, parseISO } from "date-fns";
 export function Dashboard() {
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   const [showChart, setShowChart] = useState(true); // Toggle between chart and column view
+  const [activeTab, setActiveTab] = useState("dashboard");
   const { toast } = useToast();
 
   const transactions = useTransactionStore((state) => state.transactions);
@@ -130,52 +132,79 @@ export function Dashboard() {
         </div>
       </div>
 
-      <Tabs defaultValue="dashboard" className="space-y-6 sm:space-y-8">
-        <TabsList className="transition-all duration-200 w-full grid grid-cols-3 sm:grid-cols-6 gap-0.5 sm:gap-1 p-1.5 sm:p-2 bg-muted/50 backdrop-blur-sm">
-          <TabsTrigger value="dashboard" className="transition-all duration-200 text-[10px] sm:text-xs md:text-sm px-1 sm:px-3">
+      <Tabs defaultValue="dashboard" value={activeTab} onValueChange={setActiveTab} className="space-y-6 sm:space-y-8">
+        <TabsList className="relative w-full grid grid-cols-3 sm:grid-cols-6 gap-0.5 sm:gap-1 p-1.5 sm:p-2 bg-muted/50 backdrop-blur-sm rounded-lg">
+          <TabsTrigger 
+            value="dashboard" 
+            className="relative text-[10px] sm:text-xs md:text-sm px-1 sm:px-3 data-[state=active]:text-pink-600 transition-colors duration-200"
+          >
             <span className="hidden sm:inline">🏠 Home</span>
             <span className="sm:hidden">🏠</span>
           </TabsTrigger>
-          <TabsTrigger value="income" className="transition-all duration-200 text-[10px] sm:text-xs md:text-sm px-1 sm:px-3">
+          <TabsTrigger 
+            value="income" 
+            className="relative text-[10px] sm:text-xs md:text-sm px-1 sm:px-3 data-[state=active]:text-pink-600 transition-colors duration-200"
+          >
             <span className="hidden sm:inline">💰 Income</span>
             <span className="sm:hidden">💰</span>
           </TabsTrigger>
-          <TabsTrigger value="expenses" className="transition-all duration-200 text-[10px] sm:text-xs md:text-sm px-1 sm:px-3">
+          <TabsTrigger 
+            value="expenses" 
+            className="relative text-[10px] sm:text-xs md:text-sm px-1 sm:px-3 data-[state=active]:text-pink-600 transition-colors duration-200"
+          >
             <span className="hidden sm:inline">💸 Expenses</span>
             <span className="sm:hidden">💸</span>
           </TabsTrigger>
-          <TabsTrigger value="budget" className="transition-all duration-200 text-[10px] sm:text-xs md:text-sm px-1 sm:px-3">
+          <TabsTrigger 
+            value="budget" 
+            className="relative text-[10px] sm:text-xs md:text-sm px-1 sm:px-3 data-[state=active]:text-pink-600 transition-colors duration-200"
+          >
             <span className="hidden sm:inline">💝 Budget</span>
             <span className="sm:hidden">💝</span>
           </TabsTrigger>
-          <TabsTrigger value="rates" className="transition-all duration-200 text-[10px] sm:text-xs md:text-sm px-1 sm:px-3">
+          <TabsTrigger 
+            value="rates" 
+            className="relative text-[10px] sm:text-xs md:text-sm px-1 sm:px-3 data-[state=active]:text-pink-600 transition-colors duration-200"
+          >
             <span className="hidden sm:inline">💱 Rates</span>
             <span className="sm:hidden">💱</span>
           </TabsTrigger>
-          <TabsTrigger value="simulation" className="transition-all duration-200 text-[10px] sm:text-xs md:text-sm px-1 sm:px-3">
+          <TabsTrigger 
+            value="simulation" 
+            className="relative text-[10px] sm:text-xs md:text-sm px-1 sm:px-3 data-[state=active]:text-pink-600 transition-colors duration-200"
+          >
             <span className="hidden sm:inline">🎯 Sim</span>
             <span className="sm:hidden">🎯</span>
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="dashboard" className="space-y-5 sm:space-y-6 animate-slide-up mt-6 sm:mt-8">
-          <Card className="glass-card animate-scale-in overflow-hidden">
-            <CardHeader>
-              <CardTitle className="text-lg sm:text-xl">
-                {editingTransaction ? "Edit Transaction" : "Add Transaction"}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <TransactionForm
-                categories={categories}
-                onSubmit={handleSubmit}
-                editingTransaction={editingTransaction}
-                onCancel={() => setEditingTransaction(null)}
-              />
-            </CardContent>
-          </Card>
+        <AnimatePresence mode="wait">
+          {activeTab === "dashboard" && (
+            <motion.div
+              key="dashboard"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+            >
+              <TabsContent value="dashboard" className="space-y-5 sm:space-y-6 mt-6 sm:mt-8">
+                <Card className="glass-card overflow-hidden">
+                  <CardHeader>
+                    <CardTitle className="text-lg sm:text-xl">
+                      {editingTransaction ? "Edit Transaction" : "Add Transaction"}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <TransactionForm
+                      categories={categories}
+                      onSubmit={handleSubmit}
+                      editingTransaction={editingTransaction}
+                    onCancel={() => setEditingTransaction(null)}
+                  />
+                </CardContent>
+              </Card>
 
-          <Summary transactions={currentMonthTransactions} exchangeRates={exchangeRates} />
+              <Summary transactions={currentMonthTransactions} exchangeRates={exchangeRates} />
 
           <Card className="glass-card animate-scale-in overflow-hidden" style={{ animationDelay: '0.1s' }}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
@@ -304,46 +333,99 @@ export function Dashboard() {
             </CardContent>
           </Card>
         </TabsContent>
+            </motion.div>
+          )}
 
-        <TabsContent value="income" className="animate-slide-up mt-6 sm:mt-8">
-          <IncomeSection
-            transactions={transactions}
-            categories={categories}
-            exchangeRates={exchangeRates}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-          />
-        </TabsContent>
+          {activeTab === "income" && (
+            <motion.div
+              key="income"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+            >
+              <TabsContent value="income" className="mt-6 sm:mt-8">
+                <IncomeSection
+                  transactions={transactions}
+                  categories={categories}
+                  exchangeRates={exchangeRates}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                />
+              </TabsContent>
+            </motion.div>
+          )}
 
-        <TabsContent value="expenses" className="animate-slide-up mt-6 sm:mt-8">
-          <ExpensesSection
-            transactions={transactions}
-            categories={categories}
-            exchangeRates={exchangeRates}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-          />
-        </TabsContent>
+          {activeTab === "expenses" && (
+            <motion.div
+              key="expenses"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+            >
+              <TabsContent value="expenses" className="mt-6 sm:mt-8">
+                <ExpensesSection
+                  transactions={transactions}
+                  categories={categories}
+                  exchangeRates={exchangeRates}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                />
+              </TabsContent>
+            </motion.div>
+          )}
 
-        <TabsContent value="budget" className="animate-slide-up mt-6 sm:mt-8">
-          <BudgetSection
-            transactions={transactions}
-            categories={categories}
-            exchangeRates={exchangeRates}
-          />
-        </TabsContent>
+          {activeTab === "budget" && (
+            <motion.div
+              key="budget"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+            >
+              <TabsContent value="budget" className="mt-6 sm:mt-8">
+                <BudgetSection
+                  transactions={transactions}
+                  categories={categories}
+                  exchangeRates={exchangeRates}
+                />
+              </TabsContent>
+            </motion.div>
+          )}
 
-        <TabsContent value="rates" className="space-y-4 sm:space-y-6 animate-slide-up mt-6 sm:mt-8">
-          <ExchangeRateDisplay
-            exchangeRates={exchangeRates}
-            lastUpdate={lastRateUpdate}
-            onUpdate={updateExchangeRates}
-          />
-        </TabsContent>
+          {activeTab === "rates" && (
+            <motion.div
+              key="rates"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+            >
+              <TabsContent value="rates" className="space-y-4 sm:space-y-6 mt-6 sm:mt-8">
+                <ExchangeRateDisplay
+                  exchangeRates={exchangeRates}
+                  lastUpdate={lastRateUpdate}
+                  onUpdate={updateExchangeRates}
+                />
+              </TabsContent>
+            </motion.div>
+          )}
 
-        <TabsContent value="simulation" className="animate-slide-up mt-6 sm:mt-8">
-          <SimulationMode />
-        </TabsContent>
+          {activeTab === "simulation" && (
+            <motion.div
+              key="simulation"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+            >
+              <TabsContent value="simulation" className="mt-6 sm:mt-8">
+                <SimulationMode />
+              </TabsContent>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </Tabs>
     </div>
   );
