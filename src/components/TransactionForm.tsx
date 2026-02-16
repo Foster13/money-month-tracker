@@ -2,6 +2,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { transactionSchema, TransactionFormData } from "@/lib/schemas";
@@ -175,140 +176,201 @@ export function TransactionForm({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4 animate-fade-in">
-        <FormField
-          control={form.control}
-          name="type"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Type</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select type" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="income">Income</SelectItem>
-                  <SelectItem value="expense">Expense</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <motion.form 
+        onSubmit={form.handleSubmit(handleSubmit)} 
+        className="space-y-4"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3 }}
+      >
+        <motion.div
+          initial={{ x: -20, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ duration: 0.3, delay: 0.1 }}
+        >
           <FormField
             control={form.control}
-            name="amount"
+            name="type"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Amount</FormLabel>
-                <FormControl>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground font-medium z-10">
-                      {currencySymbol}
-                    </span>
-                    <Input
-                      type="text"
-                      placeholder="0"
-                      className="pl-12"
-                      value={displayValue}
-                      onFocus={(e) => {
-                        setIsFocused(true);
-                        // Convert formatted value back to raw input
-                        if (field.value && field.value !== 0) {
-                          const rawValue = field.value.toString();
-                          // For EUR, show with comma as decimal separator
-                          if (selectedCurrency === 'EUR') {
-                            setDisplayValue(rawValue.replace('.', ','));
-                          } else if (selectedCurrency === 'IDR') {
-                            // For IDR, show with period separators while editing
-                            setDisplayValue(Math.round(field.value).toLocaleString('id-ID'));
-                          } else {
-                            setDisplayValue(rawValue);
-                          }
-                        } else {
-                          setDisplayValue('');
-                        }
-                        // Select all text on focus for easy replacement
-                        e.target.select();
-                      }}
-                      onChange={(e) => {
-                        const inputValue = e.target.value;
-                        
-                        // Validate input based on currency
-                        let isValid = false;
-                        let processedValue = inputValue;
-                        
-                        if (selectedCurrency === 'IDR') {
-                          // Allow digits and periods for IDR
-                          isValid = /^[\d.]*$/.test(inputValue);
-                          if (isValid) {
-                            // Remove all periods to get raw number
-                            const rawNumber = inputValue.replace(/\./g, '');
-                            // Format with periods as thousand separators
-                            if (rawNumber) {
-                              processedValue = parseInt(rawNumber).toLocaleString('id-ID');
-                            } else {
-                              processedValue = '';
-                            }
-                          }
-                        } else if (selectedCurrency === 'JPY') {
-                          // Only digits allowed (no decimals)
-                          isValid = /^[\d]*$/.test(inputValue);
-                          processedValue = inputValue;
-                        } else if (selectedCurrency === 'EUR') {
-                          // Digits, periods (thousands), and comma (decimal)
-                          isValid = /^[\d.,]*$/.test(inputValue);
-                          processedValue = inputValue;
-                        } else {
-                          // Digits, commas (thousands), and period (decimal)
-                          isValid = /^[\d,.]*$/.test(inputValue);
-                          processedValue = inputValue;
-                        }
-                        
-                        if (isValid || inputValue === '') {
-                          setDisplayValue(processedValue);
-                          const numValue = parseInputToNumber(inputValue, selectedCurrency);
-                          field.onChange(numValue);
-                        }
-                      }}
-                      onBlur={() => {
-                        setIsFocused(false);
-                        // Format the value when losing focus
-                        if (field.value && field.value !== 0) {
-                          setDisplayValue(formatCurrencyDisplay(field.value, selectedCurrency));
-                        } else {
-                          setDisplayValue('');
-                        }
-                        field.onBlur();
-                      }}
-                    />
-                  </div>
-                </FormControl>
+                <FormLabel>Type</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select type" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="income">Income</SelectItem>
+                    <SelectItem value="expense">Expense</SelectItem>
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}
           />
+        </motion.div>
 
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <motion.div
+            initial={{ x: -20, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ duration: 0.3, delay: 0.2 }}
+          >
+            <FormField
+              control={form.control}
+              name="amount"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Amount</FormLabel>
+                  <FormControl>
+                    <div className="relative">
+                      <motion.span 
+                        className="absolute left-3 top-2.5 text-muted-foreground font-medium z-10"
+                        key={currencySymbol}
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        {currencySymbol}
+                      </motion.span>
+                      <Input
+                        type="text"
+                        placeholder="0"
+                        className="pl-12"
+                        value={displayValue}
+                        onFocus={(e) => {
+                          setIsFocused(true);
+                          // Convert formatted value back to raw input
+                          if (field.value && field.value !== 0) {
+                            const rawValue = field.value.toString();
+                            // For EUR, show with comma as decimal separator
+                            if (selectedCurrency === 'EUR') {
+                              setDisplayValue(rawValue.replace('.', ','));
+                            } else if (selectedCurrency === 'IDR') {
+                              // For IDR, show with period separators while editing
+                              setDisplayValue(Math.round(field.value).toLocaleString('id-ID'));
+                            } else {
+                              setDisplayValue(rawValue);
+                            }
+                          } else {
+                            setDisplayValue('');
+                          }
+                          // Select all text on focus for easy replacement
+                          e.target.select();
+                        }}
+                        onChange={(e) => {
+                          const inputValue = e.target.value;
+                          
+                          // Validate input based on currency
+                          let isValid = false;
+                          let processedValue = inputValue;
+                          
+                          if (selectedCurrency === 'IDR') {
+                            // Allow digits and periods for IDR
+                            isValid = /^[\d.]*$/.test(inputValue);
+                            if (isValid) {
+                              // Remove all periods to get raw number
+                              const rawNumber = inputValue.replace(/\./g, '');
+                              // Format with periods as thousand separators
+                              if (rawNumber) {
+                                processedValue = parseInt(rawNumber).toLocaleString('id-ID');
+                              } else {
+                                processedValue = '';
+                              }
+                            }
+                          } else if (selectedCurrency === 'JPY') {
+                            // Only digits allowed (no decimals)
+                            isValid = /^[\d]*$/.test(inputValue);
+                            processedValue = inputValue;
+                          } else if (selectedCurrency === 'EUR') {
+                            // Digits, periods (thousands), and comma (decimal)
+                            isValid = /^[\d.,]*$/.test(inputValue);
+                            processedValue = inputValue;
+                          } else {
+                            // Digits, commas (thousands), and period (decimal)
+                            isValid = /^[\d,.]*$/.test(inputValue);
+                            processedValue = inputValue;
+                          }
+                          
+                          if (isValid || inputValue === '') {
+                            setDisplayValue(processedValue);
+                            const numValue = parseInputToNumber(inputValue, selectedCurrency);
+                            field.onChange(numValue);
+                          }
+                        }}
+                        onBlur={() => {
+                          setIsFocused(false);
+                          // Format the value when losing focus
+                          if (field.value && field.value !== 0) {
+                            setDisplayValue(formatCurrencyDisplay(field.value, selectedCurrency));
+                          } else {
+                            setDisplayValue('');
+                          }
+                          field.onBlur();
+                        }}
+                      />
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </motion.div>
+
+          <motion.div
+            initial={{ x: 20, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ duration: 0.3, delay: 0.2 }}
+          >
+            <FormField
+              control={form.control}
+              name="currency"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Currency</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select currency" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {Object.entries(CURRENCIES).map(([code, info]) => (
+                        <SelectItem key={code} value={code}>
+                          {info.symbol} {code} - {info.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </motion.div>
+        </div>
+
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.3, delay: 0.3 }}
+        >
           <FormField
             control={form.control}
-            name="currency"
+            name="categoryId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Currency</FormLabel>
+                <FormLabel>Category</FormLabel>
                 <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select currency" />
+                      <SelectValue placeholder="Select category" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {Object.entries(CURRENCIES).map(([code, info]) => (
-                      <SelectItem key={code} value={code}>
-                        {info.symbol} {code} - {info.name}
+                    {filteredCategories.map((category) => (
+                      <SelectItem key={category.id} value={category.id}>
+                        {category.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -317,72 +379,85 @@ export function TransactionForm({
               </FormItem>
             )}
           />
-        </div>
+        </motion.div>
 
-        <FormField
-          control={form.control}
-          name="categoryId"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Category</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.3, delay: 0.4 }}
+        >
+          <FormField
+            control={form.control}
+            name="date"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Date</FormLabel>
                 <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select category" />
-                  </SelectTrigger>
+                  <Input type="date" {...field} />
                 </FormControl>
-                <SelectContent>
-                  {filteredCategories.map((category) => (
-                    <SelectItem key={category.id} value={category.id}>
-                      {category.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </motion.div>
 
-        <FormField
-          control={form.control}
-          name="date"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Date</FormLabel>
-              <FormControl>
-                <Input type="date" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.3, delay: 0.5 }}
+        >
+          <FormField
+            control={form.control}
+            name="description"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Description</FormLabel>
+                <FormControl>
+                  <Input placeholder="Enter description" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </motion.div>
 
-        <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Description</FormLabel>
-              <FormControl>
-                <Input placeholder="Enter description" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <div className="flex flex-col sm:flex-row gap-2 animate-slide-up">
-          <Button type="submit" className="flex-1 transition-all duration-200 hover:scale-105 active:scale-95">
-            {editingTransaction ? "Update" : "Add"} Transaction
-          </Button>
-          {editingTransaction && onCancel && (
-            <Button type="button" variant="outline" onClick={onCancel} className="transition-all duration-200 hover:scale-105 active:scale-95 sm:flex-initial">
-              Cancel
+        <motion.div 
+          className="flex flex-col sm:flex-row gap-2"
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.3, delay: 0.6 }}
+        >
+          <motion.div 
+            className="flex-1"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <Button type="submit" className="w-full transition-all duration-200">
+              {editingTransaction ? "Update" : "Add"} Transaction
             </Button>
-          )}
-        </div>
-      </form>
+          </motion.div>
+          <AnimatePresence>
+            {editingTransaction && onCancel && (
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                transition={{ duration: 0.2 }}
+                className="sm:flex-initial"
+              >
+                <motion.div
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <Button type="button" variant="outline" onClick={onCancel} className="w-full transition-all duration-200">
+                    Cancel
+                  </Button>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
+      </motion.form>
     </Form>
   );
 }
