@@ -3,6 +3,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useRouter, usePathname } from "next/navigation";
 import { useTransactionStore } from "@/stores/transactionStore";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -23,11 +24,31 @@ import { fetchExchangeRates } from "@/lib/currency";
 import { useToast } from "@/hooks/use-toast";
 import { startOfMonth, endOfMonth, parseISO } from "date-fns";
 
-export function Dashboard() {
+interface DashboardProps {
+  defaultTab?: string;
+}
+
+export function Dashboard({ defaultTab = "dashboard" }: DashboardProps) {
+  const router = useRouter();
+  const pathname = usePathname();
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
-  const [showChart, setShowChart] = useState(true); // Toggle between chart and column view
-  const [activeTab, setActiveTab] = useState("dashboard");
+  const [showChart, setShowChart] = useState(true);
+  const [activeTab, setActiveTab] = useState(defaultTab);
   const { toast } = useToast();
+
+  // Update active tab based on pathname
+  useEffect(() => {
+    const pathToTab: Record<string, string> = {
+      "/": "dashboard",
+      "/income": "income",
+      "/expenses": "expenses",
+      "/budget": "budget",
+      "/rates": "rates",
+      "/simulation": "simulation",
+    };
+    const tab = pathToTab[pathname] || "dashboard";
+    setActiveTab(tab);
+  }, [pathname]);
 
   const transactions = useTransactionStore((state) => state.transactions);
   const categories = useTransactionStore((state) => state.categories);
@@ -132,46 +153,63 @@ export function Dashboard() {
         </div>
       </div>
 
-      <Tabs defaultValue="dashboard" value={activeTab} onValueChange={setActiveTab} className="space-y-6 sm:space-y-8">
+      <Tabs 
+        defaultValue="dashboard" 
+        value={activeTab} 
+        onValueChange={(value) => {
+          setActiveTab(value);
+          // Navigate to the corresponding route
+          const routes: Record<string, string> = {
+            dashboard: "/",
+            income: "/income",
+            expenses: "/expenses",
+            budget: "/budget",
+            rates: "/rates",
+            simulation: "/simulation",
+          };
+          router.push(routes[value] || "/");
+        }} 
+        className="space-y-6 sm:space-y-8"
+      >
         <TabsList className="relative w-full grid grid-cols-3 sm:grid-cols-6 gap-0.5 sm:gap-1 p-1.5 sm:p-2 bg-muted/50 backdrop-blur-sm rounded-lg">
           <TabsTrigger 
             value="dashboard" 
-            className="relative text-[10px] sm:text-xs md:text-sm px-1 sm:px-3 data-[state=active]:text-pink-600 transition-colors duration-200"
+            className="relative text-[10px] sm:text-xs md:text-sm px-1 sm:px-3 data-[state=active]:text-pink-600 transition-colors duration-200 cursor-pointer"
           >
             <span className="hidden sm:inline">🏠 Home</span>
             <span className="sm:hidden">🏠</span>
           </TabsTrigger>
           <TabsTrigger 
             value="income" 
-            className="relative text-[10px] sm:text-xs md:text-sm px-1 sm:px-3 data-[state=active]:text-pink-600 transition-colors duration-200"
+            className="relative text-[10px] sm:text-xs md:text-sm px-1 sm:px-3 data-[state=active]:text-pink-600 transition-colors duration-200 cursor-pointer"
           >
             <span className="hidden sm:inline">💰 Income</span>
             <span className="sm:hidden">💰</span>
           </TabsTrigger>
           <TabsTrigger 
             value="expenses" 
-            className="relative text-[10px] sm:text-xs md:text-sm px-1 sm:px-3 data-[state=active]:text-pink-600 transition-colors duration-200"
+            className="relative text-[10px] sm:text-xs md:text-sm px-1 sm:px-3 data-[state=active]:text-pink-600 transition-colors duration-200 cursor-pointer"
           >
             <span className="hidden sm:inline">💸 Expenses</span>
             <span className="sm:hidden">💸</span>
           </TabsTrigger>
           <TabsTrigger 
             value="budget" 
-            className="relative text-[10px] sm:text-xs md:text-sm px-1 sm:px-3 data-[state=active]:text-pink-600 transition-colors duration-200"
+            className="relative text-[10px] sm:text-xs md:text-sm px-1 sm:px-3 data-[state=active]:text-pink-600 transition-colors duration-200 cursor-pointer"
           >
             <span className="hidden sm:inline">💝 Budget</span>
             <span className="sm:hidden">💝</span>
           </TabsTrigger>
           <TabsTrigger 
             value="rates" 
-            className="relative text-[10px] sm:text-xs md:text-sm px-1 sm:px-3 data-[state=active]:text-pink-600 transition-colors duration-200"
+            className="relative text-[10px] sm:text-xs md:text-sm px-1 sm:px-3 data-[state=active]:text-pink-600 transition-colors duration-200 cursor-pointer"
           >
             <span className="hidden sm:inline">💱 Rates</span>
             <span className="sm:hidden">💱</span>
           </TabsTrigger>
           <TabsTrigger 
             value="simulation" 
-            className="relative text-[10px] sm:text-xs md:text-sm px-1 sm:px-3 data-[state=active]:text-pink-600 transition-colors duration-200"
+            className="relative text-[10px] sm:text-xs md:text-sm px-1 sm:px-3 data-[state=active]:text-pink-600 transition-colors duration-200 cursor-pointer"
           >
             <span className="hidden sm:inline">🎯 Sim</span>
             <span className="sm:hidden">🎯</span>
