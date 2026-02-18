@@ -44,8 +44,13 @@ export default function RootLayout({
             </div>
           </ThemeTransition>
           <Toaster />
-          <SpeedInsights />
-          <Analytics />
+          <SpeedInsights 
+            debug={process.env.NODE_ENV === 'development'}
+            sampleRate={1}
+          />
+          <Analytics 
+            debug={process.env.NODE_ENV === 'development'}
+          />
         </ThemeProvider>
       </body>
     </html>
