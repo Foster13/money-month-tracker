@@ -45,11 +45,11 @@ export default function RootLayout({
           </ThemeTransition>
           <Toaster />
           <SpeedInsights 
-            debug={process.env.NODE_ENV === 'development'}
+            debug={process.env.NODE_ENV === 'production'}
             sampleRate={1}
           />
           <Analytics 
-            debug={process.env.NODE_ENV === 'development'}
+            debug={process.env.NODE_ENV === 'production'}
           />
         </ThemeProvider>
       </body>
