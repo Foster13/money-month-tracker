@@ -132,7 +132,7 @@ export function Dashboard({ defaultTab = "dashboard" }: DashboardProps) {
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 space-y-6 sm:space-y-8 animate-fade-in">
       <div className="flex flex-col gap-3 sm:gap-4 animate-slide-down">
-        <div className="flex items-start justify-between gap-2">
+        <div className="flex items-start justify-between gap-1.5 sm:gap-2 whitespace-nowrap">
           <div className="flex-1 min-w-0">
             <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-pink-400 via-pink-500 to-rose-400 bg-clip-text text-transparent">
               💖 Personal Finance
@@ -143,7 +143,7 @@ export function Dashboard({ defaultTab = "dashboard" }: DashboardProps) {
           </div>
           <AnimatedThemeToggle />
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-1.5 sm:gap-2 whitespace-nowrap">
           <CategoryManager
             categories={categories}
             onAddCategory={addCategory}
@@ -171,48 +171,66 @@ export function Dashboard({ defaultTab = "dashboard" }: DashboardProps) {
         }} 
         className="space-y-6 sm:space-y-8"
       >
-        <TabsList className="relative w-full grid grid-cols-3 sm:grid-cols-6 gap-0.5 sm:gap-1 p-1.5 sm:p-2 bg-muted/50 backdrop-blur-sm rounded-lg">
+        <TabsList className="relative w-full flex sm:grid sm:grid-cols-6 gap-2 sm:gap-2 md:gap-3 px-2 py-2 sm:p-2 md:p-3 lg:p-4 bg-transparent rounded-xl sm:rounded-2xl overflow-x-auto overflow-y-hidden scrollbar-hide snap-x snap-mandatory scroll-smooth">
           <TabsTrigger 
             value="dashboard" 
-            className="relative text-[10px] sm:text-xs md:text-sm px-1 sm:px-3 data-[state=active]:text-pink-600 transition-colors duration-200 cursor-pointer"
+            className="relative flex items-center justify-center flex-shrink-0 snap-start text-sm sm:text-xs md:text-sm lg:text-base px-4 py-3 sm:px-2 sm:py-2.5 md:px-3 md:py-3 lg:px-4 lg:py-4 rounded-lg sm:rounded-lg font-semibold transition-all duration-500 ease-out cursor-pointer overflow-hidden group
+              data-[state=active]:bg-gradient-to-br data-[state=active]:from-pink-300 data-[state=active]:to-rose-300 data-[state=active]:text-rose-800 data-[state=active]:shadow-lg sm:data-[state=active]:shadow-lg sm:data-[state=active]:shadow-xl data-[state=active]:shadow-pink-300/40 data-[state=active]:scale-105 data-[state=active]:z-10
+              data-[state=inactive]:bg-pink-50/80 data-[state=inactive]:dark:bg-gray-800/50 data-[state=inactive]:text-gray-500 data-[state=inactive]:dark:text-gray-400 data-[state=inactive]:hover:bg-pink-100/90 data-[state=inactive]:dark:hover:bg-gray-700/60 data-[state=inactive]:hover:shadow-md data-[state=inactive]:hover:scale-102 data-[state=inactive]:shadow-sm
+              before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent before:translate-x-[-200%] before:transition-transform before:duration-700 hover:before:translate-x-[200%]"
           >
-            <span className="hidden sm:inline">🏠 Home</span>
-            <span className="sm:hidden">🏠</span>
+            <span className="relative z-10 hidden sm:flex items-center gap-1.5 sm:gap-2 whitespace-nowrap">🏠 Home</span>
+            <span className="relative z-10 sm:hidden text-2xl">🏠</span>
           </TabsTrigger>
           <TabsTrigger 
             value="income" 
-            className="relative text-[10px] sm:text-xs md:text-sm px-1 sm:px-3 data-[state=active]:text-pink-600 transition-colors duration-200 cursor-pointer"
+            className="relative flex items-center justify-center flex-shrink-0 snap-start text-sm sm:text-xs md:text-sm lg:text-base px-4 py-3 sm:px-2 sm:py-2.5 md:px-3 md:py-3 lg:px-4 lg:py-4 rounded-lg sm:rounded-lg font-semibold transition-all duration-500 ease-out cursor-pointer overflow-hidden group
+              data-[state=active]:bg-gradient-to-br data-[state=active]:from-pink-300 data-[state=active]:to-rose-300 data-[state=active]:text-rose-800 data-[state=active]:shadow-lg sm:data-[state=active]:shadow-lg sm:data-[state=active]:shadow-xl data-[state=active]:shadow-pink-300/40 data-[state=active]:scale-105 data-[state=active]:z-10
+              data-[state=inactive]:bg-pink-50/80 data-[state=inactive]:dark:bg-gray-800/50 data-[state=inactive]:text-gray-500 data-[state=inactive]:dark:text-gray-400 data-[state=inactive]:hover:bg-pink-100/90 data-[state=inactive]:dark:hover:bg-gray-700/60 data-[state=inactive]:hover:shadow-md data-[state=inactive]:hover:scale-102 data-[state=inactive]:shadow-sm
+              before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent before:translate-x-[-200%] before:transition-transform before:duration-700 hover:before:translate-x-[200%]"
           >
-            <span className="hidden sm:inline">💰 Income</span>
-            <span className="sm:hidden">💰</span>
+            <span className="relative z-10 hidden sm:flex items-center gap-1.5 sm:gap-2 whitespace-nowrap">💰 Income</span>
+            <span className="relative z-10 sm:hidden text-2xl">💰</span>
           </TabsTrigger>
           <TabsTrigger 
             value="expenses" 
-            className="relative text-[10px] sm:text-xs md:text-sm px-1 sm:px-3 data-[state=active]:text-pink-600 transition-colors duration-200 cursor-pointer"
+            className="relative flex items-center justify-center flex-shrink-0 snap-start text-sm sm:text-xs md:text-sm lg:text-base px-4 py-3 sm:px-2 sm:py-2.5 md:px-3 md:py-3 lg:px-4 lg:py-4 rounded-lg sm:rounded-lg font-semibold transition-all duration-500 ease-out cursor-pointer overflow-hidden group
+              data-[state=active]:bg-gradient-to-br data-[state=active]:from-pink-300 data-[state=active]:to-rose-300 data-[state=active]:text-rose-800 data-[state=active]:shadow-lg sm:data-[state=active]:shadow-lg sm:data-[state=active]:shadow-xl data-[state=active]:shadow-pink-300/40 data-[state=active]:scale-105 data-[state=active]:z-10
+              data-[state=inactive]:bg-pink-50/80 data-[state=inactive]:dark:bg-gray-800/50 data-[state=inactive]:text-gray-500 data-[state=inactive]:dark:text-gray-400 data-[state=inactive]:hover:bg-pink-100/90 data-[state=inactive]:dark:hover:bg-gray-700/60 data-[state=inactive]:hover:shadow-md data-[state=inactive]:hover:scale-102 data-[state=inactive]:shadow-sm
+              before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent before:translate-x-[-200%] before:transition-transform before:duration-700 hover:before:translate-x-[200%]"
           >
-            <span className="hidden sm:inline">💸 Expenses</span>
-            <span className="sm:hidden">💸</span>
+            <span className="relative z-10 hidden sm:flex items-center gap-1.5 sm:gap-2 whitespace-nowrap">💸 Expenses</span>
+            <span className="relative z-10 sm:hidden text-2xl">💸</span>
           </TabsTrigger>
           <TabsTrigger 
             value="budget" 
-            className="relative text-[10px] sm:text-xs md:text-sm px-1 sm:px-3 data-[state=active]:text-pink-600 transition-colors duration-200 cursor-pointer"
+            className="relative flex items-center justify-center flex-shrink-0 snap-start text-sm sm:text-xs md:text-sm lg:text-base px-4 py-3 sm:px-2 sm:py-2.5 md:px-3 md:py-3 lg:px-4 lg:py-4 rounded-lg sm:rounded-lg font-semibold transition-all duration-500 ease-out cursor-pointer overflow-hidden group
+              data-[state=active]:bg-gradient-to-br data-[state=active]:from-pink-300 data-[state=active]:to-rose-300 data-[state=active]:text-rose-800 data-[state=active]:shadow-lg sm:data-[state=active]:shadow-lg sm:data-[state=active]:shadow-xl data-[state=active]:shadow-pink-300/40 data-[state=active]:scale-105 data-[state=active]:z-10
+              data-[state=inactive]:bg-pink-50/80 data-[state=inactive]:dark:bg-gray-800/50 data-[state=inactive]:text-gray-500 data-[state=inactive]:dark:text-gray-400 data-[state=inactive]:hover:bg-pink-100/90 data-[state=inactive]:dark:hover:bg-gray-700/60 data-[state=inactive]:hover:shadow-md data-[state=inactive]:hover:scale-102 data-[state=inactive]:shadow-sm
+              before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent before:translate-x-[-200%] before:transition-transform before:duration-700 hover:before:translate-x-[200%]"
           >
-            <span className="hidden sm:inline">💝 Budget</span>
-            <span className="sm:hidden">💝</span>
+            <span className="relative z-10 hidden sm:flex items-center gap-1.5 sm:gap-2 whitespace-nowrap">💝 Budget</span>
+            <span className="relative z-10 sm:hidden text-2xl">💝</span>
           </TabsTrigger>
           <TabsTrigger 
             value="rates" 
-            className="relative text-[10px] sm:text-xs md:text-sm px-1 sm:px-3 data-[state=active]:text-pink-600 transition-colors duration-200 cursor-pointer"
+            className="relative flex items-center justify-center flex-shrink-0 snap-start text-sm sm:text-xs md:text-sm lg:text-base px-4 py-3 sm:px-2 sm:py-2.5 md:px-3 md:py-3 lg:px-4 lg:py-4 rounded-lg sm:rounded-lg font-semibold transition-all duration-500 ease-out cursor-pointer overflow-hidden group
+              data-[state=active]:bg-gradient-to-br data-[state=active]:from-pink-300 data-[state=active]:to-rose-300 data-[state=active]:text-rose-800 data-[state=active]:shadow-lg sm:data-[state=active]:shadow-lg sm:data-[state=active]:shadow-xl data-[state=active]:shadow-pink-300/40 data-[state=active]:scale-105 data-[state=active]:z-10
+              data-[state=inactive]:bg-pink-50/80 data-[state=inactive]:dark:bg-gray-800/50 data-[state=inactive]:text-gray-500 data-[state=inactive]:dark:text-gray-400 data-[state=inactive]:hover:bg-pink-100/90 data-[state=inactive]:dark:hover:bg-gray-700/60 data-[state=inactive]:hover:shadow-md data-[state=inactive]:hover:scale-102 data-[state=inactive]:shadow-sm
+              before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent before:translate-x-[-200%] before:transition-transform before:duration-700 hover:before:translate-x-[200%]"
           >
-            <span className="hidden sm:inline">💱 Rates</span>
-            <span className="sm:hidden">💱</span>
+            <span className="relative z-10 hidden sm:flex items-center gap-1.5 sm:gap-2 whitespace-nowrap">💱 Rates</span>
+            <span className="relative z-10 sm:hidden text-2xl">💱</span>
           </TabsTrigger>
           <TabsTrigger 
             value="simulation" 
-            className="relative text-[10px] sm:text-xs md:text-sm px-1 sm:px-3 data-[state=active]:text-pink-600 transition-colors duration-200 cursor-pointer"
+            className="relative flex items-center justify-center flex-shrink-0 snap-start text-sm sm:text-xs md:text-sm lg:text-base px-4 py-3 sm:px-2 sm:py-2.5 md:px-3 md:py-3 lg:px-4 lg:py-4 rounded-lg sm:rounded-lg font-semibold transition-all duration-500 ease-out cursor-pointer overflow-hidden group
+              data-[state=active]:bg-gradient-to-br data-[state=active]:from-pink-300 data-[state=active]:to-rose-300 data-[state=active]:text-rose-800 data-[state=active]:shadow-lg sm:data-[state=active]:shadow-lg sm:data-[state=active]:shadow-xl data-[state=active]:shadow-pink-300/40 data-[state=active]:scale-105 data-[state=active]:z-10
+              data-[state=inactive]:bg-pink-50/80 data-[state=inactive]:dark:bg-gray-800/50 data-[state=inactive]:text-gray-500 data-[state=inactive]:dark:text-gray-400 data-[state=inactive]:hover:bg-pink-100/90 data-[state=inactive]:dark:hover:bg-gray-700/60 data-[state=inactive]:hover:shadow-md data-[state=inactive]:hover:scale-102 data-[state=inactive]:shadow-sm
+              before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent before:translate-x-[-200%] before:transition-transform before:duration-700 hover:before:translate-x-[200%]"
           >
-            <span className="hidden sm:inline">🎯 Sim</span>
-            <span className="sm:hidden">🎯</span>
+            <span className="relative z-10 hidden sm:flex items-center gap-1.5 sm:gap-2 whitespace-nowrap">🎯 Sim</span>
+            <span className="relative z-10 sm:hidden text-2xl">🎯</span>
           </TabsTrigger>
         </TabsList>
 
@@ -247,7 +265,7 @@ export function Dashboard({ defaultTab = "dashboard" }: DashboardProps) {
           <Card className="glass-card animate-scale-in overflow-hidden" style={{ animationDelay: '0.1s' }}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
               <CardTitle className="text-lg sm:text-xl">Income vs Expenses (Last 6 Months)</CardTitle>
-              <div className="flex gap-2">
+              <div className="flex gap-1.5 sm:gap-2 whitespace-nowrap">
                 <button
                   onClick={() => setShowChart(true)}
                   className={`px-3 py-1.5 text-xs sm:text-sm rounded-md transition-all duration-200 ${
@@ -468,3 +486,7 @@ export function Dashboard({ defaultTab = "dashboard" }: DashboardProps) {
     </div>
   );
 }
+
+
+
+
