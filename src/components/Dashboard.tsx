@@ -3,6 +3,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useRouter, usePathname } from "next/navigation";
 import { useTransactionStore } from "@/stores/transactionStore";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
@@ -24,11 +25,31 @@ import { fetchExchangeRates } from "@/lib/currency";
 import { useToast } from "@/hooks/use-toast";
 import { startOfMonth, endOfMonth, parseISO } from "date-fns";
 
-export function Dashboard() {
+interface DashboardProps {
+  defaultTab?: string;
+}
+
+export function Dashboard({ defaultTab = "dashboard" }: DashboardProps) {
+  const router = useRouter();
+  const pathname = usePathname();
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   const [showChart, setShowChart] = useState(true);
-  const [activeTab, setActiveTab] = useState("dashboard");
+  const [activeTab, setActiveTab] = useState(defaultTab);
   const { toast } = useToast();
+
+  // Update active tab based on pathname
+  useEffect(() => {
+    const pathToTab: Record<string, string> = {
+      "/": "dashboard",
+      "/income": "income",
+      "/expenses": "expenses",
+      "/budget": "budget",
+      "/rates": "rates",
+      "/simulation": "simulation",
+    };
+    const tab = pathToTab[pathname] || "dashboard";
+    setActiveTab(tab);
+  }, [pathname]);
 
   const transactions = useTransactionStore((state) => state.transactions);
   const categories = useTransactionStore((state) => state.categories);
@@ -121,7 +142,18 @@ export function Dashboard() {
           { name: "Sim", icon: "🎯", value: "simulation" },
         ]}
         activeTab={activeTab}
-        onTabChange={setActiveTab}
+        onTabChange={(value) => {
+          setActiveTab(value);
+          const routes: Record<string, string> = {
+            dashboard: "/",
+            income: "/income",
+            expenses: "/expenses",
+            budget: "/budget",
+            rates: "/rates",
+            simulation: "/simulation",
+          };
+          router.push(routes[value] || "/");
+        }}
       />
 
       <div className="flex flex-col gap-3 sm:gap-4 animate-slide-down pt-16 sm:pt-20 md:pt-16">
