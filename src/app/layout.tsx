@@ -6,6 +6,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
 import { GradientBackground } from "@/components/GradientBackground";
 import { ThemeTransition } from "@/components/ThemeTransition";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Analytics } from "@vercel/analytics/react";
 
 const inter = Inter({ 
   subsets: ["latin"],
@@ -42,6 +44,13 @@ export default function RootLayout({
             </div>
           </ThemeTransition>
           <Toaster />
+          <SpeedInsights 
+            debug={process.env.NODE_ENV === 'production'}
+            sampleRate={1}
+          />
+          <Analytics 
+            debug={process.env.NODE_ENV === 'production'}
+          />
         </ThemeProvider>
       </body>
     </html>
