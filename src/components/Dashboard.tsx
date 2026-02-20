@@ -5,7 +5,8 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTransactionStore } from "@/stores/transactionStore";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
+import { FloatingNavbar } from "./FloatingNavbar";
 import { TransactionForm } from "./TransactionForm";
 import { TransactionList } from "./TransactionList";
 import { Summary } from "./Summary";
@@ -110,7 +111,23 @@ export function Dashboard() {
 
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 space-y-6 sm:space-y-8 animate-fade-in">
-      <div className="flex flex-col gap-3 sm:gap-4 animate-slide-down">
+      {/* Floating Navbar */}
+      <FloatingNavbar
+        navItems={[
+          { name: "Home", icon: "🏠", value: "dashboard" },
+          { name: "Income", icon: "💰", value: "income" },
+          { name: "Expenses", icon: "💸", value: "expenses" },
+          { name: "Budget", icon: "💝", value: "budget" },
+          { name: "Rates", icon: "💱", value: "rates" },
+          { name: "Sim", icon: "🎯", value: "simulation" },
+        ]}
+        activeTab={activeTab}
+        onTabChange={(value) => {
+          setActiveTab(value);
+        }}
+      />
+
+      <div className="flex flex-col gap-3 sm:gap-4 animate-slide-down pt-16 sm:pt-20 md:pt-16">
         <div className="flex items-start justify-between gap-2">
           <div className="flex-1 min-w-0">
             <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-pink-400 via-pink-500 to-rose-400 bg-clip-text text-transparent">
@@ -132,52 +149,7 @@ export function Dashboard() {
         </div>
       </div>
 
-      <Tabs defaultValue="dashboard" value={activeTab} onValueChange={setActiveTab} className="space-y-6 sm:space-y-8">
-        <TabsList className="relative w-full grid grid-cols-3 sm:grid-cols-6 gap-0.5 sm:gap-1 p-1.5 sm:p-2 bg-muted/50 backdrop-blur-sm rounded-lg">
-          <TabsTrigger 
-            value="dashboard" 
-            className="relative text-[10px] sm:text-xs md:text-sm px-1 sm:px-3 data-[state=active]:text-pink-600 transition-colors duration-200"
-          >
-            <span className="hidden sm:inline">🏠 Home</span>
-            <span className="sm:hidden">🏠</span>
-          </TabsTrigger>
-          <TabsTrigger 
-            value="income" 
-            className="relative text-[10px] sm:text-xs md:text-sm px-1 sm:px-3 data-[state=active]:text-pink-600 transition-colors duration-200"
-          >
-            <span className="hidden sm:inline">💰 Income</span>
-            <span className="sm:hidden">💰</span>
-          </TabsTrigger>
-          <TabsTrigger 
-            value="expenses" 
-            className="relative text-[10px] sm:text-xs md:text-sm px-1 sm:px-3 data-[state=active]:text-pink-600 transition-colors duration-200"
-          >
-            <span className="hidden sm:inline">💸 Expenses</span>
-            <span className="sm:hidden">💸</span>
-          </TabsTrigger>
-          <TabsTrigger 
-            value="budget" 
-            className="relative text-[10px] sm:text-xs md:text-sm px-1 sm:px-3 data-[state=active]:text-pink-600 transition-colors duration-200"
-          >
-            <span className="hidden sm:inline">💝 Budget</span>
-            <span className="sm:hidden">💝</span>
-          </TabsTrigger>
-          <TabsTrigger 
-            value="rates" 
-            className="relative text-[10px] sm:text-xs md:text-sm px-1 sm:px-3 data-[state=active]:text-pink-600 transition-colors duration-200"
-          >
-            <span className="hidden sm:inline">💱 Rates</span>
-            <span className="sm:hidden">💱</span>
-          </TabsTrigger>
-          <TabsTrigger 
-            value="simulation" 
-            className="relative text-[10px] sm:text-xs md:text-sm px-1 sm:px-3 data-[state=active]:text-pink-600 transition-colors duration-200"
-          >
-            <span className="hidden sm:inline">🎯 Sim</span>
-            <span className="sm:hidden">🎯</span>
-          </TabsTrigger>
-        </TabsList>
-
+      <Tabs defaultValue="dashboard" value={activeTab} className="space-y-6 sm:space-y-8">
         <AnimatePresence mode="wait">
           {activeTab === "dashboard" && (
             <motion.div
