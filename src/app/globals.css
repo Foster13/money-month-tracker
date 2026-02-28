@@ -315,3 +315,22 @@
     background-position: 0% 50%;
   }
 }
+
+  /* Dialog positioning - prevent movement */
+  [data-radix-dialog-content] {
+    position: fixed !important;
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    margin: 0 !important;
+  }
+
+  /* Prevent dialog from moving on hover/interaction */
+  .dialog-fixed {
+    position: fixed !important;
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    margin: 0 !important;
+    will-change: auto !important;
+  }

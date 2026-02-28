@@ -4,6 +4,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { Icon } from "./icons/Icon";
 
 interface NavItem {
   name: string;
@@ -109,9 +110,11 @@ export function FloatingNavbar({
                   {/* Content */}
                   <span className="relative z-10 flex items-center gap-1.5 md:gap-2">
                     {/* Icon */}
-                    <span className="text-base sm:text-lg md:text-xl lg:text-2xl">
-                      {item.icon}
-                    </span>
+                    <Icon 
+                      name={item.icon} 
+                      size={20}
+                      className="sm:w-5 sm:h-5 md:w-6 md:h-6"
+                    />
                     {/* Text - hidden on mobile, visible on md+ */}
                     <span className="hidden md:inline-block text-xs lg:text-sm font-semibold whitespace-nowrap">
                       {item.name}

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Transaction, Currency } from "@/types";
 import { convertToIDR } from "@/lib/currency";
 import { TrendingUp, TrendingDown, Wallet, FileDown } from "lucide-react";
+import { Icon } from "./icons/Icon";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 
@@ -291,7 +292,10 @@ export function Summary({ transactions, exchangeRates }: SummaryProps) {
       >
         <Card className="glass-card overflow-hidden border-pink-200 h-full">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xs sm:text-sm font-medium text-pink-700">💰 Total Income</CardTitle>
+            <CardTitle className="text-xs sm:text-sm font-medium text-pink-700 flex items-center gap-1.5">
+              <Icon name="income" size={16} />
+              Total Income
+            </CardTitle>
             <motion.div 
               className="p-2 rounded-full bg-pink-100 backdrop-blur-sm"
               animate={{ 
@@ -332,7 +336,10 @@ export function Summary({ transactions, exchangeRates }: SummaryProps) {
       >
         <Card className="glass-card overflow-hidden border-rose-200 h-full">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xs sm:text-sm font-medium text-rose-700">💸 Total Expenses</CardTitle>
+            <CardTitle className="text-xs sm:text-sm font-medium text-rose-700 flex items-center gap-1.5">
+              <Icon name="expenses" size={16} />
+              Total Expenses
+            </CardTitle>
             <motion.div 
               className="p-2 rounded-full bg-rose-100 backdrop-blur-sm"
               animate={{ 
@@ -375,7 +382,10 @@ export function Summary({ transactions, exchangeRates }: SummaryProps) {
       >
         <Card className="glass-card overflow-hidden border-purple-200 h-full">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xs sm:text-sm font-medium text-purple-700">💝 Balance</CardTitle>
+            <CardTitle className="text-xs sm:text-sm font-medium text-purple-700 flex items-center gap-1.5">
+              <Icon name="budget" size={16} />
+              Balance
+            </CardTitle>
             <motion.div 
               className="p-2 rounded-full bg-purple-100 backdrop-blur-sm"
               animate={{ 

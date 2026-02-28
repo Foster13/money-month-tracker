@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { format, parseISO } from "date-fns";
 import { formatCurrency, convertToIDR } from "@/lib/currency";
 import { TrendingDown, ArrowUpDown, Calendar, Tag, DollarSign } from "lucide-react";
+import { Icon } from "./icons/Icon";
 
 interface ExpensesSectionProps {
   transactions: Transaction[];
@@ -78,7 +79,10 @@ export function ExpensesSection({
                 <TrendingDown className="h-5 w-5 sm:h-6 sm:w-6 text-rose-500" />
               </div>
               <div className="min-w-0">
-                <CardTitle className="text-xl sm:text-2xl text-rose-700 truncate">💸 Expenses</CardTitle>
+                <CardTitle className="text-xl sm:text-2xl text-rose-700 truncate flex items-center gap-2">
+                  <Icon name="expenses" size={24} />
+                  Expenses
+                </CardTitle>
                 <p className="text-xs sm:text-sm text-muted-foreground mt-1">
                   {expenses.length} transactions
                 </p>

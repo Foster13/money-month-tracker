@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { format, parseISO, startOfMonth, endOfMonth } from "date-fns";
 import { convertToIDR, formatCurrency } from "@/lib/currency";
 import { Wallet, TrendingUp, TrendingDown, Target, Edit2, Check, X } from "lucide-react";
+import { Icon } from "./icons/Icon";
 import { useToast } from "@/hooks/use-toast";
 
 interface BudgetSectionProps {
@@ -119,7 +120,10 @@ export function BudgetSection({
               <Target className="h-5 w-5 sm:h-6 sm:w-6 text-purple-500" />
             </div>
             <div className="min-w-0">
-              <CardTitle className="text-xl sm:text-2xl text-purple-700 truncate">💝 Monthly Budget</CardTitle>
+              <CardTitle className="text-xl sm:text-2xl text-purple-700 truncate flex items-center gap-2">
+                <Icon name="budget" size={24} />
+                Monthly Budget
+              </CardTitle>
               <p className="text-xs sm:text-sm text-muted-foreground mt-1">
                 {format(now, "MMMM yyyy")}
               </p>

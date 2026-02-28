@@ -19,7 +19,9 @@ import { ExchangeRateDisplay } from "./ExchangeRateDisplay";
 import { ExpensesSection } from "./ExpensesSection";
 import { IncomeSection } from "./IncomeSection";
 import { BudgetSection } from "./BudgetSection";
+import { NotesSection } from "./NotesSection";
 import { AnimatedThemeToggle } from "./AnimatedThemeToggle";
+import { Icon } from "./icons/Icon";
 import { Transaction } from "@/types";
 import { fetchExchangeRates } from "@/lib/currency";
 import { useToast } from "@/hooks/use-toast";
@@ -46,6 +48,7 @@ export function Dashboard({ defaultTab = "dashboard" }: DashboardProps) {
       "/budget": "budget",
       "/rates": "rates",
       "/simulation": "simulation",
+      "/notes": "notes",
     };
     const tab = pathToTab[pathname] || "dashboard";
     setActiveTab(tab);
@@ -134,12 +137,13 @@ export function Dashboard({ defaultTab = "dashboard" }: DashboardProps) {
       {/* Floating Navbar */}
       <FloatingNavbar
         navItems={[
-          { name: "Home", icon: "🏠", value: "dashboard" },
-          { name: "Income", icon: "💰", value: "income" },
-          { name: "Expenses", icon: "💸", value: "expenses" },
-          { name: "Budget", icon: "💝", value: "budget" },
-          { name: "Rates", icon: "💱", value: "rates" },
-          { name: "Sim", icon: "🎯", value: "simulation" },
+          { name: "Home", icon: "home", value: "dashboard" },
+          { name: "Income", icon: "income", value: "income" },
+          { name: "Expenses", icon: "expenses", value: "expenses" },
+          { name: "Budget", icon: "budget", value: "budget" },
+          { name: "Rates", icon: "rates", value: "rates" },
+          { name: "Sim", icon: "simulation", value: "simulation" },
+          { name: "Notes", icon: "notes", value: "notes" },
         ]}
         activeTab={activeTab}
         onTabChange={(value) => {
@@ -151,6 +155,7 @@ export function Dashboard({ defaultTab = "dashboard" }: DashboardProps) {
             budget: "/budget",
             rates: "/rates",
             simulation: "/simulation",
+            notes: "/notes",
           };
           router.push(routes[value] || "/");
         }}
@@ -159,11 +164,13 @@ export function Dashboard({ defaultTab = "dashboard" }: DashboardProps) {
       <div className="flex flex-col gap-3 sm:gap-4 animate-slide-down pt-16 sm:pt-20 md:pt-16">
         <div className="flex items-start justify-between gap-2">
           <div className="flex-1 min-w-0">
-            <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-pink-400 via-pink-500 to-rose-400 bg-clip-text text-transparent">
-              💖 Personal Finance
+            <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-pink-400 via-pink-500 to-rose-400 bg-clip-text text-transparent flex items-center gap-2">
+              <Icon name="heart" size={32} className="text-pink-500" />
+              Personal Finance
             </h1>
-            <p className="text-xs sm:text-sm text-muted-foreground mt-1">
-              ✨ Track your income and expenses
+            <p className="text-xs sm:text-sm text-muted-foreground mt-1 flex items-center gap-1">
+              <Icon name="sparkles" size={16} className="text-pink-400" />
+              Track your income and expenses
             </p>
           </div>
           <AnimatedThemeToggle />
@@ -416,6 +423,20 @@ export function Dashboard({ defaultTab = "dashboard" }: DashboardProps) {
             >
               <TabsContent value="simulation" className="mt-6 sm:mt-8">
                 <SimulationMode />
+              </TabsContent>
+            </motion.div>
+          )}
+
+          {activeTab === "notes" && (
+            <motion.div
+              key="notes"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+            >
+              <TabsContent value="notes" className="mt-6 sm:mt-8">
+                <NotesSection />
               </TabsContent>
             </motion.div>
           )}
