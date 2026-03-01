@@ -4,8 +4,46 @@ import { persist } from "zustand/middleware";
 import { Transaction, Category, TransactionState, Currency } from "@/types";
 
 /**
- * Default income categories pre-populated on first run
+ * Default icon mapping for categories (for migration)
  */
+const CATEGORY_ICON_MAP: Record<string, string> = {
+  "Salary": "Briefcase",
+  "Freelance": "Laptop",
+  "Investments": "TrendingUp",
+  "Other Income": "DollarSign",
+  "Housing": "Home",
+  "Transportation": "Car",
+  "Food": "UtensilsCrossed",
+  "Utilities": "Zap",
+  "Healthcare": "Heart",
+  "Entertainment": "Film",
+  "Shopping": "ShoppingBag",
+  "Bills": "FileText",
+  "Debts": "CreditCard",
+  "Snacks": "Cookie",
+  "Other Expenses": "MoreHorizontal",
+  "Debt": "CreditCard", // Alternative spelling
+};
+
+/**
+ * Migrate old categories to add missing icons
+ */
+const migrateCategories = (categories: Category[]): Category[] => {
+  return categories.map(category => {
+    // If category already has an icon, keep it
+    if (category.icon) {
+      return category;
+    }
+    
+    // Try to find icon based on category name
+    const icon = CATEGORY_ICON_MAP[category.name] || "Circle";
+    
+    return {
+      ...category,
+      icon,
+    };
+  });
+};
 const DEFAULT_INCOME_CATEGORIES: Omit<Category, "id">[] = [
   { name: "Salary", type: "income", color: "#10b981", icon: "Briefcase" },
   { name: "Freelance", type: "income", color: "#3b82f6", icon: "Laptop" },
@@ -156,7 +194,7 @@ export const useTransactionStore = create<TransactionState>()(
           if (data.transactions && data.categories) {
             set({
               transactions: data.transactions,
-              categories: data.categories,
+              categories: migrateCategories(data.categories), // Migrate categories on import
               exchangeRates: data.exchangeRates || DEFAULT_EXCHANGE_RATES,
               lastRateUpdate: data.lastRateUpdate || null,
             });
@@ -170,6 +208,16 @@ export const useTransactionStore = create<TransactionState>()(
     }),
     {
       name: "finance-storage",
+      // Add migration on rehydration
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          // Migrate categories if they don't have icons
+          const migratedCategories = migrateCategories(state.categories);
+          if (JSON.stringify(migratedCategories) !== JSON.stringify(state.categories)) {
+            state.categories = migratedCategories;
+          }
+        }
+      },
     }
   )
 );
