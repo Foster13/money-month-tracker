@@ -9,6 +9,7 @@ import { format, parseISO } from "date-fns";
 import { formatCurrency, convertToIDR } from "@/lib/currency";
 import { TrendingUp, ArrowUpDown, Calendar, Tag, DollarSign } from "lucide-react";
 import { Icon } from "./icons/Icon";
+import { IconRenderer } from "./icons/IconRenderer";
 
 interface IncomeSectionProps {
   transactions: Transaction[];
@@ -34,24 +35,41 @@ export function IncomeSection({
 
   // Sort income
   const sortedIncome = [...income].sort((a, b) => {
+    let result = 0;
+    
     switch (sortBy) {
       case "date-desc":
-        return new Date(b.date).getTime() - new Date(a.date).getTime();
+        result = new Date(b.date).getTime() - new Date(a.date).getTime();
+        break;
       case "date-asc":
-        return new Date(a.date).getTime() - new Date(b.date).getTime();
+        result = new Date(a.date).getTime() - new Date(b.date).getTime();
+        break;
       case "amount-desc":
-        return convertToIDR(b.amount, b.currency, exchangeRates) - convertToIDR(a.amount, a.currency, exchangeRates);
+        result = convertToIDR(b.amount, b.currency, exchangeRates) - convertToIDR(a.amount, a.currency, exchangeRates);
+        break;
       case "amount-asc":
-        return convertToIDR(a.amount, a.currency, exchangeRates) - convertToIDR(b.amount, b.currency, exchangeRates);
+        result = convertToIDR(a.amount, a.currency, exchangeRates) - convertToIDR(b.amount, b.currency, exchangeRates);
+        break;
       case "category":
         const catA = categories.find((c) => c.id === a.categoryId)?.name || "";
         const catB = categories.find((c) => c.id === b.categoryId)?.name || "";
-        return catA.localeCompare(catB);
+        result = catA.localeCompare(catB);
+        break;
       case "alphabetical":
-        return a.description.localeCompare(b.description);
+        result = a.description.localeCompare(b.description);
+        break;
       default:
-        return 0;
+        result = 0;
     }
+    
+    // If primary sort results in equality, sort by creation time (ID timestamp)
+    if (result === 0) {
+      const timestampA = parseInt(a.id.split('-')[0]) || 0;
+      const timestampB = parseInt(b.id.split('-')[0]) || 0;
+      return timestampB - timestampA; // Most recently created first
+    }
+    
+    return result;
   });
 
   const getCategoryName = (categoryId: string) => {
@@ -62,24 +80,28 @@ export function IncomeSection({
     return categories.find((c) => c.id === categoryId)?.color || "#64748b";
   };
 
+  const getCategoryIcon = (categoryId: string) => {
+    return categories.find((c) => c.id === categoryId)?.icon || "Circle";
+  };
+
   const totalIncome = income.reduce(
     (sum, t) => sum + convertToIDR(t.amount, t.currency, exchangeRates),
     0
   );
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      {/* Header with Stats */}
-      <Card className="glass-card overflow-hidden border-pink-200">
-        <CardHeader className="p-4 sm:p-6">
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 animate-fade-in max-w-full overflow-x-hidden">
+      {/* Header with Stats - Responsive spacing and layout */}
+      <Card className="glass-card overflow-hidden border-income mb-6">
+        <CardHeader className="px-4 sm:px-6 py-4 sm:py-5">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 sm:p-3 rounded-full bg-pink-100 backdrop-blur-sm flex-shrink-0">
-                <TrendingUp className="h-5 w-5 sm:h-6 sm:w-6 text-pink-500" />
+              <div className="p-2 sm:p-3 rounded-full bg-income backdrop-blur-sm flex-shrink-0">
+                <TrendingUp className="h-5 w-5 sm:h-6 sm:w-6 text-income" aria-hidden={true} />
               </div>
               <div className="min-w-0">
-                <CardTitle className="text-xl sm:text-2xl text-pink-700 truncate flex items-center gap-2">
-                  <Icon name="income" size={24} />
+                <CardTitle className="text-lg sm:text-xl lg:text-2xl text-income truncate flex items-center gap-2">
+                  <Icon name="income" size="lg" className="w-5 h-5 sm:w-6 sm:h-6" aria-hidden={true} />
                   Income
                 </CardTitle>
                 <p className="text-xs sm:text-sm text-muted-foreground mt-1">
@@ -89,7 +111,7 @@ export function IncomeSection({
             </div>
             <div className="text-left sm:text-right">
               <p className="text-xs sm:text-sm text-muted-foreground">Total Income</p>
-              <p className="text-xl sm:text-2xl font-bold text-pink-600 break-words">
+              <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-income break-words">
                 Rp {totalIncome.toLocaleString("id-ID")}
               </p>
             </div>
@@ -97,52 +119,52 @@ export function IncomeSection({
         </CardHeader>
       </Card>
 
-      {/* Sort Controls */}
-      <Card className="glass-subtle">
-        <CardContent className="pt-4 pb-4 px-4 sm:pt-6 sm:pb-6 sm:px-6">
+      {/* Sort Controls - Responsive with proper touch targets */}
+      <Card className="glass-subtle mb-6">
+        <CardContent className="px-4 sm:px-6 py-4">
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start sm:items-center justify-between">
             <div className="flex items-center gap-2">
-              <ArrowUpDown className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+              <ArrowUpDown className="h-4 w-4 text-muted-foreground flex-shrink-0" aria-hidden={true} />
               <span className="text-sm font-medium">Sort by:</span>
             </div>
             <Select value={sortBy} onValueChange={(value) => setSortBy(value as SortOption)}>
-              <SelectTrigger className="w-full sm:w-[200px]">
+              <SelectTrigger className="w-full sm:w-[200px] min-h-[44px]">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="date-desc">
                   <div className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4" />
+                    <Calendar className="h-4 w-4" aria-hidden={true} />
                     Newest First
                   </div>
                 </SelectItem>
                 <SelectItem value="date-asc">
                   <div className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4" />
+                    <Calendar className="h-4 w-4" aria-hidden={true} />
                     Oldest First
                   </div>
                 </SelectItem>
                 <SelectItem value="amount-desc">
                   <div className="flex items-center gap-2">
-                    <DollarSign className="h-4 w-4" />
+                    <DollarSign className="h-4 w-4" aria-hidden={true} />
                     Highest Amount
                   </div>
                 </SelectItem>
                 <SelectItem value="amount-asc">
                   <div className="flex items-center gap-2">
-                    <DollarSign className="h-4 w-4" />
+                    <DollarSign className="h-4 w-4" aria-hidden={true} />
                     Lowest Amount
                   </div>
                 </SelectItem>
                 <SelectItem value="category">
                   <div className="flex items-center gap-2">
-                    <Tag className="h-4 w-4" />
+                    <Tag className="h-4 w-4" aria-hidden={true} />
                     By Category
                   </div>
                 </SelectItem>
                 <SelectItem value="alphabetical">
                   <div className="flex items-center gap-2">
-                    <ArrowUpDown className="h-4 w-4" />
+                    <ArrowUpDown className="h-4 w-4" aria-hidden={true} />
                     Alphabetical
                   </div>
                 </SelectItem>
@@ -152,13 +174,13 @@ export function IncomeSection({
         </CardContent>
       </Card>
 
-      {/* Income List */}
-      <div className="space-y-3">
+      {/* Income List - Responsive grid: 1 col mobile, 2 cols tablet+ */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
         {sortedIncome.length === 0 ? (
-          <Card className="glass-subtle">
+          <Card className="glass-subtle md:col-span-2">
             <CardContent className="py-12 text-center">
               <TrendingUp className="h-12 w-12 text-muted-foreground mx-auto mb-4 opacity-50" />
-              <p className="text-muted-foreground">No income yet</p>
+              <p className="text-sm sm:text-base text-muted-foreground">No income yet</p>
             </CardContent>
           </Card>
         ) : (
@@ -168,10 +190,16 @@ export function IncomeSection({
               className="glass-subtle hover-lift transition-all duration-200 animate-fade-in"
               style={{ animationDelay: `${index * 0.05}s` }}
             >
-              <CardContent className="p-4">
+              <CardContent className="p-4 sm:p-5">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-2">
+                      <IconRenderer 
+                        name={getCategoryIcon(transaction.categoryId)}
+                        className="w-4 h-4 flex-shrink-0"
+                        style={{ color: getCategoryColor(transaction.categoryId) }}
+                        aria-hidden={true}
+                      />
                       <span
                         className="w-3 h-3 rounded-full flex-shrink-0"
                         style={{ backgroundColor: getCategoryColor(transaction.categoryId) }}
@@ -183,15 +211,15 @@ export function IncomeSection({
                         {getCategoryName(transaction.categoryId)}
                       </span>
                     </div>
-                    <h3 className="font-semibold text-foreground mb-1 truncate">
+                    <h3 className="text-base sm:text-lg font-semibold text-foreground mb-1 truncate">
                       {transaction.description}
                     </h3>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs sm:text-sm text-muted-foreground">
                       {format(parseISO(transaction.date), "MMM dd, yyyy")}
                     </p>
                   </div>
                   <div className="text-right flex-shrink-0">
-                    <p className="text-lg font-bold text-pink-600">
+                    <p className="text-base sm:text-lg font-bold text-income">
                       {formatCurrency(transaction.amount, transaction.currency, false)}
                     </p>
                     {transaction.currency !== "IDR" && (

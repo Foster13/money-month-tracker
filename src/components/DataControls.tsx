@@ -72,8 +72,8 @@ export function DataControls({ onExport, onImport }: DataControlsProps) {
 
   return (
     <div className="flex flex-wrap gap-2">
-      <Button variant="outline" onClick={handleExport} className="transition-all duration-200 hover:scale-105 active:scale-95 text-xs sm:text-sm flex-1 sm:flex-initial">
-        <Download className="mr-0 sm:mr-2 h-4 w-4" />
+      <Button variant="outline" onClick={handleExport} className="transition-all duration-200 hover:scale-105 active:scale-95 text-xs sm:text-sm flex-1 sm:flex-initial" aria-label="Export financial data to JSON file">
+        <Download className="mr-0 sm:mr-2 h-4 w-4" aria-hidden="true" />
         <span className="hidden sm:inline">Export Data</span>
         <span className="sm:hidden">Export</span>
       </Button>
@@ -81,8 +81,9 @@ export function DataControls({ onExport, onImport }: DataControlsProps) {
         variant="outline"
         onClick={() => fileInputRef.current?.click()}
         className="transition-all duration-200 hover:scale-105 active:scale-95 text-xs sm:text-sm flex-1 sm:flex-initial"
+        aria-label="Import financial data from JSON file"
       >
-        <Upload className="mr-0 sm:mr-2 h-4 w-4" />
+        <Upload className="mr-0 sm:mr-2 h-4 w-4" aria-hidden="true" />
         <span className="hidden sm:inline">Import Data</span>
         <span className="sm:hidden">Import</span>
       </Button>
@@ -92,6 +93,7 @@ export function DataControls({ onExport, onImport }: DataControlsProps) {
         accept=".json"
         onChange={handleImport}
         className="hidden"
+        aria-label="File input for importing data"
       />
     </div>
   );

@@ -93,23 +93,23 @@ export function InstallPWA() {
               <div className="flex items-start justify-between gap-2">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-pink-400 to-rose-400 flex items-center justify-center flex-shrink-0">
-                    <Download className="w-6 h-6 text-white" />
+                    <Download className="w-6 h-6 text-white" aria-hidden="true" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-sm sm:text-base text-gray-900 dark:text-gray-100">
+                    <h3 className="text-heading-sm text-gray-900 dark:text-gray-100">
                       Install Finance App
                     </h3>
-                    <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-0.5">
+                    <p className="text-caption mt-0.5">
                       Access offline & get a better experience
                     </p>
                   </div>
                 </div>
                 <button
                   onClick={handleDismiss}
-                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors flex-shrink-0"
-                  aria-label="Dismiss"
+                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-200 flex-shrink-0 cursor-pointer min-h-[44px] min-w-[44px] flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-500 focus-visible:ring-offset-2 rounded-md"
+                  aria-label="Dismiss install prompt"
                 >
-                  <X className="w-5 h-5" />
+                  <X className="w-5 h-5" aria-hidden="true" />
                 </button>
               </div>
 
@@ -118,6 +118,7 @@ export function InstallPWA() {
                   onClick={handleInstallClick}
                   className="flex-1 bg-gradient-to-r from-pink-400 to-rose-400 hover:from-pink-500 hover:to-rose-500 text-white"
                   size="sm"
+                  aria-label="Install app now"
                 >
                   Install Now
                 </Button>
@@ -126,6 +127,7 @@ export function InstallPWA() {
                   variant="outline"
                   size="sm"
                   className="border-pink-200"
+                  aria-label="Install later"
                 >
                   Later
                 </Button>

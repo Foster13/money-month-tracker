@@ -1,17 +1,37 @@
 // File: src/components/icons/Icon.tsx
 // Icons inspired by Icons8 3D Fluency style
 import React from "react";
+import { iconSizes } from "@/constants/design-tokens";
+
+type IconSize = 'sm' | 'md' | 'lg';
 
 interface IconProps {
   name: string;
   className?: string;
-  size?: number;
+  size?: IconSize | number; // Support both size variants and custom pixel values
+  'aria-label'?: string; // Descriptive label for screen readers
+  'aria-hidden'?: boolean; // Hide decorative icons from screen readers
 }
 
-export function Icon({ name, className = "", size = 24 }: IconProps) {
+export function Icon({ name, className = "", size = 'md', 'aria-label': ariaLabel, 'aria-hidden': ariaHidden }: IconProps) {
+  // Convert size to pixel value
+  const sizeValue = typeof size === 'number' 
+    ? size 
+    : parseInt(iconSizes[size]);
+
+  // Determine accessibility attributes
+  const accessibilityProps: { 'aria-label'?: string; 'aria-hidden'?: boolean; role?: string } = {};
+  
+  if (ariaHidden) {
+    accessibilityProps['aria-hidden'] = true;
+  } else if (ariaLabel) {
+    accessibilityProps['aria-label'] = ariaLabel;
+    accessibilityProps['role'] = 'img';
+  }
+
   const icons: Record<string, JSX.Element> = {
     notes: (
-      <svg viewBox="0 0 64 64" fill="none" width={size} height={size} className={className}>
+      <svg viewBox="0 0 64 64" fill="none" width={sizeValue} height={sizeValue} className={className} {...accessibilityProps}>
         <ellipse cx="32" cy="58" rx="18" ry="3" fill="#000000" opacity="0.1"/>
         <rect x="14" y="10" width="36" height="44" rx="3" fill="url(#notesGrad1)"/>
         <rect x="18" y="6" width="28" height="6" rx="2" fill="url(#notesGrad2)"/>
@@ -36,7 +56,7 @@ export function Icon({ name, className = "", size = 24 }: IconProps) {
       </svg>
     ),
     home: (
-      <svg viewBox="0 0 64 64" fill="none" width={size} height={size} className={className}>
+      <svg viewBox="0 0 64 64" fill="none" width={sizeValue} height={sizeValue} className={className} {...accessibilityProps}>
         <ellipse cx="32" cy="58" rx="20" ry="3" fill="#000000" opacity="0.1"/>
         <path d="M14 30L32 14L50 30V52C50 53.1046 49.1046 54 48 54H16C14.8954 54 14 53.1046 14 52V30Z" fill="url(#homeGrad1)"/>
         <path d="M10 32L32 12L54 32L50 36L32 20L14 36L10 32Z" fill="url(#homeGrad2)"/>
@@ -57,7 +77,7 @@ export function Icon({ name, className = "", size = 24 }: IconProps) {
       </svg>
     ),
     income: (
-      <svg viewBox="0 0 64 64" fill="none" width={size} height={size} className={className}>
+      <svg viewBox="0 0 64 64" fill="none" width={sizeValue} height={sizeValue} className={className} {...accessibilityProps}>
         <ellipse cx="32" cy="58" rx="18" ry="3" fill="#000000" opacity="0.1"/>
         <path d="M32 12C32 12 24 14 24 18V20C24 20 20 22 20 28V46C20 50 24 54 32 54C40 54 44 50 44 46V28C44 22 40 20 40 20V18C40 14 32 12 32 12Z" fill="url(#incomeGrad1)"/>
         <ellipse cx="32" cy="20" rx="8" ry="3" fill="#2E7D32"/>
@@ -72,7 +92,7 @@ export function Icon({ name, className = "", size = 24 }: IconProps) {
       </svg>
     ),
     expenses: (
-      <svg viewBox="0 0 64 64" fill="none" width={size} height={size} className={className}>
+      <svg viewBox="0 0 64 64" fill="none" width={sizeValue} height={sizeValue} className={className} {...accessibilityProps}>
         <ellipse cx="32" cy="58" rx="18" ry="3" fill="#000000" opacity="0.1"/>
         <path d="M12 20C12 17.7909 13.7909 16 16 16H48C50.2091 16 52 17.7909 52 20V48C52 50.2091 50.2091 52 48 52H16C13.7909 52 12 50.2091 12 48V20Z" fill="url(#expensesGrad1)"/>
         <path d="M12 20C12 17.7909 13.7909 16 16 16H48C50.2091 16 52 17.7909 52 20V26H12V20Z" fill="url(#expensesGrad2)"/>
@@ -98,7 +118,7 @@ export function Icon({ name, className = "", size = 24 }: IconProps) {
       </svg>
     ),
     budget: (
-      <svg viewBox="0 0 64 64" fill="none" width={size} height={size} className={className}>
+      <svg viewBox="0 0 64 64" fill="none" width={sizeValue} height={sizeValue} className={className} {...accessibilityProps}>
         <ellipse cx="32" cy="58" rx="18" ry="3" fill="#000000" opacity="0.1"/>
         <ellipse cx="32" cy="36" rx="18" ry="14" fill="url(#budgetGrad1)"/>
         <ellipse cx="48" cy="36" rx="4" ry="5" fill="url(#budgetGrad2)"/>
@@ -131,7 +151,7 @@ export function Icon({ name, className = "", size = 24 }: IconProps) {
       </svg>
     ),
     rates: (
-      <svg viewBox="0 0 64 64" fill="none" width={size} height={size} className={className}>
+      <svg viewBox="0 0 64 64" fill="none" width={sizeValue} height={sizeValue} className={className} {...accessibilityProps}>
         <ellipse cx="32" cy="58" rx="20" ry="3" fill="#000000" opacity="0.1"/>
         <circle cx="24" cy="32" r="14" fill="url(#ratesGrad1)"/>
         <circle cx="24" cy="32" r="11" fill="#FFD700"/>
@@ -157,7 +177,7 @@ export function Icon({ name, className = "", size = 24 }: IconProps) {
       </svg>
     ),
     simulation: (
-      <svg viewBox="0 0 64 64" fill="none" width={size} height={size} className={className}>
+      <svg viewBox="0 0 64 64" fill="none" width={sizeValue} height={sizeValue} className={className} {...accessibilityProps}>
         <ellipse cx="32" cy="58" rx="18" ry="3" fill="#000000" opacity="0.1"/>
         <rect x="16" y="12" width="32" height="42" rx="3" fill="url(#simGrad1)"/>
         <rect x="26" y="8" width="12" height="6" rx="2" fill="url(#simGrad2)"/>
@@ -187,7 +207,7 @@ export function Icon({ name, className = "", size = 24 }: IconProps) {
       </svg>
     ),
     heart: (
-      <svg viewBox="0 0 64 64" fill="none" width={size} height={size} className={className}>
+      <svg viewBox="0 0 64 64" fill="none" width={sizeValue} height={sizeValue} className={className} {...accessibilityProps}>
         <ellipse cx="32" cy="58" rx="16" ry="3" fill="#000000" opacity="0.1"/>
         <path d="M32 54C32 54 12 42 12 26C12 14 20 10 26 14C28 15 30 17 32 20C34 17 36 15 38 14C44 10 52 14 52 26C52 42 32 54 32 54Z" fill="url(#heartGrad1)"/>
         <path d="M32 20C34 17 36 15 38 14C44 10 52 14 52 26C52 30 50 34 46 38" fill="url(#heartGrad2)" opacity="0.6"/>
@@ -210,7 +230,7 @@ export function Icon({ name, className = "", size = 24 }: IconProps) {
       </svg>
     ),
     sparkles: (
-      <svg viewBox="0 0 64 64" fill="none" width={size} height={size} className={className}>
+      <svg viewBox="0 0 64 64" fill="none" width={sizeValue} height={sizeValue} className={className} {...accessibilityProps}>
         <path d="M32 8L34 18L44 20L34 22L32 32L30 22L20 20L30 18L32 8Z" fill="url(#sparkleGrad1)"/>
         <path d="M32 8L34 18L44 20L34 22L32 32L30 22L20 20L30 18L32 8Z" stroke="#FFA500" strokeWidth="1.5" strokeLinejoin="round"/>
         <circle cx="30" cy="16" r="2" fill="#FFFFFF" opacity="0.8"/>
