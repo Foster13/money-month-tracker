@@ -1,4 +1,15 @@
 // File: tailwind.config.ts
+import {
+  colors,
+  spacing,
+  typography,
+  breakpoints,
+  borderRadius,
+  shadows,
+  transitions,
+  zIndex,
+} from "./src/constants/design-tokens";
+
 const config = {
   darkMode: ["class"],
   content: [
@@ -14,14 +25,20 @@ const config = {
         "2xl": "1400px",
       },
     },
+    // Override default breakpoints with design tokens
+    screens: breakpoints,
     extend: {
+      // Design token colors
       colors: {
+        ...colors,
+        // Preserve existing CSS variable-based colors for shadcn/ui compatibility
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
+          ...colors.primary,
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
         },
@@ -50,11 +67,28 @@ const config = {
           foreground: "hsl(var(--card-foreground))",
         },
       },
+      // Design token spacing
+      spacing: spacing,
+      // Design token typography
+      fontFamily: typography.fontFamily,
+      fontSize: typography.fontSize,
+      fontWeight: typography.fontWeight,
+      lineHeight: typography.lineHeight,
+      // Design token border radius
       borderRadius: {
+        ...borderRadius,
+        // Preserve existing CSS variable-based radius
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      // Design token shadows
+      boxShadow: shadows,
+      // Design token transitions
+      transitionDuration: transitions.duration,
+      transitionTimingFunction: transitions.timing,
+      // Design token z-index
+      zIndex: zIndex,
     },
   },
   plugins: [require("tailwindcss-animate")],

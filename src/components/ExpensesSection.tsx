@@ -10,6 +10,7 @@ import { format, parseISO } from "date-fns";
 import { formatCurrency, convertToIDR } from "@/lib/currency";
 import { TrendingDown, ArrowUpDown, Calendar, Tag, DollarSign } from "lucide-react";
 import { Icon } from "./icons/Icon";
+import { IconRenderer } from "./icons/IconRenderer";
 
 interface ExpensesSectionProps {
   transactions: Transaction[];
@@ -63,24 +64,28 @@ export function ExpensesSection({
     return categories.find((c) => c.id === categoryId)?.color || "#64748b";
   };
 
+  const getCategoryIcon = (categoryId: string) => {
+    return categories.find((c) => c.id === categoryId)?.icon || "Circle";
+  };
+
   const totalExpenses = expenses.reduce(
     (sum, t) => sum + convertToIDR(t.amount, t.currency, exchangeRates),
     0
   );
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      {/* Header with Stats */}
-      <Card className="glass-card overflow-hidden border-rose-200">
-        <CardHeader className="p-4 sm:p-6">
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 animate-fade-in max-w-full overflow-x-hidden">
+      {/* Header with Stats - Responsive spacing and layout */}
+      <Card className="glass-card overflow-hidden border-expense mb-6">
+        <CardHeader className="px-4 sm:px-6 py-4 sm:py-5">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 sm:p-3 rounded-full bg-rose-100 backdrop-blur-sm flex-shrink-0">
-                <TrendingDown className="h-5 w-5 sm:h-6 sm:w-6 text-rose-500" />
+              <div className="p-2 sm:p-3 rounded-full bg-expense backdrop-blur-sm flex-shrink-0">
+                <TrendingDown className="h-5 w-5 sm:h-6 sm:w-6 text-expense" aria-hidden={true} />
               </div>
               <div className="min-w-0">
-                <CardTitle className="text-xl sm:text-2xl text-rose-700 truncate flex items-center gap-2">
-                  <Icon name="expenses" size={24} />
+                <CardTitle className="text-lg sm:text-xl lg:text-2xl text-expense truncate flex items-center gap-2">
+                  <Icon name="expenses" size="lg" className="w-5 h-5 sm:w-6 sm:h-6" aria-hidden={true} />
                   Expenses
                 </CardTitle>
                 <p className="text-xs sm:text-sm text-muted-foreground mt-1">
@@ -90,7 +95,7 @@ export function ExpensesSection({
             </div>
             <div className="text-left sm:text-right">
               <p className="text-xs sm:text-sm text-muted-foreground">Total Expenses</p>
-              <p className="text-xl sm:text-2xl font-bold text-rose-600 break-words">
+              <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-expense break-words">
                 Rp {totalExpenses.toLocaleString("id-ID")}
               </p>
             </div>
@@ -98,52 +103,52 @@ export function ExpensesSection({
         </CardHeader>
       </Card>
 
-      {/* Sort Controls */}
-      <Card className="glass-subtle">
-        <CardContent className="pt-4 pb-4 px-4 sm:pt-6 sm:pb-6 sm:px-6">
+      {/* Sort Controls - Responsive with proper touch targets */}
+      <Card className="glass-subtle mb-6">
+        <CardContent className="px-4 sm:px-6 py-4">
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start sm:items-center justify-between">
             <div className="flex items-center gap-2">
-              <ArrowUpDown className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+              <ArrowUpDown className="h-4 w-4 text-muted-foreground flex-shrink-0" aria-hidden={true} />
               <span className="text-sm font-medium">Sort by:</span>
             </div>
             <Select value={sortBy} onValueChange={(value) => setSortBy(value as SortOption)}>
-              <SelectTrigger className="w-full sm:w-[200px]">
+              <SelectTrigger className="w-full sm:w-[200px] min-h-[44px]">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="date-desc">
                   <div className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4" />
+                    <Calendar className="h-4 w-4" aria-hidden={true} />
                     Newest First
                   </div>
                 </SelectItem>
                 <SelectItem value="date-asc">
                   <div className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4" />
+                    <Calendar className="h-4 w-4" aria-hidden={true} />
                     Oldest First
                   </div>
                 </SelectItem>
                 <SelectItem value="amount-desc">
                   <div className="flex items-center gap-2">
-                    <DollarSign className="h-4 w-4" />
+                    <DollarSign className="h-4 w-4" aria-hidden={true} />
                     Highest Amount
                   </div>
                 </SelectItem>
                 <SelectItem value="amount-asc">
                   <div className="flex items-center gap-2">
-                    <DollarSign className="h-4 w-4" />
+                    <DollarSign className="h-4 w-4" aria-hidden={true} />
                     Lowest Amount
                   </div>
                 </SelectItem>
                 <SelectItem value="category">
                   <div className="flex items-center gap-2">
-                    <Tag className="h-4 w-4" />
+                    <Tag className="h-4 w-4" aria-hidden={true} />
                     By Category
                   </div>
                 </SelectItem>
                 <SelectItem value="alphabetical">
                   <div className="flex items-center gap-2">
-                    <ArrowUpDown className="h-4 w-4" />
+                    <ArrowUpDown className="h-4 w-4" aria-hidden={true} />
                     Alphabetical
                   </div>
                 </SelectItem>
@@ -153,13 +158,13 @@ export function ExpensesSection({
         </CardContent>
       </Card>
 
-      {/* Expenses List */}
-      <div className="space-y-3">
+      {/* Expenses List - Responsive grid: 1 col mobile, 2 cols tablet+ */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
         {sortedExpenses.length === 0 ? (
-          <Card className="glass-subtle">
+          <Card className="glass-subtle md:col-span-2">
             <CardContent className="py-12 text-center">
               <TrendingDown className="h-12 w-12 text-muted-foreground mx-auto mb-4 opacity-50" />
-              <p className="text-muted-foreground">No expenses yet</p>
+              <p className="text-sm sm:text-base text-muted-foreground">No expenses yet</p>
             </CardContent>
           </Card>
         ) : (
@@ -169,10 +174,16 @@ export function ExpensesSection({
               className="glass-subtle hover-lift transition-all duration-200 animate-fade-in"
               style={{ animationDelay: `${index * 0.05}s` }}
             >
-              <CardContent className="p-4">
+              <CardContent className="p-4 sm:p-5">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-2">
+                      <IconRenderer 
+                        name={getCategoryIcon(transaction.categoryId)}
+                        className="w-4 h-4 flex-shrink-0"
+                        style={{ color: getCategoryColor(transaction.categoryId) }}
+                        aria-hidden={true}
+                      />
                       <span
                         className="w-3 h-3 rounded-full flex-shrink-0"
                         style={{ backgroundColor: getCategoryColor(transaction.categoryId) }}
@@ -184,15 +195,15 @@ export function ExpensesSection({
                         {getCategoryName(transaction.categoryId)}
                       </span>
                     </div>
-                    <h3 className="font-semibold text-foreground mb-1 truncate">
+                    <h3 className="text-base sm:text-lg font-semibold text-foreground mb-1 truncate">
                       {transaction.description}
                     </h3>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs sm:text-sm text-muted-foreground">
                       {format(parseISO(transaction.date), "MMM dd, yyyy")}
                     </p>
                   </div>
                   <div className="text-right flex-shrink-0">
-                    <p className="text-lg font-bold text-rose-600">
+                    <p className="text-base sm:text-lg font-bold text-expense">
                       {formatCurrency(transaction.amount, transaction.currency, false)}
                     </p>
                     {transaction.currency !== "IDR" && (

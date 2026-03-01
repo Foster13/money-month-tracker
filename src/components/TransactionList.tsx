@@ -14,7 +14,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Edit, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
+import { Edit, Trash2, ChevronLeft, ChevronRight, Receipt } from "lucide-react";
+import { IconRenderer } from "@/components/icons/IconRenderer";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { EmptyState } from "@/components/ui/empty-state";
 
 interface TransactionListProps {
   transactions: Transaction[];
@@ -22,6 +25,7 @@ interface TransactionListProps {
   exchangeRates: Record<Currency, number>;
   onEdit: (transaction: Transaction) => void;
   onDelete: (id: string) => void;
+  isLoading?: boolean;
 }
 
 const ITEMS_PER_PAGE = 10;
@@ -32,8 +36,19 @@ export function TransactionList({
   exchangeRates,
   onEdit,
   onDelete,
+  isLoading = false,
 }: TransactionListProps) {
   const [currentPage, setCurrentPage] = useState(1);
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12 text-center">
+        <LoadingSpinner size="lg" variant="primary" />
+        <p className="text-body text-muted-foreground mt-4">Loading transactions...</p>
+      </div>
+    );
+  }
 
   // Sort transactions by date (newest first)
   const sortedTransactions = [...transactions].sort(
@@ -55,27 +70,34 @@ export function TransactionList({
     return category?.color || "#64748b";
   };
 
+  const getCategoryIcon = (categoryId: string) => {
+    const category = categories.find((c) => c.id === categoryId);
+    return category?.icon || "Circle";
+  };
+
   if (transactions.length === 0) {
     return (
-      <div className="text-center py-8 text-sm sm:text-base text-muted-foreground">
-        No transactions yet. Add your first transaction above!
-      </div>
+      <EmptyState
+        icon={<Receipt className="w-8 h-8 text-pink-500" aria-hidden={true} />}
+        title="No transactions yet"
+        description="Add your first transaction using the form above to start tracking your finances."
+      />
     );
   }
 
   return (
-    <div className="space-y-4">
+    <div className="stack-spacing">
       {/* Desktop Table View */}
-      <div className="hidden md:block rounded-md border overflow-hidden">
+      <div className="hidden md:block rounded-md border overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow className="hover:bg-muted/50 transition-colors">
-              <TableHead>Date</TableHead>
-              <TableHead>Description</TableHead>
-              <TableHead>Category</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead className="text-right">Amount</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead className="whitespace-nowrap">Date</TableHead>
+              <TableHead className="whitespace-nowrap">Description</TableHead>
+              <TableHead className="whitespace-nowrap">Category</TableHead>
+              <TableHead className="whitespace-nowrap">Type</TableHead>
+              <TableHead className="text-right whitespace-nowrap">Amount</TableHead>
+              <TableHead className="text-right whitespace-nowrap">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -94,6 +116,11 @@ export function TransactionList({
                     className="inline-flex items-center gap-2 transition-all duration-200"
                     style={{ color: getCategoryColor(transaction.categoryId) }}
                   >
+                    <IconRenderer 
+                      name={getCategoryIcon(transaction.categoryId)}
+                      className="w-4 h-4 flex-shrink-0"
+                      aria-hidden={true}
+                    />
                     <span
                       className="w-3 h-3 rounded-full transition-transform duration-200 hover:scale-125"
                       style={{
@@ -109,8 +136,8 @@ export function TransactionList({
                   <span
                     className={`capitalize px-2 py-1 rounded-full text-xs font-medium transition-all duration-200 ${
                       transaction.type === "income"
-                        ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-                        : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
+                        ? "bg-income text-income border border-income"
+                        : "bg-expense text-expense border border-expense"
                     }`}
                   >
                     {transaction.type}
@@ -119,8 +146,8 @@ export function TransactionList({
                 <TableCell
                   className={`text-right font-medium transition-all duration-200 ${
                     transaction.type === "income"
-                      ? "text-green-600"
-                      : "text-red-600"
+                      ? "text-income"
+                      : "text-expense"
                   }`}
                 >
                   <div className="flex flex-col items-end">
@@ -151,16 +178,18 @@ export function TransactionList({
                       size="icon"
                       onClick={() => onEdit(transaction)}
                       className="hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-all duration-200"
+                      aria-label={`Edit ${transaction.description} transaction`}
                     >
-                      <Edit className="h-4 w-4" />
+                      <Edit className="h-4 w-4" aria-hidden={true} />
                     </Button>
                     <Button
                       variant="ghost"
                       size="icon"
                       onClick={() => onDelete(transaction.id)}
                       className="hover:bg-red-100 dark:hover:bg-red-900/30 transition-all duration-200"
+                      aria-label={`Delete ${transaction.description} transaction`}
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 className="h-4 w-4" aria-hidden={true} />
                     </Button>
                   </div>
                 </TableCell>
@@ -171,11 +200,11 @@ export function TransactionList({
       </div>
 
       {/* Mobile Card View */}
-      <div className="md:hidden space-y-3">
+      <div className="md:hidden stack-spacing-sm">
         {currentTransactions.map((transaction, index) => (
           <div
             key={transaction.id}
-            className="border rounded-lg p-4 space-y-3 hover:bg-muted/50 transition-all duration-200 animate-fade-in"
+            className="border rounded-lg p-4 stack-spacing-sm hover:bg-muted/50 transition-all duration-200 animate-fade-in"
             style={{ animationDelay: `${index * 0.05}s` }}
           >
             <div className="flex items-start justify-between gap-2">
@@ -188,8 +217,8 @@ export function TransactionList({
               <span
                 className={`capitalize px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${
                   transaction.type === "income"
-                    ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-                    : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
+                    ? "bg-income text-income border border-income"
+                    : "bg-expense text-expense border border-expense"
                 }`}
               >
                 {transaction.type}
@@ -197,6 +226,12 @@ export function TransactionList({
             </div>
 
             <div className="flex items-center gap-2">
+              <IconRenderer 
+                name={getCategoryIcon(transaction.categoryId)}
+                className="w-4 h-4 flex-shrink-0"
+                style={{ color: getCategoryColor(transaction.categoryId) }}
+                aria-hidden={true}
+              />
               <span
                 className="w-3 h-3 rounded-full flex-shrink-0"
                 style={{
@@ -215,8 +250,8 @@ export function TransactionList({
               <div
                 className={`font-bold text-base ${
                   transaction.type === "income"
-                    ? "text-green-600"
-                    : "text-red-600"
+                    ? "text-income"
+                    : "text-expense"
                 }`}
               >
                 {transaction.type === "income" ? "+" : "-"}
@@ -241,17 +276,19 @@ export function TransactionList({
                   variant="ghost"
                   size="icon"
                   onClick={() => onEdit(transaction)}
-                  className="h-8 w-8 hover:bg-blue-100 dark:hover:bg-blue-900/30"
+                  className="hover:bg-blue-100 dark:hover:bg-blue-900/30"
+                  aria-label={`Edit ${transaction.description} transaction`}
                 >
-                  <Edit className="h-4 w-4" />
+                  <Edit className="h-4 w-4" aria-hidden={true} />
                 </Button>
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={() => onDelete(transaction.id)}
-                  className="h-8 w-8 hover:bg-red-100 dark:hover:bg-red-900/30"
+                  className="hover:bg-red-100 dark:hover:bg-red-900/30"
+                  aria-label={`Delete ${transaction.description} transaction`}
                 >
-                  <Trash2 className="h-4 w-4" />
+                  <Trash2 className="h-4 w-4" aria-hidden={true} />
                 </Button>
               </div>
             </div>
@@ -261,7 +298,7 @@ export function TransactionList({
 
       {totalPages > 1 && (
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 animate-fade-in">
-          <div className="text-xs sm:text-sm text-muted-foreground text-center sm:text-left">
+          <div className="text-caption text-muted-foreground text-center sm:text-left">
             Showing {startIndex + 1} to {Math.min(endIndex, transactions.length)}{" "}
             of {transactions.length} transactions
           </div>
@@ -272,8 +309,9 @@ export function TransactionList({
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={currentPage === 1}
               className="transition-all duration-200"
+              aria-label="Go to previous page"
             >
-              <ChevronLeft className="h-4 w-4" />
+              <ChevronLeft className="h-4 w-4" aria-hidden={true} />
               <span className="hidden sm:inline ml-1">Previous</span>
             </Button>
             <Button
@@ -282,9 +320,10 @@ export function TransactionList({
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
               className="transition-all duration-200"
+              aria-label="Go to next page"
             >
               <span className="hidden sm:inline mr-1">Next</span>
-              <ChevronRight className="h-4 w-4" />
+              <ChevronRight className="h-4 w-4" aria-hidden={true} />
             </Button>
           </div>
         </div>

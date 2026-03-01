@@ -7,24 +7,24 @@ import { Transaction, Category, TransactionState, Currency } from "@/types";
  * Default income categories pre-populated on first run
  */
 const DEFAULT_INCOME_CATEGORIES: Omit<Category, "id">[] = [
-  { name: "Salary", type: "income", color: "#10b981" },
-  { name: "Freelance", type: "income", color: "#3b82f6" },
-  { name: "Investments", type: "income", color: "#8b5cf6" },
-  { name: "Other Income", type: "income", color: "#06b6d4" },
+  { name: "Salary", type: "income", color: "#10b981", icon: "Briefcase" },
+  { name: "Freelance", type: "income", color: "#3b82f6", icon: "Laptop" },
+  { name: "Investments", type: "income", color: "#8b5cf6", icon: "TrendingUp" },
+  { name: "Other Income", type: "income", color: "#06b6d4", icon: "DollarSign" },
 ];
 
 /**
  * Default expense categories pre-populated on first run
  */
 const DEFAULT_EXPENSE_CATEGORIES: Omit<Category, "id">[] = [
-  { name: "Housing", type: "expense", color: "#ef4444" },
-  { name: "Transportation", type: "expense", color: "#f59e0b" },
-  { name: "Food", type: "expense", color: "#ec4899" },
-  { name: "Utilities", type: "expense", color: "#6366f1" },
-  { name: "Healthcare", type: "expense", color: "#14b8a6" },
-  { name: "Entertainment", type: "expense", color: "#f97316" },
-  { name: "Shopping", type: "expense", color: "#a855f7" },
-  { name: "Other Expenses", type: "expense", color: "#64748b" },
+  { name: "Housing", type: "expense", color: "#ef4444", icon: "Home" },
+  { name: "Transportation", type: "expense", color: "#f59e0b", icon: "Car" },
+  { name: "Food", type: "expense", color: "#ec4899", icon: "UtensilsCrossed" },
+  { name: "Utilities", type: "expense", color: "#6366f1", icon: "Zap" },
+  { name: "Healthcare", type: "expense", color: "#14b8a6", icon: "Heart" },
+  { name: "Entertainment", type: "expense", color: "#f97316", icon: "Film" },
+  { name: "Shopping", type: "expense", color: "#a855f7", icon: "ShoppingBag" },
+  { name: "Other Expenses", type: "expense", color: "#64748b", icon: "MoreHorizontal" },
 ];
 
 /**

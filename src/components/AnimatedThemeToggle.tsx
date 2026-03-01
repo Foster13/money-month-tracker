@@ -16,8 +16,8 @@ export function AnimatedThemeToggle() {
 
   if (!mounted) {
     return (
-      <Button variant="outline" size="icon" className="relative overflow-hidden">
-        <Sun className="h-[1.2rem] w-[1.2rem]" />
+      <Button variant="outline" size="icon" className="relative overflow-hidden" aria-label="Theme toggle loading">
+        <Sun className="h-[1.2rem] w-[1.2rem]" aria-hidden="true" />
       </Button>
     );
   }
@@ -34,6 +34,7 @@ export function AnimatedThemeToggle() {
       size="icon"
       onClick={toggleTheme}
       className="relative overflow-hidden group transition-all duration-300"
+      aria-label={`Switch to ${isDark ? "light" : "dark"} mode`}
     >
       {/* Background gradient animation */}
       <motion.div
@@ -100,7 +101,7 @@ export function AnimatedThemeToggle() {
                   ease: "easeInOut",
                 }}
               >
-                <Moon className="h-[1.2rem] w-[1.2rem] text-blue-200 drop-shadow-[0_0_8px_rgba(147,197,253,0.5)]" />
+                <Moon className="h-[1.2rem] w-[1.2rem] text-blue-200 drop-shadow-[0_0_8px_rgba(147,197,253,0.5)]" aria-hidden="true" />
               </motion.div>
             </motion.div>
           ) : (
@@ -123,7 +124,7 @@ export function AnimatedThemeToggle() {
                   ease: "linear",
                 }}
               >
-                <Sun className="h-[1.2rem] w-[1.2rem] text-amber-500 drop-shadow-[0_0_8px_rgba(251,191,36,0.5)]" />
+                <Sun className="h-[1.2rem] w-[1.2rem] text-amber-500 drop-shadow-[0_0_8px_rgba(251,191,36,0.5)]" aria-hidden="true" />
               </motion.div>
             </motion.div>
           )}

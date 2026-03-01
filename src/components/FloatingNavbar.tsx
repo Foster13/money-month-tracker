@@ -41,7 +41,7 @@ export function FloatingNavbar({
 
   return (
     <AnimatePresence mode="wait">
-      <motion.div
+      <motion.nav
         initial={{
           opacity: 1,
           y: 0,
@@ -58,6 +58,7 @@ export function FloatingNavbar({
           "fixed top-4 inset-x-0 mx-auto z-50 flex items-center justify-center",
           className
         )}
+        aria-label="Main navigation"
       >
         <div className="relative">
           {/* Navbar Container */}
@@ -82,17 +83,21 @@ export function FloatingNavbar({
                   onClick={() => onTabChange(item.value)}
                   className={cn(
                     "relative flex items-center justify-center",
-                    "rounded-full transition-all duration-300",
+                    "rounded-full transition-all duration-200",
                     "cursor-pointer group",
                     // Mobile: icon only, smaller size
                     "w-9 h-9 sm:w-10 sm:h-10 md:w-auto md:h-auto",
                     "md:px-3 md:py-2 lg:px-4 lg:py-2.5",
+                    // Focus indicators for keyboard navigation
+                    "focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-500 focus-visible:ring-offset-2",
                     isActive
                       ? "text-white"
                       : "text-gray-600 dark:text-gray-400 hover:text-pink-600 dark:hover:text-pink-400"
                   )}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
+                  aria-label={`Navigate to ${item.name}`}
+                  aria-current={isActive ? "page" : undefined}
                 >
                   {/* Active Background */}
                   {isActive && (
@@ -112,8 +117,9 @@ export function FloatingNavbar({
                     {/* Icon */}
                     <Icon 
                       name={item.icon} 
-                      size={20}
+                      size="md"
                       className="sm:w-5 sm:h-5 md:w-6 md:h-6"
+                      aria-hidden={true}
                     />
                     {/* Text - hidden on mobile, visible on md+ */}
                     <span className="hidden md:inline-block text-xs lg:text-sm font-semibold whitespace-nowrap">
@@ -124,7 +130,7 @@ export function FloatingNavbar({
                   {/* Hover effect for inactive items */}
                   {!isActive && (
                     <motion.div
-                      className="absolute inset-0 bg-pink-100/50 dark:bg-pink-900/20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                      className="absolute inset-0 bg-pink-100/50 dark:bg-pink-900/20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200"
                       initial={{ opacity: 0 }}
                     />
                   )}
@@ -138,7 +144,7 @@ export function FloatingNavbar({
             <div className="absolute inset-0 bg-gradient-to-r from-pink-400 via-rose-400 to-pink-500 rounded-full" />
           </div>
         </div>
-      </motion.div>
+      </motion.nav>
     </AnimatePresence>
   );
 }

@@ -22,6 +22,7 @@ export interface Category {
   name: string;
   type: "income" | "expense";
   color?: string;
+  icon?: string; // Lucide icon name
 }
 
 /**

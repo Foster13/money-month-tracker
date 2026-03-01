@@ -183,17 +183,17 @@ export function NotesSection() {
   });
 
   return (
-    <div className="space-y-4">
-      {/* Header */}
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 max-w-full overflow-x-hidden space-y-6">
+      {/* Header - Responsive spacing and layout */}
       <Card className="glass-card border-purple-200 dark:border-purple-800">
-        <CardHeader className="space-y-4 pb-4">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center">
-                <Icon name="sparkles" size={20} />
+        <CardHeader className="px-4 sm:px-6 py-4 sm:py-5 space-y-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center flex-shrink-0">
+                <Icon name="sparkles" size="md" className="sm:w-6 sm:h-6" aria-hidden={true} />
               </div>
               <div>
-                <CardTitle className="text-xl sm:text-2xl text-purple-700 dark:text-purple-300">
+                <CardTitle className="text-lg sm:text-xl lg:text-2xl text-purple-700 dark:text-purple-300">
                   Quick Notes
                 </CardTitle>
                 <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
@@ -205,30 +205,35 @@ export function NotesSection() {
             <Button
               onClick={() => setIsAdding(!isAdding)}
               size="sm"
-              className="bg-gradient-to-r from-purple-400 to-pink-400 hover:from-purple-500 hover:to-pink-500 text-white"
+              className="bg-gradient-to-r from-purple-400 to-pink-400 hover:from-purple-500 hover:to-pink-500 text-white min-h-[44px] w-full sm:w-auto"
+              aria-label="Add new note"
             >
-              <Plus className="w-4 h-4 mr-1" />
+              <Plus className="w-4 h-4 mr-1" aria-hidden={true} />
               Add Note
             </Button>
           </div>
 
-          {/* Search Bar */}
+          {/* Search Bar - Responsive with proper touch targets */}
           {notes.length > 0 && (
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <label htmlFor="note-search" className="sr-only">Search notes</label>
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden={true} />
               <Input
+                id="note-search"
                 type="text"
                 placeholder="Search notes by title or content..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 bg-white/50 dark:bg-gray-900/50"
+                className="pl-10 bg-white/50 dark:bg-gray-900/50 min-h-[44px]"
+                aria-label="Search notes by title or content"
               />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery("")}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer transition-colors duration-200 min-h-[44px] min-w-[44px] flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 rounded-md"
+                  aria-label="Clear search"
                 >
-                  <X className="w-4 h-4" />
+                  <X className="w-4 h-4" aria-hidden={true} />
                 </button>
               )}
             </div>
@@ -246,36 +251,47 @@ export function NotesSection() {
             transition={{ duration: 0.2 }}
           >
             <Card className={`${newNote.color} border-2`}>
-              <CardContent className="pt-6 space-y-3">
-                <Input
-                  placeholder="Note title (optional)"
-                  value={newNote.title}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewNote({ ...newNote, title: e.target.value })}
-                  className="bg-white/50 dark:bg-gray-900/50"
-                />
-                <Textarea
-                  placeholder="Write your note here..."
-                  value={newNote.content}
-                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setNewNote({ ...newNote, content: e.target.value })}
-                  rows={4}
-                  className="bg-white/50 dark:bg-gray-900/50 resize-none"
-                />
-                <div className="flex items-center justify-between gap-2">
-                  <div className="flex gap-2">
+              <CardContent className="pt-6 stack-spacing-sm">
+                <div>
+                  <label htmlFor="new-note-title" className="sr-only">Note title</label>
+                  <Input
+                    id="new-note-title"
+                    placeholder="Note title (optional)"
+                    value={newNote.title}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewNote({ ...newNote, title: e.target.value })}
+                    className="bg-white/50 dark:bg-gray-900/50 min-h-[44px]"
+                    aria-label="Note title (optional)"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="new-note-content" className="sr-only">Note content</label>
+                  <Textarea
+                    id="new-note-content"
+                    placeholder="Write your note here..."
+                    value={newNote.content}
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setNewNote({ ...newNote, content: e.target.value })}
+                    rows={4}
+                    className="bg-white/50 dark:bg-gray-900/50 resize-none"
+                    aria-label="Note content"
+                  />
+                </div>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                  <div className="flex gap-2 flex-wrap">
                     {NOTE_COLORS.map((color) => (
                       <button
                         key={color.name}
                         onClick={() => setNewNote({ ...newNote, color: color.value })}
-                        className={`w-6 h-6 rounded-full ${color.value} border-2 ${
+                        className={`w-10 h-10 sm:w-8 sm:h-8 min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 flex items-center justify-center rounded-full ${color.value} border-2 cursor-pointer transition-all duration-200 hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 ${
                           newNote.color === color.value
                             ? "ring-2 ring-purple-400 ring-offset-2"
                             : ""
                         }`}
                         title={color.name}
+                        aria-label={`Select ${color.name} color`}
                       />
                     ))}
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 w-full sm:w-auto">
                     <Button
                       onClick={() => {
                         setIsAdding(false);
@@ -283,16 +299,19 @@ export function NotesSection() {
                       }}
                       variant="outline"
                       size="sm"
+                      className="flex-1 sm:flex-none min-h-[44px]"
+                      aria-label="Cancel adding note"
                     >
-                      <X className="w-4 h-4 mr-1" />
+                      <X className="w-4 h-4 mr-1" aria-hidden={true} />
                       Cancel
                     </Button>
                     <Button
                       onClick={handleAddNote}
                       size="sm"
-                      className="bg-gradient-to-r from-purple-400 to-pink-400 hover:from-purple-500 hover:to-pink-500 text-white"
+                      className="flex-1 sm:flex-none bg-gradient-to-r from-purple-400 to-pink-400 hover:from-purple-500 hover:to-pink-500 text-white min-h-[44px]"
+                      aria-label="Save new note"
                     >
-                      <Check className="w-4 h-4 mr-1" />
+                      <Check className="w-4 h-4 mr-1" aria-hidden={true} />
                       Save
                     </Button>
                   </div>
@@ -303,8 +322,8 @@ export function NotesSection() {
         )}
       </AnimatePresence>
 
-      {/* Notes List */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {/* Notes List - Responsive grid: 1 col mobile, 2 cols tablet, 3 cols desktop */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         <AnimatePresence>
           {filteredNotes.map((note, index) => (
             <motion.div
@@ -318,54 +337,67 @@ export function NotesSection() {
                 <CardContent className="pt-6 space-y-3">
                   {editingId === note.id ? (
                     <>
-                      <Input
-                        value={editingNote?.title || ""}
-                        placeholder="Note title (optional)"
-                        className="bg-white/50 dark:bg-gray-900/50 font-semibold"
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditingNote(editingNote ? { ...editingNote, title: e.target.value } : null)}
-                      />
-                      <Textarea
-                        value={editingNote?.content || ""}
-                        placeholder="Note content"
-                        rows={5}
-                        className="bg-white/50 dark:bg-gray-900/50 resize-none"
-                        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setEditingNote(editingNote ? { ...editingNote, content: e.target.value } : null)}
-                      />
+                      <div>
+                        <label htmlFor={`edit-note-title-${note.id}`} className="sr-only">Note title</label>
+                        <Input
+                          id={`edit-note-title-${note.id}`}
+                          value={editingNote?.title || ""}
+                          placeholder="Note title (optional)"
+                          className="bg-white/50 dark:bg-gray-900/50 font-semibold min-h-[44px]"
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditingNote(editingNote ? { ...editingNote, title: e.target.value } : null)}
+                          aria-label="Note title (optional)"
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor={`edit-note-content-${note.id}`} className="sr-only">Note content</label>
+                        <Textarea
+                          id={`edit-note-content-${note.id}`}
+                          value={editingNote?.content || ""}
+                          placeholder="Note content"
+                          rows={5}
+                          className="bg-white/50 dark:bg-gray-900/50 resize-none"
+                          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setEditingNote(editingNote ? { ...editingNote, content: e.target.value } : null)}
+                          aria-label="Note content"
+                        />
+                      </div>
                       
-                      {/* Color Picker for Edit Mode */}
-                      <div className="flex items-center gap-2 pt-2">
+                      {/* Color Picker for Edit Mode - Responsive */}
+                      <div className="flex items-center gap-2 pt-2 flex-wrap">
                         <span className="text-xs text-gray-600 dark:text-gray-400">Color:</span>
                         {NOTE_COLORS.map((color) => (
                           <button
                             key={color.name}
                             onClick={() => setEditingNote(editingNote ? { ...editingNote, color: color.value } : null)}
-                            className={`w-6 h-6 rounded-full ${color.value} border-2 transition-all ${
+                            className={`w-10 h-10 sm:w-8 sm:h-8 min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 flex items-center justify-center rounded-full ${color.value} border-2 cursor-pointer transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 ${
                               editingNote?.color === color.value
                                 ? "ring-2 ring-purple-400 ring-offset-2 scale-110"
                                 : "hover:scale-105"
                             }`}
                             title={color.name}
+                            aria-label={`Select ${color.name} color`}
                           />
                         ))}
                       </div>
 
-                      {/* Edit Actions */}
-                      <div className="flex gap-2 pt-2">
+                      {/* Edit Actions - Responsive */}
+                      <div className="flex flex-col sm:flex-row gap-2 pt-2">
                         <Button
                           onClick={() => handleUpdateNote(note.id)}
                           size="sm"
-                          className="flex-1 bg-gradient-to-r from-green-400 to-emerald-400 hover:from-green-500 hover:to-emerald-500 text-white"
+                          className="flex-1 bg-gradient-to-r from-green-400 to-emerald-400 hover:from-green-500 hover:to-emerald-500 text-white min-h-[44px]"
+                          aria-label="Save changes to note"
                         >
-                          <Save className="w-4 h-4 mr-1" />
+                          <Save className="w-4 h-4 mr-1" aria-hidden={true} />
                           Save Changes
                         </Button>
                         <Button
                           onClick={handleCancelEdit}
                           variant="outline"
                           size="sm"
-                          className="flex-1"
+                          className="flex-1 min-h-[44px]"
+                          aria-label="Cancel editing note"
                         >
-                          <X className="w-4 h-4 mr-1" />
+                          <X className="w-4 h-4 mr-1" aria-hidden={true} />
                           Cancel
                         </Button>
                       </div>
@@ -373,19 +405,19 @@ export function NotesSection() {
                   ) : (
                     <>
                       {note.title && (
-                        <h3 className="font-semibold text-lg text-gray-900 dark:text-gray-100 break-words">
+                        <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100 break-words">
                           {note.title}
                         </h3>
                       )}
                       {note.content && (
-                        <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap break-words">
+                        <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 whitespace-pre-wrap break-words">
                           {note.content}
                         </p>
                       )}
 
                       <div className="flex items-center justify-between pt-2 border-t border-gray-200 dark:border-gray-700">
                         <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
-                          <Calendar className="w-3 h-3" />
+                          <Calendar className="w-3 h-3" aria-hidden={true} />
                           {format(new Date(note.updatedAt), "MMM dd, yyyy")}
                         </div>
                         <div className="flex gap-1">
@@ -393,19 +425,19 @@ export function NotesSection() {
                             onClick={() => handleStartEdit(note)}
                             variant="ghost"
                             size="sm"
-                            className="h-8 w-8 p-0 hover:bg-blue-100 dark:hover:bg-blue-900/30"
-                            title="Edit note"
+                            className="h-10 w-10 sm:h-8 sm:w-8 min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 p-0 hover:bg-blue-100 dark:hover:bg-blue-900/30"
+                            aria-label="Edit note"
                           >
-                            <Edit2 className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                            <Edit2 className="w-4 h-4 text-blue-600 dark:text-blue-400" aria-hidden={true} />
                           </Button>
                           <Button
                             onClick={() => openDeleteDialog(note.id)}
                             variant="ghost"
                             size="sm"
-                            className="h-8 w-8 p-0 hover:bg-rose-100 dark:hover:bg-rose-900/30"
-                            title="Delete note"
+                            className="h-10 w-10 sm:h-8 sm:w-8 min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 p-0 hover:bg-rose-100 dark:hover:bg-rose-900/30"
+                            aria-label="Delete note"
                           >
-                            <Trash2 className="w-4 h-4 text-rose-600 dark:text-rose-400" />
+                            <Trash2 className="w-4 h-4 text-rose-600 dark:text-rose-400" aria-hidden={true} />
                           </Button>
                         </div>
                       </div>
@@ -423,18 +455,20 @@ export function NotesSection() {
         <Card className="glass-card border-dashed border-2 border-purple-200 dark:border-purple-800">
           <CardContent className="py-12 text-center">
             <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 flex items-center justify-center">
-              <Search className="w-8 h-8 text-purple-400" />
+              <Search className="w-8 h-8 text-purple-400" aria-hidden={true} />
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+            <h3 className="text-heading-sm text-gray-900 dark:text-gray-100 mb-2">
               No notes found
             </h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+            <p className="text-body mb-4">
               Try searching with different keywords
             </p>
             <Button
               onClick={() => setSearchQuery("")}
               variant="outline"
+              aria-label="Clear search filter"
             >
+              <X className="w-4 h-4 mr-2" aria-hidden={true} />
               Clear Search
             </Button>
           </CardContent>
@@ -446,19 +480,20 @@ export function NotesSection() {
         <Card className="glass-card border-dashed border-2 border-purple-200 dark:border-purple-800">
           <CardContent className="py-12 text-center">
             <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 flex items-center justify-center">
-              <Icon name="sparkles" size={32} />
+              <Icon name="sparkles" size={32} aria-hidden={true} /> {/* Custom size for empty state hero icon */}
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+            <h3 className="text-heading-sm text-gray-900 dark:text-gray-100 mb-2">
               No notes yet
             </h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+            <p className="text-body mb-4">
               Start adding notes to keep track of important information
             </p>
             <Button
               onClick={() => setIsAdding(true)}
               className="bg-gradient-to-r from-purple-400 to-pink-400 hover:from-purple-500 hover:to-pink-500 text-white"
+              aria-label="Add your first note"
             >
-              <Plus className="w-4 h-4 mr-2" />
+              <Plus className="w-4 h-4 mr-2" aria-hidden={true} />
               Add Your First Note
             </Button>
           </CardContent>
@@ -481,20 +516,21 @@ export function NotesSection() {
             e.preventDefault();
             closeDeleteDialog();
           }}
-          onInteractOutside={(e) => {
-            e.preventDefault();
+          onEscapeKeyDown={(e) => {
+            // Allow Escape key to close the dialog
+            closeDeleteDialog();
           }}
         >
           <DialogHeader>
             <div className="flex items-center gap-2 sm:gap-3 mb-1 sm:mb-2">
               <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-rose-100 to-red-100 dark:from-rose-900/30 dark:to-red-900/30 flex items-center justify-center flex-shrink-0">
-                <AlertTriangle className="w-5 h-5 sm:w-6 sm:h-6 text-rose-600 dark:text-rose-400" />
+                <AlertTriangle className="w-5 h-5 sm:w-6 sm:w-6 text-rose-600 dark:text-rose-400" aria-hidden={true} />
               </div>
               <DialogTitle className="text-base sm:text-lg text-gray-900 dark:text-gray-100 leading-tight">
                 Delete Note
               </DialogTitle>
             </div>
-            <DialogDescription className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 pt-1 sm:pt-2 leading-relaxed">
+            <DialogDescription className="text-body pt-1 sm:pt-2 leading-relaxed">
               Are you sure you want to delete this note? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
@@ -504,6 +540,7 @@ export function NotesSection() {
               variant="outline"
               onClick={closeDeleteDialog}
               className="w-full sm:w-auto order-2 sm:order-1 h-9 text-sm"
+              aria-label="Cancel deletion"
             >
               Cancel
             </Button>
@@ -511,8 +548,9 @@ export function NotesSection() {
               type="button"
               onClick={handleDeleteNote}
               className="w-full sm:w-auto order-1 sm:order-2 h-9 text-sm bg-gradient-to-r from-rose-500 to-red-500 hover:from-rose-600 hover:to-red-600 text-white"
+              aria-label="Confirm delete note"
             >
-              <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
+              <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" aria-hidden={true} />
               Delete
             </Button>
           </DialogFooter>

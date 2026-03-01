@@ -70,7 +70,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <ThemeTransition>
-            <div className="relative min-h-screen">
+            <div className="relative min-h-screen overflow-x-hidden max-w-full">
               {/* Animated gradient background - only visible in light mode */}
               <div className="dark:hidden">
                 <GradientBackground />

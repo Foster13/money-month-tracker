@@ -263,7 +263,7 @@ export function Summary({ transactions, exchangeRates }: SummaryProps) {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="stack-spacing">
       {/* Export Button */}
       <motion.div 
         className="flex justify-end"
@@ -274,9 +274,10 @@ export function Summary({ transactions, exchangeRates }: SummaryProps) {
         <Button
           onClick={exportToPDF}
           size="sm"
-          className="transition-all duration-200 hover:scale-105 active:scale-95 bg-gradient-to-r from-pink-400 via-pink-500 to-rose-400 hover:from-pink-500 hover:via-pink-600 hover:to-rose-500 text-white shadow-md hover:shadow-lg"
+          className="transition-all duration-200 hover:scale-105 active:scale-95 bg-gradient-to-r from-pink-400 via-pink-500 to-rose-400 hover:from-pink-500 hover:via-pink-600 hover:to-rose-500 text-white shadow-md hover:shadow-lg text-xs sm:text-sm"
+          aria-label="Export financial summary to PDF"
         >
-          <FileDown className="mr-2 h-4 w-4" />
+          <FileDown className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" aria-hidden={true} />
           Export PDF
         </Button>
       </motion.div>
@@ -290,14 +291,14 @@ export function Summary({ transactions, exchangeRates }: SummaryProps) {
         whileHover={{ scale: 1.02, y: -5 }}
         whileTap={{ scale: 0.98 }}
       >
-        <Card className="glass-card overflow-hidden border-pink-200 h-full">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xs sm:text-sm font-medium text-pink-700 flex items-center gap-1.5">
-              <Icon name="income" size={16} />
+        <Card className="glass-card overflow-hidden border-income h-full">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 px-3 sm:px-6 pt-3 sm:pt-6">
+            <CardTitle className="text-xs sm:text-sm font-medium text-income flex items-center gap-1 sm:gap-1.5">
+              <Icon name="income" size="sm" className="sm:w-4 sm:h-4" aria-hidden={true} />
               Total Income
             </CardTitle>
             <motion.div 
-              className="p-2 rounded-full bg-pink-100 backdrop-blur-sm"
+              className="p-1.5 sm:p-2 rounded-full bg-income backdrop-blur-sm"
               animate={{ 
                 rotate: [0, 5, -5, 0],
                 scale: [1, 1.1, 1]
@@ -308,12 +309,12 @@ export function Summary({ transactions, exchangeRates }: SummaryProps) {
                 repeatDelay: 3
               }}
             >
-              <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 text-pink-500" />
+              <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4 md:h-5 md:w-5 text-income" aria-hidden={true} />
             </motion.div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="px-3 sm:px-6 pb-3 sm:pb-6">
             <motion.div 
-              className="text-xl sm:text-2xl font-bold text-pink-600 break-words"
+              className="text-lg sm:text-xl md:text-2xl font-bold text-income break-words"
               initial={{ scale: 0.5, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.2 }}
@@ -334,14 +335,14 @@ export function Summary({ transactions, exchangeRates }: SummaryProps) {
         whileHover={{ scale: 1.02, y: -5 }}
         whileTap={{ scale: 0.98 }}
       >
-        <Card className="glass-card overflow-hidden border-rose-200 h-full">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xs sm:text-sm font-medium text-rose-700 flex items-center gap-1.5">
-              <Icon name="expenses" size={16} />
+        <Card className="glass-card overflow-hidden border-expense h-full">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 px-3 sm:px-6 pt-3 sm:pt-6">
+            <CardTitle className="text-xs sm:text-sm font-medium text-expense flex items-center gap-1 sm:gap-1.5">
+              <Icon name="expenses" size="sm" className="sm:w-4 sm:h-4" aria-hidden={true} />
               Total Expenses
             </CardTitle>
             <motion.div 
-              className="p-2 rounded-full bg-rose-100 backdrop-blur-sm"
+              className="p-1.5 sm:p-2 rounded-full bg-expense backdrop-blur-sm"
               animate={{ 
                 rotate: [0, -5, 5, 0],
                 scale: [1, 1.1, 1]
@@ -353,19 +354,19 @@ export function Summary({ transactions, exchangeRates }: SummaryProps) {
                 delay: 0.5
               }}
             >
-              <TrendingDown className="h-4 w-4 sm:h-5 sm:w-5 text-rose-500" />
+              <TrendingDown className="h-3 w-3 sm:h-4 sm:w-4 md:h-5 md:w-5 text-expense" aria-hidden={true} />
             </motion.div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="px-3 sm:px-6 pb-3 sm:pb-6">
             <motion.div 
-              className="text-xl sm:text-2xl font-bold text-rose-600 break-words"
+              className="text-lg sm:text-xl md:text-2xl font-bold text-expense break-words"
               initial={{ scale: 0.5, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.3 }}
             >
               {formatIDR(totalExpenses)}
             </motion.div>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="text-caption mt-1">
               All amounts converted to IDR
             </p>
           </CardContent>
@@ -380,14 +381,14 @@ export function Summary({ transactions, exchangeRates }: SummaryProps) {
         whileTap={{ scale: 0.98 }}
         className="sm:col-span-2 lg:col-span-1"
       >
-        <Card className="glass-card overflow-hidden border-purple-200 h-full">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xs sm:text-sm font-medium text-purple-700 flex items-center gap-1.5">
-              <Icon name="budget" size={16} />
+        <Card className="glass-card overflow-hidden border-budget h-full">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 px-3 sm:px-6 pt-3 sm:pt-6">
+            <CardTitle className="text-xs sm:text-sm font-medium text-budget flex items-center gap-1 sm:gap-1.5">
+              <Icon name="budget" size="sm" className="sm:w-4 sm:h-4" aria-hidden={true} />
               Balance
             </CardTitle>
             <motion.div 
-              className="p-2 rounded-full bg-purple-100 backdrop-blur-sm"
+              className="p-1.5 sm:p-2 rounded-full bg-budget backdrop-blur-sm"
               animate={{ 
                 rotate: [0, 10, -10, 0],
                 scale: [1, 1.15, 1]
@@ -399,13 +400,13 @@ export function Summary({ transactions, exchangeRates }: SummaryProps) {
                 delay: 1
               }}
             >
-              <Wallet className="h-4 w-4 sm:h-5 sm:w-5 text-purple-500" />
+              <Wallet className="h-3 w-3 sm:h-4 sm:w-4 md:h-5 md:w-5 text-budget" aria-hidden={true} />
             </motion.div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="px-3 sm:px-6 pb-3 sm:pb-6">
             <motion.div
-              className={`text-xl sm:text-2xl font-bold break-words ${
-                balance >= 0 ? "text-purple-600" : "text-rose-600"
+              className={`text-xl sm:text-2xl md:text-3xl font-bold break-words ${
+                balance >= 0 ? "text-budget" : "text-expense"
               }`}
               initial={{ scale: 0.5, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
@@ -413,7 +414,7 @@ export function Summary({ transactions, exchangeRates }: SummaryProps) {
             >
               {formatIDR(balance)}
             </motion.div>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="text-caption mt-1">
               Net balance in IDR
             </p>
           </CardContent>

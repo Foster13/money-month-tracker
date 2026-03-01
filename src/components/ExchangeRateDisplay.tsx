@@ -46,22 +46,24 @@ export function ExchangeRateDisplay({
 
   return (
     <Card className="glass-card animate-fade-in overflow-hidden">
-      <CardHeader>
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <CardTitle className="text-lg sm:text-xl">Exchange Rates (to IDR)</CardTitle>
+      <CardHeader className="px-4 sm:px-6 py-4 sm:py-5">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+          <CardTitle className="text-lg sm:text-xl lg:text-2xl font-semibold">Exchange Rates (to IDR)</CardTitle>
           <Button
             variant="outline"
             size="sm"
             onClick={handleUpdateRates}
             disabled={isUpdating}
-            className="transition-all duration-200 w-full sm:w-auto"
+            className="transition-all duration-200 w-full sm:w-auto min-h-[44px]"
+            aria-label="Update exchange rates"
           >
-            <RefreshCw className={`h-4 w-4 mr-2 transition-transform duration-500 ${isUpdating ? "animate-spin" : ""}`} />
+            <RefreshCw className={`h-4 w-4 mr-2 transition-transform duration-500 ${isUpdating ? "animate-spin" : ""}`} aria-hidden="true" />
             {isUpdating ? "Updating..." : "Update Rates"}
           </Button>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="px-4 sm:px-6 pb-6">
+        {/* Responsive grid: 2 cols mobile, 3 cols tablet, 4 cols desktop */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
           {Object.entries(exchangeRates)
             .filter(([currency]) => currency !== "IDR")
@@ -70,13 +72,13 @@ export function ExchangeRateDisplay({
               return (
                 <div
                   key={currency}
-                  className="glass-subtle flex flex-col p-3 rounded-lg hover-lift transition-all duration-300 animate-scale-in"
+                  className="glass-subtle flex flex-col p-3 sm:p-4 rounded-lg hover-lift transition-all duration-200 animate-scale-in"
                   style={{ animationDelay: `${index * 0.05}s` }}
                 >
-                  <div className="text-xs sm:text-sm font-medium text-muted-foreground">
+                  <div className="text-xs sm:text-sm text-muted-foreground">
                     {currencyInfo.symbol} {currency}
                   </div>
-                  <div className="text-base sm:text-lg font-bold transition-all duration-300 break-words">
+                  <div className="text-base sm:text-lg font-bold transition-all duration-200 break-words">
                     Rp {rate.toLocaleString("id-ID", {
                       minimumFractionDigits: 0,
                       maximumFractionDigits: 0,
@@ -90,12 +92,12 @@ export function ExchangeRateDisplay({
             })}
         </div>
         {lastUpdate && (
-          <div className="mt-4 text-xs text-muted-foreground text-center animate-fade-in">
+          <div className="text-xs sm:text-sm text-muted-foreground text-center mt-4 animate-fade-in">
             Last updated: {format(new Date(lastUpdate), "PPpp")}
           </div>
         )}
         {!lastUpdate && (
-          <div className="mt-4 text-xs text-muted-foreground text-center animate-fade-in">
+          <div className="text-xs sm:text-sm text-muted-foreground text-center mt-4 animate-fade-in">
             Click &quot;Update Rates&quot; to fetch real-time exchange rates
           </div>
         )}
