@@ -24,6 +24,9 @@ const DEFAULT_EXPENSE_CATEGORIES: Omit<Category, "id">[] = [
   { name: "Healthcare", type: "expense", color: "#14b8a6", icon: "Heart" },
   { name: "Entertainment", type: "expense", color: "#f97316", icon: "Film" },
   { name: "Shopping", type: "expense", color: "#a855f7", icon: "ShoppingBag" },
+  { name: "Bills", type: "expense", color: "#dc2626", icon: "FileText" },
+  { name: "Debts", type: "expense", color: "#991b1b", icon: "CreditCard" },
+  { name: "Snacks", type: "expense", color: "#fb923c", icon: "Cookie" },
   { name: "Other Expenses", type: "expense", color: "#64748b", icon: "MoreHorizontal" },
 ];
 

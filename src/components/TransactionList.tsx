@@ -50,10 +50,23 @@ export function TransactionList({
     );
   }
 
-  // Sort transactions by date (newest first)
-  const sortedTransactions = [...transactions].sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-  );
+  // Sort transactions by date (newest first), then by creation time (ID) for same dates
+  const sortedTransactions = [...transactions].sort((a, b) => {
+    // First, compare dates
+    const dateA = new Date(a.date).getTime();
+    const dateB = new Date(b.date).getTime();
+    
+    if (dateB !== dateA) {
+      return dateB - dateA; // Newer dates first
+    }
+    
+    // If dates are the same, sort by ID (which contains timestamp)
+    // Extract timestamp from ID format: "timestamp-random"
+    const timestampA = parseInt(a.id.split('-')[0]) || 0;
+    const timestampB = parseInt(b.id.split('-')[0]) || 0;
+    
+    return timestampB - timestampA; // Most recently created first
+  });
 
   const totalPages = Math.ceil(sortedTransactions.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;

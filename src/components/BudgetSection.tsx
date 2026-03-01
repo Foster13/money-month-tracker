@@ -60,9 +60,22 @@ export function BudgetSection({
   const budgetRemaining = monthlyBudget - totalExpenses;
   const budgetPercentage = monthlyBudget > 0 ? (totalExpenses / monthlyBudget) * 100 : 0;
 
-  // Get latest 5 transactions
+  // Get latest 5 transactions (sorted by date, then by creation time)
   const latestTransactions = [...currentMonthTransactions]
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .sort((a, b) => {
+      const dateA = new Date(a.date).getTime();
+      const dateB = new Date(b.date).getTime();
+      
+      if (dateB !== dateA) {
+        return dateB - dateA; // Newer dates first
+      }
+      
+      // If dates are the same, sort by ID (which contains timestamp)
+      const timestampA = parseInt(a.id.split('-')[0]) || 0;
+      const timestampB = parseInt(b.id.split('-')[0]) || 0;
+      
+      return timestampB - timestampA; // Most recently created first
+    })
     .slice(0, 5);
 
   // Get top 3 categories by transaction count

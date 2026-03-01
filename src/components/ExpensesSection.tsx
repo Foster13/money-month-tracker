@@ -36,24 +36,41 @@ export function ExpensesSection({
 
   // Sort expenses
   const sortedExpenses = [...expenses].sort((a, b) => {
+    let result = 0;
+    
     switch (sortBy) {
       case "date-desc":
-        return new Date(b.date).getTime() - new Date(a.date).getTime();
+        result = new Date(b.date).getTime() - new Date(a.date).getTime();
+        break;
       case "date-asc":
-        return new Date(a.date).getTime() - new Date(b.date).getTime();
+        result = new Date(a.date).getTime() - new Date(b.date).getTime();
+        break;
       case "amount-desc":
-        return convertToIDR(b.amount, b.currency, exchangeRates) - convertToIDR(a.amount, a.currency, exchangeRates);
+        result = convertToIDR(b.amount, b.currency, exchangeRates) - convertToIDR(a.amount, a.currency, exchangeRates);
+        break;
       case "amount-asc":
-        return convertToIDR(a.amount, a.currency, exchangeRates) - convertToIDR(b.amount, b.currency, exchangeRates);
+        result = convertToIDR(a.amount, a.currency, exchangeRates) - convertToIDR(b.amount, b.currency, exchangeRates);
+        break;
       case "category":
         const catA = categories.find((c) => c.id === a.categoryId)?.name || "";
         const catB = categories.find((c) => c.id === b.categoryId)?.name || "";
-        return catA.localeCompare(catB);
+        result = catA.localeCompare(catB);
+        break;
       case "alphabetical":
-        return a.description.localeCompare(b.description);
+        result = a.description.localeCompare(b.description);
+        break;
       default:
-        return 0;
+        result = 0;
     }
+    
+    // If primary sort results in equality, sort by creation time (ID timestamp)
+    if (result === 0) {
+      const timestampA = parseInt(a.id.split('-')[0]) || 0;
+      const timestampB = parseInt(b.id.split('-')[0]) || 0;
+      return timestampB - timestampA; // Most recently created first
+    }
+    
+    return result;
   });
 
   const getCategoryName = (categoryId: string) => {
