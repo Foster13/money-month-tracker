@@ -1,10 +1,10 @@
 // File: src/components/TransactionList.tsx
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Transaction, Category, Currency } from "@/types";
 import { format, parseISO } from "date-fns";
-import { formatCurrency } from "@/lib/currency";
+import { formatCurrency, convertToIDR } from "@/lib/currency";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -18,6 +18,7 @@ import { Edit, Trash2, ChevronLeft, ChevronRight, Receipt } from "lucide-react";
 import { IconRenderer } from "@/components/icons/IconRenderer";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { EmptyState } from "@/components/ui/empty-state";
+import { TransactionFilters, FilterOptions } from "./TransactionFilters";
 
 interface TransactionListProps {
   transactions: Transaction[];
@@ -39,6 +40,138 @@ export function TransactionList({
   isLoading = false,
 }: TransactionListProps) {
   const [currentPage, setCurrentPage] = useState(1);
+  const [filters, setFilters] = useState<FilterOptions>({
+    searchQuery: "",
+    type: "all",
+    categoryIds: [],
+    dateFrom: "",
+    dateTo: "",
+    amountMin: "",
+    amountMax: "",
+  });
+
+  const handleResetFilters = () => {
+    setFilters({
+      searchQuery: "",
+      type: "all",
+      categoryIds: [],
+      dateFrom: "",
+      dateTo: "",
+      amountMin: "",
+      amountMax: "",
+    });
+    setCurrentPage(1);
+  };
+
+  // Reset to page 1 when filters change
+  const handleFiltersChange = (newFilters: FilterOptions) => {
+    setFilters(newFilters);
+    setCurrentPage(1);
+  };
+
+  // Helper functions
+  const getCategoryName = useMemo(
+    () => (categoryId: string) => {
+      const category = categories.find((c) => c.id === categoryId);
+      return category?.name || "Unknown";
+    },
+    [categories]
+  );
+
+  const getCategoryColor = useMemo(
+    () => (categoryId: string) => {
+      const category = categories.find((c) => c.id === categoryId);
+      return category?.color || "#64748b";
+    },
+    [categories]
+  );
+
+  const getCategoryIcon = useMemo(
+    () => (categoryId: string) => {
+      const category = categories.find((c) => c.id === categoryId);
+      return category?.icon || "Circle";
+    },
+    [categories]
+  );
+
+  // Filter and sort transactions
+  const filteredAndSortedTransactions = useMemo(() => {
+    let filtered = [...transactions];
+
+    // Apply search filter
+    if (filters.searchQuery) {
+      const query = filters.searchQuery.toLowerCase();
+      filtered = filtered.filter((t) => {
+        const description = t.description.toLowerCase();
+        const amount = t.amount.toString();
+        const categoryName = getCategoryName(t.categoryId).toLowerCase();
+        return (
+          description.includes(query) ||
+          amount.includes(query) ||
+          categoryName.includes(query)
+        );
+      });
+    }
+
+    // Apply type filter
+    if (filters.type !== "all") {
+      filtered = filtered.filter((t) => t.type === filters.type);
+    }
+
+    // Apply category filter
+    if (filters.categoryIds.length > 0) {
+      filtered = filtered.filter((t) =>
+        filters.categoryIds.includes(t.categoryId)
+      );
+    }
+
+    // Apply date range filter
+    if (filters.dateFrom) {
+      const fromDate = new Date(filters.dateFrom);
+      filtered = filtered.filter((t) => parseISO(t.date) >= fromDate);
+    }
+    if (filters.dateTo) {
+      const toDate = new Date(filters.dateTo);
+      toDate.setHours(23, 59, 59, 999); // Include the entire day
+      filtered = filtered.filter((t) => parseISO(t.date) <= toDate);
+    }
+
+    // Apply amount range filter
+    if (filters.amountMin) {
+      const minAmount = parseFloat(filters.amountMin);
+      filtered = filtered.filter((t) => {
+        const amountInIDR = convertToIDR(t.amount, t.currency, exchangeRates);
+        return amountInIDR >= minAmount;
+      });
+    }
+    if (filters.amountMax) {
+      const maxAmount = parseFloat(filters.amountMax);
+      filtered = filtered.filter((t) => {
+        const amountInIDR = convertToIDR(t.amount, t.currency, exchangeRates);
+        return amountInIDR <= maxAmount;
+      });
+    }
+
+    // Sort by date (newest first), then by creation time (ID) for same dates
+    return filtered.sort((a, b) => {
+      const dateA = new Date(a.date).getTime();
+      const dateB = new Date(b.date).getTime();
+
+      if (dateB !== dateA) {
+        return dateB - dateA;
+      }
+
+      const timestampA = parseInt(a.id.split("-")[0]) || 0;
+      const timestampB = parseInt(b.id.split("-")[0]) || 0;
+
+      return timestampB - timestampA;
+    });
+  }, [transactions, filters, exchangeRates, categories, getCategoryName]);
+
+  const totalPages = Math.ceil(filteredAndSortedTransactions.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const currentTransactions = filteredAndSortedTransactions.slice(startIndex, endIndex);
 
   // Show loading state
   if (isLoading) {
@@ -50,44 +183,6 @@ export function TransactionList({
     );
   }
 
-  // Sort transactions by date (newest first), then by creation time (ID) for same dates
-  const sortedTransactions = [...transactions].sort((a, b) => {
-    // First, compare dates
-    const dateA = new Date(a.date).getTime();
-    const dateB = new Date(b.date).getTime();
-    
-    if (dateB !== dateA) {
-      return dateB - dateA; // Newer dates first
-    }
-    
-    // If dates are the same, sort by ID (which contains timestamp)
-    // Extract timestamp from ID format: "timestamp-random"
-    const timestampA = parseInt(a.id.split('-')[0]) || 0;
-    const timestampB = parseInt(b.id.split('-')[0]) || 0;
-    
-    return timestampB - timestampA; // Most recently created first
-  });
-
-  const totalPages = Math.ceil(sortedTransactions.length / ITEMS_PER_PAGE);
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const endIndex = startIndex + ITEMS_PER_PAGE;
-  const currentTransactions = sortedTransactions.slice(startIndex, endIndex);
-
-  const getCategoryName = (categoryId: string) => {
-    const category = categories.find((c) => c.id === categoryId);
-    return category?.name || "Unknown";
-  };
-
-  const getCategoryColor = (categoryId: string) => {
-    const category = categories.find((c) => c.id === categoryId);
-    return category?.color || "#64748b";
-  };
-
-  const getCategoryIcon = (categoryId: string) => {
-    const category = categories.find((c) => c.id === categoryId);
-    return category?.icon || "Circle";
-  };
-
   if (transactions.length === 0) {
     return (
       <EmptyState
@@ -98,9 +193,33 @@ export function TransactionList({
     );
   }
 
+  const hasNoResults = filteredAndSortedTransactions.length === 0;
+
   return (
     <div className="stack-spacing">
-      {/* Desktop Table View */}
+      {/* Filters */}
+      <TransactionFilters
+        categories={categories}
+        filters={filters}
+        onFiltersChange={handleFiltersChange}
+        onReset={handleResetFilters}
+      />
+
+      {/* No Results State */}
+      {hasNoResults ? (
+        <EmptyState
+          icon={<Receipt className="w-8 h-8 text-pink-500" aria-hidden={true} />}
+          title="No transactions found"
+          description="Try adjusting your filters or search query to find what you're looking for."
+          action={
+            <Button onClick={handleResetFilters} variant="outline">
+              Clear Filters
+            </Button>
+          }
+        />
+      ) : (
+        <>
+          {/* Desktop Table View */}
       <div className="hidden md:block rounded-md border overflow-x-auto">
         <Table>
           <TableHeader>
@@ -312,8 +431,13 @@ export function TransactionList({
       {totalPages > 1 && (
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 animate-fade-in">
           <div className="text-caption text-muted-foreground text-center sm:text-left">
-            Showing {startIndex + 1} to {Math.min(endIndex, transactions.length)}{" "}
-            of {transactions.length} transactions
+            Showing {startIndex + 1} to {Math.min(endIndex, filteredAndSortedTransactions.length)}{" "}
+            of {filteredAndSortedTransactions.length} transactions
+            {filteredAndSortedTransactions.length !== transactions.length && (
+              <span className="text-pink-500">
+                {" "}(filtered from {transactions.length})
+              </span>
+            )}
           </div>
           <div className="flex gap-2">
             <Button
@@ -340,6 +464,8 @@ export function TransactionList({
             </Button>
           </div>
         </div>
+      )}
+        </>
       )}
     </div>
   );
