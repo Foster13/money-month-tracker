@@ -12,6 +12,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -44,6 +45,8 @@ export function CategoryManager({
   );
   const [newCategoryColor, setNewCategoryColor] = useState("#64748b");
   const [newCategoryIcon, setNewCategoryIcon] = useState("Circle");
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [categoryToDelete, setCategoryToDelete] = useState<{ id: string; name: string } | null>(null);
   const { toast } = useToast();
 
   const handleAddCategory = () => {
@@ -75,17 +78,20 @@ export function CategoryManager({
   };
 
   const handleDeleteCategory = (id: string, name: string) => {
-    if (
-      confirm(
-        `Are you sure you want to delete "${name}"? All transactions with this category will also be deleted.`
-      )
-    ) {
-      onDeleteCategory(id);
+    setCategoryToDelete({ id, name });
+    setDeleteConfirmOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (categoryToDelete) {
+      onDeleteCategory(categoryToDelete.id);
       toast({
         title: "Success",
         description: "Category deleted successfully",
       });
+      setCategoryToDelete(null);
     }
+    setDeleteConfirmOpen(false);
   };
 
   const incomeCategories = categories.filter((c) => c.type === "income");
@@ -292,6 +298,18 @@ export function CategoryManager({
           </div>
         </div>
       </DialogContent>
+
+      {/* Confirmation Dialog */}
+      <ConfirmDialog
+        open={deleteConfirmOpen}
+        onOpenChange={setDeleteConfirmOpen}
+        onConfirm={confirmDelete}
+        title="Delete Category"
+        description={`Are you sure you want to delete "${categoryToDelete?.name}"? All transactions with this category will also be deleted.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="destructive"
+      />
     </Dialog>
   );
 }

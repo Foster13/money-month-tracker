@@ -23,6 +23,7 @@ import { BudgetSection } from "./BudgetSection";
 import { NotesSection } from "./NotesSection";
 import { AnimatedThemeToggle } from "./AnimatedThemeToggle";
 import { Icon } from "./icons/Icon";
+import { ConfirmDialog } from "./ui/confirm-dialog";
 import { Transaction } from "@/types";
 import { fetchExchangeRates } from "@/lib/currency";
 import { useToast } from "@/hooks/use-toast";
@@ -38,6 +39,8 @@ export function Dashboard({ defaultTab = "dashboard" }: DashboardProps) {
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   const [showChart, setShowChart] = useState(true);
   const [activeTab, setActiveTab] = useState(defaultTab);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [transactionToDelete, setTransactionToDelete] = useState<string | null>(null);
   const { toast } = useToast();
 
   // Update active tab based on pathname
@@ -116,13 +119,20 @@ export function Dashboard({ defaultTab = "dashboard" }: DashboardProps) {
   };
 
   const handleDelete = (id: string) => {
-    if (confirm("Are you sure you want to delete this transaction?")) {
-      deleteTransaction(id);
+    setTransactionToDelete(id);
+    setDeleteConfirmOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (transactionToDelete) {
+      deleteTransaction(transactionToDelete);
       toast({
         title: "Success",
         description: "Transaction deleted successfully",
       });
+      setTransactionToDelete(null);
     }
+    setDeleteConfirmOpen(false);
   };
 
   const handleImport = (jsonData: string) => {
@@ -474,6 +484,18 @@ export function Dashboard({ defaultTab = "dashboard" }: DashboardProps) {
           )}
         </AnimatePresence>
       </Tabs>
+
+      {/* Confirmation Dialog */}
+      <ConfirmDialog
+        open={deleteConfirmOpen}
+        onOpenChange={setDeleteConfirmOpen}
+        onConfirm={confirmDelete}
+        title="Delete Transaction"
+        description="Are you sure you want to delete this transaction? This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="destructive"
+      />
     </div>
   );
 }
