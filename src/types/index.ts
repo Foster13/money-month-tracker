@@ -55,6 +55,11 @@ export interface TransactionState {
   updateExchangeRates: (rates: Record<Currency, number>) => void;
   exportData: () => string;
   importData: (jsonData: string) => void;
+  undo: () => void;
+  redo: () => void;
+  canUndo: () => boolean;
+  canRedo: () => boolean;
+  clearHistory: () => void;
 }
 
 /**
