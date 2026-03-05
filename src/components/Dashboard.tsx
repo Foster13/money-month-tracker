@@ -24,6 +24,7 @@ import { NotesSection } from "./NotesSection";
 import { AnimatedThemeToggle } from "./AnimatedThemeToggle";
 import { Icon } from "./icons/Icon";
 import { ConfirmDialog } from "./ui/confirm-dialog";
+import { UndoRedoControls } from "./UndoRedoControls";
 import { Transaction } from "@/types";
 import { fetchExchangeRates } from "@/lib/currency";
 import { useToast } from "@/hooks/use-toast";
@@ -192,6 +193,7 @@ export function Dashboard({ defaultTab = "dashboard" }: DashboardProps) {
         
         {/* Controls - Responsive layout with proper touch targets */}
         <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-2">
+          <UndoRedoControls />
           <CategoryManager
             categories={categories}
             onAddCategory={addCategory}

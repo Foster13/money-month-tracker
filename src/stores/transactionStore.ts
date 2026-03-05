@@ -4,6 +4,31 @@ import { persist } from "zustand/middleware";
 import { Transaction, Category, TransactionState, Currency } from "@/types";
 
 /**
+ * History action types for undo/redo
+ */
+export type HistoryAction = 
+  | { type: "ADD_TRANSACTION"; transaction: Transaction }
+  | { type: "UPDATE_TRANSACTION"; id: string; oldTransaction: Transaction; newTransaction: Transaction }
+  | { type: "DELETE_TRANSACTION"; transaction: Transaction }
+  | { type: "ADD_CATEGORY"; category: Category }
+  | { type: "DELETE_CATEGORY"; category: Category; deletedTransactions: Transaction[] };
+
+/**
+ * History state for undo/redo
+ */
+interface HistoryState {
+  past: HistoryAction[];
+  future: HistoryAction[];
+}
+
+/**
+ * Extended transaction state with undo/redo (includes history)
+ */
+interface ExtendedTransactionState extends TransactionState {
+  history: HistoryState;
+}
+
+/**
  * Default icon mapping for categories (for migration)
  */
 const CATEGORY_ICON_MAP: Record<string, string> = {
@@ -105,15 +130,29 @@ const initializeDefaultCategories = (): Category[] => {
 };
 
 /**
- * Main transaction store with localStorage persistence
+ * Main transaction store with localStorage persistence and undo/redo
  */
-export const useTransactionStore = create<TransactionState>()(
+export const useTransactionStore = create<ExtendedTransactionState>()(
   persist(
     (set, get) => ({
       transactions: [],
       categories: initializeDefaultCategories(),
       exchangeRates: DEFAULT_EXCHANGE_RATES,
       lastRateUpdate: null,
+      history: {
+        past: [],
+        future: [],
+      },
+
+      // Helper to add action to history
+      addToHistory: (action: HistoryAction) => {
+        set((state) => ({
+          history: {
+            past: [...state.history.past.slice(-9), action], // Keep last 10 actions
+            future: [], // Clear future when new action is performed
+          },
+        }));
+      },
 
       addTransaction: (transaction) => {
         const newTransaction: Transaction = {
@@ -121,22 +160,61 @@ export const useTransactionStore = create<TransactionState>()(
           id: generateId(),
           currency: transaction.currency || "IDR",
         };
+        
         set((state) => ({
           transactions: [...state.transactions, newTransaction],
+          history: {
+            past: [
+              ...state.history.past.slice(-9),
+              { type: "ADD_TRANSACTION", transaction: newTransaction },
+            ],
+            future: [],
+          },
         }));
       },
 
       updateTransaction: (id, updates) => {
+        const state = get();
+        const oldTransaction = state.transactions.find((t) => t.id === id);
+        
+        if (!oldTransaction) return;
+        
+        const newTransaction = { ...oldTransaction, ...updates };
+        
         set((state) => ({
           transactions: state.transactions.map((t) =>
-            t.id === id ? { ...t, ...updates } : t
+            t.id === id ? newTransaction : t
           ),
+          history: {
+            past: [
+              ...state.history.past.slice(-9),
+              { 
+                type: "UPDATE_TRANSACTION", 
+                id, 
+                oldTransaction, 
+                newTransaction 
+              },
+            ],
+            future: [],
+          },
         }));
       },
 
       deleteTransaction: (id) => {
+        const state = get();
+        const transaction = state.transactions.find((t) => t.id === id);
+        
+        if (!transaction) return;
+        
         set((state) => ({
           transactions: state.transactions.filter((t) => t.id !== id),
+          history: {
+            past: [
+              ...state.history.past.slice(-9),
+              { type: "DELETE_TRANSACTION", transaction },
+            ],
+            future: [],
+          },
         }));
       },
 
@@ -147,6 +225,13 @@ export const useTransactionStore = create<TransactionState>()(
         };
         set((state) => ({
           categories: [...state.categories, newCategory],
+          history: {
+            past: [
+              ...state.history.past.slice(-9),
+              { type: "ADD_CATEGORY", category: newCategory },
+            ],
+            future: [],
+          },
         }));
       },
 
@@ -159,11 +244,177 @@ export const useTransactionStore = create<TransactionState>()(
       },
 
       deleteCategory: (id) => {
+        const state = get();
+        const category = state.categories.find((c) => c.id === id);
+        const deletedTransactions = state.transactions.filter((t) => t.categoryId === id);
+        
+        if (!category) return;
+        
         set((state) => ({
           categories: state.categories.filter((c) => c.id !== id),
-          // Also remove transactions with this category
           transactions: state.transactions.filter((t) => t.categoryId !== id),
+          history: {
+            past: [
+              ...state.history.past.slice(-9),
+              { type: "DELETE_CATEGORY", category, deletedTransactions },
+            ],
+            future: [],
+          },
         }));
+      },
+
+      // Undo functionality
+      undo: () => {
+        const state = get();
+        const { past, future } = state.history;
+        
+        if (past.length === 0) return;
+        
+        const action = past[past.length - 1];
+        const newPast = past.slice(0, -1);
+        
+        switch (action.type) {
+          case "ADD_TRANSACTION":
+            set((state) => ({
+              transactions: state.transactions.filter((t) => t.id !== action.transaction.id),
+              history: {
+                past: newPast,
+                future: [action, ...future],
+              },
+            }));
+            break;
+            
+          case "UPDATE_TRANSACTION":
+            set((state) => ({
+              transactions: state.transactions.map((t) =>
+                t.id === action.id ? action.oldTransaction : t
+              ),
+              history: {
+                past: newPast,
+                future: [action, ...future],
+              },
+            }));
+            break;
+            
+          case "DELETE_TRANSACTION":
+            set((state) => ({
+              transactions: [...state.transactions, action.transaction],
+              history: {
+                past: newPast,
+                future: [action, ...future],
+              },
+            }));
+            break;
+            
+          case "ADD_CATEGORY":
+            set((state) => ({
+              categories: state.categories.filter((c) => c.id !== action.category.id),
+              history: {
+                past: newPast,
+                future: [action, ...future],
+              },
+            }));
+            break;
+            
+          case "DELETE_CATEGORY":
+            set((state) => ({
+              categories: [...state.categories, action.category],
+              transactions: [...state.transactions, ...action.deletedTransactions],
+              history: {
+                past: newPast,
+                future: [action, ...future],
+              },
+            }));
+            break;
+        }
+      },
+
+      // Redo functionality
+      redo: () => {
+        const state = get();
+        const { past, future } = state.history;
+        
+        if (future.length === 0) return;
+        
+        const action = future[0];
+        const newFuture = future.slice(1);
+        
+        switch (action.type) {
+          case "ADD_TRANSACTION":
+            set((state) => ({
+              transactions: [...state.transactions, action.transaction],
+              history: {
+                past: [...past, action],
+                future: newFuture,
+              },
+            }));
+            break;
+            
+          case "UPDATE_TRANSACTION":
+            set((state) => ({
+              transactions: state.transactions.map((t) =>
+                t.id === action.id ? action.newTransaction : t
+              ),
+              history: {
+                past: [...past, action],
+                future: newFuture,
+              },
+            }));
+            break;
+            
+          case "DELETE_TRANSACTION":
+            set((state) => ({
+              transactions: state.transactions.filter((t) => t.id !== action.transaction.id),
+              history: {
+                past: [...past, action],
+                future: newFuture,
+              },
+            }));
+            break;
+            
+          case "ADD_CATEGORY":
+            set((state) => ({
+              categories: [...state.categories, action.category],
+              history: {
+                past: [...past, action],
+                future: newFuture,
+              },
+            }));
+            break;
+            
+          case "DELETE_CATEGORY":
+            set((state) => ({
+              categories: state.categories.filter((c) => c.id !== action.category.id),
+              transactions: state.transactions.filter(
+                (t) => !action.deletedTransactions.some((dt) => dt.id === t.id)
+              ),
+              history: {
+                past: [...past, action],
+                future: newFuture,
+              },
+            }));
+            break;
+        }
+      },
+
+      // Check if undo is available
+      canUndo: () => {
+        return get().history.past.length > 0;
+      },
+
+      // Check if redo is available
+      canRedo: () => {
+        return get().history.future.length > 0;
+      },
+
+      // Clear history
+      clearHistory: () => {
+        set({
+          history: {
+            past: [],
+            future: [],
+          },
+        });
       },
 
       updateExchangeRates: (rates) => {
