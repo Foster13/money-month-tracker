@@ -129,6 +129,19 @@ const withPWA = require('next-pwa')({
 
 const nextConfig = {
   reactStrictMode: true,
+  // Optimize for faster development
+  swcMinify: true,
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
+  },
+  // Optimize images
+  images: {
+    formats: ['image/avif', 'image/webp'],
+  },
+  // Reduce bundle size
+  experimental: {
+    optimizePackageImports: ['lucide-react', 'recharts', 'date-fns'],
+  },
 };
 
 module.exports = withPWA(nextConfig);

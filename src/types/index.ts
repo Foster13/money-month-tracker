@@ -46,6 +46,7 @@ export interface TransactionState {
   categories: Category[];
   exchangeRates: Record<Currency, number>;
   lastRateUpdate: string | null;
+  selectedTransactionIds: Set<string>;
   addTransaction: (transaction: Omit<Transaction, "id">) => void;
   updateTransaction: (id: string, transaction: Partial<Transaction>) => void;
   deleteTransaction: (id: string) => void;
@@ -60,6 +61,14 @@ export interface TransactionState {
   canUndo: () => boolean;
   canRedo: () => boolean;
   clearHistory: () => void;
+  selectTransaction: (id: string) => void;
+  deselectTransaction: (id: string) => void;
+  toggleTransaction: (id: string) => void;
+  selectAll: (ids: string[]) => void;
+  clearSelection: () => void;
+  bulkDelete: (ids: string[]) => void;
+  bulkUpdateCategory: (ids: string[], categoryId: string) => void;
+  bulkExport: (ids: string[], format: 'json' | 'csv') => string;
 }
 
 /**
@@ -73,4 +82,46 @@ export interface SimulationState {
   deleteTransaction: (id: string) => void;
   clearSimulation: () => void;
   loadFromMain: (transactions: Transaction[], categories: Category[]) => void;
+}
+
+/**
+ * Props for the bulk delete confirmation dialog
+ */
+export interface BulkDeleteDialogProps {
+  open: boolean;
+  count: number;
+  onConfirm: () => void;
+  onCancel: () => void;
+}
+
+/**
+ * Props for the bulk category change dialog
+ */
+export interface BulkCategoryDialogProps {
+  open: boolean;
+  count: number;
+  categories: Category[];
+  onConfirm: (categoryId: string) => void;
+  onCancel: () => void;
+}
+
+/**
+ * Props for the bulk export dialog
+ */
+export interface BulkExportDialogProps {
+  open: boolean;
+  count: number;
+  onConfirm: (format: 'json' | 'csv') => void;
+  onCancel: () => void;
+}
+
+/**
+ * Props for the bulk actions toolbar component
+ */
+export interface BulkActionsToolbarProps {
+  selectedCount: number;
+  onBulkDelete: () => void;
+  onBulkCategoryChange: () => void;
+  onBulkExport: () => void;
+  onClearSelection: () => void;
 }
