@@ -1,7 +1,7 @@
 // File: src/components/TransactionList.tsx
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { Transaction, Category, Currency } from "@/types";
 import { format, parseISO } from "date-fns";
 import { formatCurrency, convertToIDR } from "@/lib/currency";
@@ -19,6 +19,13 @@ import { IconRenderer } from "@/components/icons/IconRenderer";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { EmptyState } from "@/components/ui/empty-state";
 import { TransactionFilters, FilterOptions } from "./TransactionFilters";
+import { useTransactionStore } from "@/stores/transactionStore";
+import { Checkbox } from "@/components/ui/checkbox";
+import { BulkActionsToolbar } from "@/components/BulkActionsToolbar";
+import { BulkDeleteDialog } from "@/components/BulkDeleteDialog";
+import { BulkCategoryDialog } from "@/components/BulkCategoryDialog";
+import { BulkExportDialog } from "@/components/BulkExportDialog";
+import { useToast } from "@/hooks/use-toast";
 
 interface TransactionListProps {
   transactions: Transaction[];
@@ -50,6 +57,22 @@ export function TransactionList({
     amountMax: "",
   });
 
+  // Get selection state and methods from store
+  const selectedTransactionIds = useTransactionStore((state) => state.selectedTransactionIds);
+  const toggleTransaction = useTransactionStore((state) => state.toggleTransaction);
+  const selectAll = useTransactionStore((state) => state.selectAll);
+  const clearSelection = useTransactionStore((state) => state.clearSelection);
+  const bulkDelete = useTransactionStore((state) => state.bulkDelete);
+  const bulkUpdateCategory = useTransactionStore((state) => state.bulkUpdateCategory);
+  const bulkExport = useTransactionStore((state) => state.bulkExport);
+
+  // Dialog state management
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
+  const [exportDialogOpen, setExportDialogOpen] = useState(false);
+
+  const { toast } = useToast();
+
   const handleResetFilters = () => {
     setFilters({
       searchQuery: "",
@@ -69,25 +92,25 @@ export function TransactionList({
     setCurrentPage(1);
   };
 
-  // Helper functions
-  const getCategoryName = useMemo(
-    () => (categoryId: string) => {
+  // Helper functions with useCallback for better performance
+  const getCategoryName = useCallback(
+    (categoryId: string) => {
       const category = categories.find((c) => c.id === categoryId);
       return category?.name || "Unknown";
     },
     [categories]
   );
 
-  const getCategoryColor = useMemo(
-    () => (categoryId: string) => {
+  const getCategoryColor = useCallback(
+    (categoryId: string) => {
       const category = categories.find((c) => c.id === categoryId);
       return category?.color || "#64748b";
     },
     [categories]
   );
 
-  const getCategoryIcon = useMemo(
-    () => (categoryId: string) => {
+  const getCategoryIcon = useCallback(
+    (categoryId: string) => {
       const category = categories.find((c) => c.id === categoryId);
       return category?.icon || "Circle";
     },
@@ -166,12 +189,115 @@ export function TransactionList({
 
       return timestampB - timestampA;
     });
-  }, [transactions, filters, exchangeRates, categories, getCategoryName]);
+  }, [transactions, filters, exchangeRates, getCategoryName]);
 
   const totalPages = Math.ceil(filteredAndSortedTransactions.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
   const currentTransactions = filteredAndSortedTransactions.slice(startIndex, endIndex);
+
+  // Calculate "Select All" checkbox state
+  // Use ALL filtered transactions, not just current page
+  const filteredTransactionIds = filteredAndSortedTransactions.map((t) => t.id);
+  const selectedFilteredCount = filteredTransactionIds.filter((id) => 
+    selectedTransactionIds.has(id)
+  ).length;
+  
+  const isAllSelected = filteredTransactionIds.length > 0 && 
+    selectedFilteredCount === filteredTransactionIds.length;
+  const isIndeterminate = selectedFilteredCount > 0 && 
+    selectedFilteredCount < filteredTransactionIds.length;
+
+  // Handle "Select All" checkbox
+  const handleSelectAll = () => {
+    if (isAllSelected) {
+      clearSelection();
+    } else {
+      // Select all filtered transactions, not just current page
+      selectAll(filteredTransactionIds);
+    }
+  };
+
+  // Bulk operation handlers
+  const handleBulkDelete = () => {
+    setDeleteDialogOpen(true);
+  };
+
+  const handleBulkDeleteConfirm = () => {
+    const selectedIds = Array.from(selectedTransactionIds);
+    bulkDelete(selectedIds);
+    setDeleteDialogOpen(false);
+    
+    toast({
+      title: "Transactions deleted",
+      description: `Successfully deleted ${selectedIds.length} ${selectedIds.length === 1 ? 'transaction' : 'transactions'}.`,
+    });
+  };
+
+  const handleBulkCategoryChange = () => {
+    setCategoryDialogOpen(true);
+  };
+
+  const handleBulkCategoryConfirm = (categoryId: string) => {
+    const selectedIds = Array.from(selectedTransactionIds);
+    
+    try {
+      bulkUpdateCategory(selectedIds, categoryId);
+      setCategoryDialogOpen(false);
+      
+      const categoryName = categories.find((c) => c.id === categoryId)?.name || "Unknown";
+      toast({
+        title: "Category updated",
+        description: `Successfully updated ${selectedIds.length} ${selectedIds.length === 1 ? 'transaction' : 'transactions'} to ${categoryName}.`,
+      });
+    } catch (error) {
+      setCategoryDialogOpen(false);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to update category",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleBulkExport = () => {
+    setExportDialogOpen(true);
+  };
+
+  const handleBulkExportConfirm = (format: 'json' | 'csv') => {
+    const selectedIds = Array.from(selectedTransactionIds);
+    
+    try {
+      const exportData = bulkExport(selectedIds, format);
+      
+      // Trigger browser download
+      const blob = new Blob([exportData], { 
+        type: format === 'json' ? 'application/json' : 'text/csv' 
+      });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `transactions-export-${new Date().toISOString().split('T')[0]}.${format}`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+      setExportDialogOpen(false);
+      
+      toast({
+        title: "Export successful",
+        description: `Successfully exported ${selectedIds.length} ${selectedIds.length === 1 ? 'transaction' : 'transactions'} as ${format.toUpperCase()}.`,
+      });
+    } catch (error) {
+      setExportDialogOpen(false);
+      toast({
+        title: "Export failed",
+        description: error instanceof Error ? error.message : "Failed to generate export file",
+        variant: "destructive",
+      });
+    }
+  };
 
   // Show loading state
   if (isLoading) {
@@ -205,6 +331,40 @@ export function TransactionList({
         onReset={handleResetFilters}
       />
 
+      {/* Bulk Actions Toolbar */}
+      <BulkActionsToolbar
+        selectedCount={selectedFilteredCount}
+        onBulkDelete={handleBulkDelete}
+        onBulkCategoryChange={handleBulkCategoryChange}
+        onBulkExport={handleBulkExport}
+        onClearSelection={clearSelection}
+      />
+
+      {/* Bulk Delete Dialog */}
+      <BulkDeleteDialog
+        open={deleteDialogOpen}
+        count={selectedFilteredCount}
+        onConfirm={handleBulkDeleteConfirm}
+        onCancel={() => setDeleteDialogOpen(false)}
+      />
+
+      {/* Bulk Category Dialog */}
+      <BulkCategoryDialog
+        open={categoryDialogOpen}
+        count={selectedFilteredCount}
+        categories={categories}
+        onConfirm={handleBulkCategoryConfirm}
+        onCancel={() => setCategoryDialogOpen(false)}
+      />
+
+      {/* Bulk Export Dialog */}
+      <BulkExportDialog
+        open={exportDialogOpen}
+        count={selectedFilteredCount}
+        onConfirm={handleBulkExportConfirm}
+        onCancel={() => setExportDialogOpen(false)}
+      />
+
       {/* No Results State */}
       {hasNoResults ? (
         <EmptyState
@@ -224,6 +384,14 @@ export function TransactionList({
         <Table>
           <TableHeader>
             <TableRow className="hover:bg-muted/50 transition-colors">
+              <TableHead className="w-12">
+                <Checkbox
+                  checked={isAllSelected}
+                  indeterminate={isIndeterminate}
+                  onCheckedChange={handleSelectAll}
+                  aria-label="Select all transactions"
+                />
+              </TableHead>
               <TableHead className="whitespace-nowrap">Date</TableHead>
               <TableHead className="whitespace-nowrap">Description</TableHead>
               <TableHead className="whitespace-nowrap">Category</TableHead>
@@ -233,12 +401,23 @@ export function TransactionList({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {currentTransactions.map((transaction, index) => (
-              <TableRow 
-                key={transaction.id}
-                className="hover:bg-muted/50 transition-all duration-200 animate-fade-in"
-                style={{ animationDelay: `${index * 0.05}s` }}
-              >
+            {currentTransactions.map((transaction, index) => {
+              const isSelected = selectedTransactionIds.has(transaction.id);
+              return (
+                <TableRow 
+                  key={transaction.id}
+                  className={`hover:bg-muted/50 transition-all duration-200 animate-fade-in ${
+                    isSelected ? "bg-muted/70" : ""
+                  }`}
+                  style={{ animationDelay: `${index * 0.05}s` }}
+                >
+                  <TableCell>
+                    <Checkbox
+                      checked={isSelected}
+                      onCheckedChange={() => toggleTransaction(transaction.id)}
+                      aria-label={`Select ${transaction.description} transaction`}
+                    />
+                  </TableCell>
                 <TableCell>
                   {format(parseISO(transaction.date), "MMM dd, yyyy")}
                 </TableCell>
@@ -326,36 +505,49 @@ export function TransactionList({
                   </div>
                 </TableCell>
               </TableRow>
-            ))}
+            );
+            })}
           </TableBody>
         </Table>
       </div>
 
       {/* Mobile Card View */}
       <div className="md:hidden stack-spacing-sm">
-        {currentTransactions.map((transaction, index) => (
-          <div
-            key={transaction.id}
-            className="border rounded-lg p-4 stack-spacing-sm hover:bg-muted/50 transition-all duration-200 animate-fade-in"
-            style={{ animationDelay: `${index * 0.05}s` }}
-          >
-            <div className="flex items-start justify-between gap-2">
-              <div className="flex-1 min-w-0">
-                <div className="font-medium text-sm truncate">{transaction.description}</div>
-                <div className="text-xs text-muted-foreground mt-1">
-                  {format(parseISO(transaction.date), "MMM dd, yyyy")}
-                </div>
-              </div>
-              <span
-                className={`capitalize px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${
-                  transaction.type === "income"
-                    ? "bg-income text-income border border-income"
-                    : "bg-expense text-expense border border-expense"
-                }`}
-              >
-                {transaction.type}
-              </span>
-            </div>
+        {currentTransactions.map((transaction, index) => {
+          const isSelected = selectedTransactionIds.has(transaction.id);
+          return (
+            <div
+              key={transaction.id}
+              className={`border rounded-lg p-4 stack-spacing-sm hover:bg-muted/50 transition-all duration-200 animate-fade-in ${
+                isSelected ? "bg-muted/70" : ""
+              }`}
+              style={{ animationDelay: `${index * 0.05}s` }}
+            >
+              <div className="flex items-start gap-3">
+                <Checkbox
+                  checked={isSelected}
+                  onCheckedChange={() => toggleTransaction(transaction.id)}
+                  aria-label={`Select ${transaction.description} transaction`}
+                  className="mt-1"
+                />
+                <div className="flex-1 min-w-0 stack-spacing-sm">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex-1 min-w-0">
+                      <div className="font-medium text-sm truncate">{transaction.description}</div>
+                      <div className="text-xs text-muted-foreground mt-1">
+                        {format(parseISO(transaction.date), "MMM dd, yyyy")}
+                      </div>
+                    </div>
+                    <span
+                      className={`capitalize px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${
+                        transaction.type === "income"
+                          ? "bg-income text-income border border-income"
+                          : "bg-expense text-expense border border-expense"
+                      }`}
+                    >
+                      {transaction.type}
+                    </span>
+                  </div>
 
             <div className="flex items-center gap-2">
               <IconRenderer 
@@ -424,8 +616,11 @@ export function TransactionList({
                 </Button>
               </div>
             </div>
-          </div>
-        ))}
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       {totalPages > 1 && (

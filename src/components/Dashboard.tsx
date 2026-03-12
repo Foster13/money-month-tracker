@@ -2,6 +2,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter, usePathname } from "next/navigation";
 import { useTransactionStore } from "@/stores/transactionStore";
@@ -12,22 +13,54 @@ import { FloatingNavbar } from "./FloatingNavbar";
 import { TransactionForm } from "./TransactionForm";
 import { TransactionList } from "./TransactionList";
 import { Summary } from "./Summary";
-import { CategoryManager } from "./CategoryManager";
-import { DataControls } from "./DataControls";
-import { FinanceChart } from "./FinanceChart";
-import { SimulationMode } from "./SimulationMode";
-import { ExchangeRateDisplay } from "./ExchangeRateDisplay";
-import { ExpensesSection } from "./ExpensesSection";
-import { IncomeSection } from "./IncomeSection";
-import { BudgetSection } from "./BudgetSection";
-import { NotesSection } from "./NotesSection";
-import { AnimatedThemeToggle } from "./AnimatedThemeToggle";
 import { Icon } from "./icons/Icon";
 import { ConfirmDialog } from "./ui/confirm-dialog";
 import { UndoRedoControls } from "./UndoRedoControls";
 import { Transaction } from "@/types";
 import { fetchExchangeRates } from "@/lib/currency";
 import { useToast } from "@/hooks/use-toast";
+
+// Lazy load komponen yang tidak langsung terlihat
+const CategoryManager = dynamic(() => import("./CategoryManager").then(mod => ({ default: mod.CategoryManager })), {
+  loading: () => <div className="animate-pulse h-32 bg-muted rounded-lg" />,
+});
+
+const DataControls = dynamic(() => import("./DataControls").then(mod => ({ default: mod.DataControls })), {
+  loading: () => <div className="animate-pulse h-20 bg-muted rounded-lg" />,
+});
+
+const FinanceChart = dynamic(() => import("./FinanceChart").then(mod => ({ default: mod.FinanceChart })), {
+  loading: () => <div className="animate-pulse h-64 bg-muted rounded-lg" />,
+});
+
+const SimulationMode = dynamic(() => import("./SimulationMode").then(mod => ({ default: mod.SimulationMode })), {
+  loading: () => <div className="animate-pulse h-40 bg-muted rounded-lg" />,
+});
+
+const ExchangeRateDisplay = dynamic(() => import("./ExchangeRateDisplay").then(mod => ({ default: mod.ExchangeRateDisplay })), {
+  loading: () => <div className="animate-pulse h-24 bg-muted rounded-lg" />,
+});
+
+const ExpensesSection = dynamic(() => import("./ExpensesSection").then(mod => ({ default: mod.ExpensesSection })), {
+  loading: () => <div className="animate-pulse h-96 bg-muted rounded-lg" />,
+});
+
+const IncomeSection = dynamic(() => import("./IncomeSection").then(mod => ({ default: mod.IncomeSection })), {
+  loading: () => <div className="animate-pulse h-96 bg-muted rounded-lg" />,
+});
+
+const BudgetSection = dynamic(() => import("./BudgetSection").then(mod => ({ default: mod.BudgetSection })), {
+  loading: () => <div className="animate-pulse h-96 bg-muted rounded-lg" />,
+});
+
+const NotesSection = dynamic(() => import("./NotesSection").then(mod => ({ default: mod.NotesSection })), {
+  loading: () => <div className="animate-pulse h-96 bg-muted rounded-lg" />,
+});
+
+const AnimatedThemeToggle = dynamic(() => import("./AnimatedThemeToggle").then(mod => ({ default: mod.AnimatedThemeToggle })), {
+  ssr: false,
+  loading: () => <div className="w-10 h-10 bg-muted rounded-full animate-pulse" />,
+});
 import { startOfMonth, endOfMonth, parseISO } from "date-fns";
 
 interface DashboardProps {

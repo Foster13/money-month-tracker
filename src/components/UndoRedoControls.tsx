@@ -21,11 +21,19 @@ export function UndoRedoControls() {
       if ((e.ctrlKey || e.metaKey) && e.key === "z" && !e.shiftKey) {
         e.preventDefault();
         if (canUndo) {
-          undo();
-          toast({
-            title: "Undo",
-            description: "Action undone successfully",
-          });
+          try {
+            undo();
+            toast({
+              title: "Undo",
+              description: "Action undone successfully",
+            });
+          } catch (error) {
+            toast({
+              title: "Undo failed",
+              description: error instanceof Error ? error.message : "Failed to undo operation",
+              variant: "destructive",
+            });
+          }
         }
       }
       
@@ -36,11 +44,19 @@ export function UndoRedoControls() {
       ) {
         e.preventDefault();
         if (canRedo) {
-          redo();
-          toast({
-            title: "Redo",
-            description: "Action redone successfully",
-          });
+          try {
+            redo();
+            toast({
+              title: "Redo",
+              description: "Action redone successfully",
+            });
+          } catch (error) {
+            toast({
+              title: "Redo failed",
+              description: error instanceof Error ? error.message : "Failed to redo operation",
+              variant: "destructive",
+            });
+          }
         }
       }
     };
@@ -50,19 +66,35 @@ export function UndoRedoControls() {
   }, [canUndo, canRedo, undo, redo, toast]);
 
   const handleUndo = () => {
-    undo();
-    toast({
-      title: "Undo",
-      description: "Action undone successfully",
-    });
+    try {
+      undo();
+      toast({
+        title: "Undo",
+        description: "Action undone successfully",
+      });
+    } catch (error) {
+      toast({
+        title: "Undo failed",
+        description: error instanceof Error ? error.message : "Failed to undo operation",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleRedo = () => {
-    redo();
-    toast({
-      title: "Redo",
-      description: "Action redone successfully",
-    });
+    try {
+      redo();
+      toast({
+        title: "Redo",
+        description: "Action redone successfully",
+      });
+    } catch (error) {
+      toast({
+        title: "Redo failed",
+        description: error instanceof Error ? error.message : "Failed to redo operation",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
