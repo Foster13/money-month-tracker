@@ -15,7 +15,6 @@ export const NAV_ITEMS: NavItem[] = [
   { name: "Budget", icon: "budget", value: "budget", path: ROUTES.BUDGET },
   { name: "Rates", icon: "rates", value: "rates", path: ROUTES.RATES },
   { name: "Sim", icon: "simulation", value: "simulation", path: ROUTES.SIMULATION },
-  { name: "Notes", icon: "notes", value: "notes", path: ROUTES.NOTES },
 ] as const;
 
 export const PATH_TO_TAB_MAP: Record<string, string> = {
@@ -25,7 +24,6 @@ export const PATH_TO_TAB_MAP: Record<string, string> = {
   [ROUTES.BUDGET]: "budget",
   [ROUTES.RATES]: "rates",
   [ROUTES.SIMULATION]: "simulation",
-  [ROUTES.NOTES]: "notes",
 };
 
 export const TAB_TO_PATH_MAP: Record<string, string> = {
@@ -35,5 +33,4 @@ export const TAB_TO_PATH_MAP: Record<string, string> = {
   budget: ROUTES.BUDGET,
   rates: ROUTES.RATES,
   simulation: ROUTES.SIMULATION,
-  notes: ROUTES.NOTES,
 };
