@@ -30,3 +30,31 @@ export const categorySchema = z.object({
 });
 
 export type CategoryFormData = z.infer<typeof categorySchema>;
+
+/**
+ * Zod schemas for data import validation
+ */
+export const transactionImportSchema = z.object({
+  id: z.string(),
+  amount: z.number(),
+  currency: z.enum(["IDR", "USD", "SGD", "GBP", "EUR", "JPY", "AUD", "CNY"]),
+  categoryId: z.string(),
+  date: z.string(),
+  description: z.string(),
+  type: z.enum(["income", "expense"]),
+});
+
+export const categoryImportSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  type: z.enum(["income", "expense"]),
+  color: z.string().optional(),
+  icon: z.string().optional(),
+});
+
+export const importDataSchema = z.object({
+  transactions: z.array(transactionImportSchema),
+  categories: z.array(categoryImportSchema),
+  exchangeRates: z.record(z.string(), z.number()).optional(),
+  lastRateUpdate: z.string().nullable().optional(),
+});

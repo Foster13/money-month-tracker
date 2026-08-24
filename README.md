@@ -5,6 +5,7 @@ A modern Personal Finance Management web application built with Next.js 14. Trac
 ## ✨ Features
 
 ### 💰 Financial Tracking
+
 - ✅ Track income and expenses with customizable categories
 - ✅ **Multi-currency support** (IDR, USD, SGD, GBP, EUR, JPY, AUD, CNY)
 - ✅ **Real-time exchange rates** with automatic IDR conversion
@@ -13,6 +14,7 @@ A modern Personal Finance Management web application built with Next.js 14. Trac
 - ✅ **Bulk operations** - Select and manage multiple transactions at once
 
 ### 🎯 Advanced Features
+
 - ✅ **Dedicated Income & Expenses sections** with 6 sorting options
 - ✅ **Budget tracking** with progress monitoring and alerts
 - ✅ **Top 3 categories analysis** for spending insights
@@ -23,6 +25,7 @@ A modern Personal Finance Management web application built with Next.js 14. Trac
 - ✅ **Dark mode** support with smooth transitions
 
 ### 🚀 Bulk Operations
+
 - ✅ Select multiple transactions with checkboxes
 - ✅ Bulk delete with confirmation
 - ✅ Bulk category change
@@ -31,10 +34,11 @@ A modern Personal Finance Management web application built with Next.js 14. Trac
 - ✅ Full keyboard accessibility
 
 ### 🔧 Technical Features
+
 - ✅ **Progressive Web App (PWA)** - Install on any device
-- ✅ **Offline support** with service workers
-- ✅ **Client-side only** - No backend required
-- ✅ **localStorage persistence** - Your data stays private
+- ✅ **Offline-First Architecture** - Works flawlessly with spotty connections via service workers
+- ✅ **Cloud Sync & Auth** - Powered by Supabase PostgreSQL for seamless cross-device access
+- ✅ **Optimistic UI** - Interactions feel instantaneous while syncing in the background
 - ✅ **Form validation** with Zod schemas
 - ✅ **Toast notifications** for user feedback
 - ✅ **Responsive design** - Works on mobile, tablet, and desktop
@@ -43,29 +47,33 @@ A modern Personal Finance Management web application built with Next.js 14. Trac
 ## 🚀 Quick Start
 
 ### Prerequisites
+
 - Node.js 18 or higher
 - npm or yarn
 
 ### Installation
 
 1. **Clone the repository**
+
 ```bash
 git clone https://github.com/yourusername/personal-finance-manager.git
 cd personal-finance-manager
 ```
 
 2. **Install dependencies**
+
 ```bash
 npm install
 ```
 
 3. **Run development server**
+
 ```bash
 npm run dev
 ```
 
 4. **Open browser**
-Navigate to [http://localhost:3000](http://localhost:3000)
+   Navigate to [http://localhost:3000](http://localhost:3000)
 
 ### Production Build
 
@@ -80,7 +88,8 @@ npm start
 - **Language**: [TypeScript](https://www.typescriptlang.org/) (strict mode)
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/)
 - **UI Components**: [Shadcn/UI](https://ui.shadcn.com/) (Radix UI)
-- **State Management**: [Zustand](https://docs.pmnd.rs/zustand) with localStorage
+- **Database & Auth**: [Supabase](https://supabase.com/) (PostgreSQL)
+- **State Management**: [Zustand](https://docs.pmnd.rs/zustand) (Optimistic UI + LocalStorage)
 - **Form Handling**: [React Hook Form](https://react-hook-form.com/) + [Zod](https://zod.dev/)
 - **Charts**: [Recharts](https://recharts.org/)
 - **Date Handling**: [date-fns](https://date-fns.org/)
@@ -91,29 +100,34 @@ npm start
 ## 🎯 Usage Guide
 
 ### Adding Transactions
+
 1. Click "Add Transaction" button
 2. Fill in amount, description, category, and date
 3. Select currency (optional, defaults to IDR)
 4. Click "Add" to save
 
 ### Bulk Operations
+
 1. Select transactions using checkboxes
 2. Use "Select All" to select all filtered transactions
 3. Click bulk action buttons (Delete, Category, Export)
 4. Confirm your action in the dialog
 
 ### Managing Budget
+
 1. Navigate to Budget section
 2. Set your monthly budget
 3. Track spending progress with visual indicators
 4. View top spending categories
 
 ### Exchange Rates
+
 1. Navigate to Rates section
 2. Click "Update Rates" to fetch latest rates
 3. All transactions automatically convert to IDR
 
 ### Data Export/Import
+
 1. Go to Settings or Data Controls
 2. Click "Export Data" to download JSON backup
 3. Click "Import Data" to restore from backup
@@ -150,24 +164,28 @@ personal-finance-manager/
 ## 🐛 Troubleshooting
 
 ### TypeScript Errors
+
 ```bash
 npm install  # Install all dependencies
 ```
 
 ### Build Errors
+
 Ensure Node.js version:
+
 ```bash
 node --version  # Should be >= 18
 ```
 
 ### Missing Dependencies
+
 ```bash
 rm -rf node_modules package-lock.json
 npm install
 ```
 
-## 🔒 Privacy
+## 🔒 Privacy & Data Sync
 
-All data is stored locally in your browser's localStorage. No data is sent to any server. Your financial information stays completely private.
+Your data operates **offline-first** using local storage for instant load times, and securely syncs to your personal cloud account (powered by Supabase) when online. This ensures your financial information is backed up and accessible across all your devices while remaining private and secured by robust Authentication.
 
 ---

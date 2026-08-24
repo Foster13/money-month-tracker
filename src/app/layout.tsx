@@ -1,20 +1,15 @@
 // File: src/app/layout.tsx
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
-import { ThemeProvider } from "@/components/theme-provider";
-import { GradientBackground } from "@/components/GradientBackground";
-import { ThemeTransition } from "@/components/ThemeTransition";
-import { InstallPWA } from "@/components/InstallPWA";
+import { ThemeProvider } from "@/components/layout/theme-provider";
+import { InstallPWA } from "@/components/layout/InstallPWA";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/layout/AppSidebar";
+import { AuthGuard } from "@/components/auth/AuthGuard";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
-
-const inter = Inter({ 
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
-});
+import { StoreInitializer } from "@/components/layout/StoreInitializer";
 
 export const metadata: Metadata = {
   title: "Personal Finance Manager",
@@ -55,38 +50,37 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-title" content="Finance App" />
         <meta name="format-detection" content="telephone=no" />
         <meta name="mobile-web-app-capable" content="yes" />
-        <meta name="theme-color" content="#FF69B4" />
-        
+        <meta name="theme-color" content="#fff0f5" media="(prefers-color-scheme: light)" />
+        <meta name="theme-color" content="#1a0f14" media="(prefers-color-scheme: dark)" />
+
         <link rel="apple-touch-icon" sizes="180x180" href="/icon-192x192.png" />
         <link rel="icon" type="image/png" sizes="32x32" href="/icon-192x192.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/icon-192x192.png" />
         <link rel="manifest" href="/manifest.json" />
       </head>
-      <body className={inter.className}>
+      {/* ponytail: removed next/font/google bloat, using native system fonts */}
+      <body className="font-sans antialiased text-foreground bg-background">
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
           enableSystem={false}
           disableTransitionOnChange
         >
-          <ThemeTransition>
-            <div className="relative min-h-screen overflow-x-hidden max-w-full">
-              {/* Animated gradient background - only visible in light mode */}
-              <div className="dark:hidden">
-                <GradientBackground />
-              </div>
-              {children}
-            </div>
-          </ThemeTransition>
+          {/* ponytail: removed ThemeTransition bloat */}
+          <AuthGuard>
+            <StoreInitializer>
+              <SidebarProvider>
+                <AppSidebar />
+                <div className="relative min-h-screen overflow-x-hidden max-w-full flex-1 w-full flex flex-col">
+                  {children}
+                </div>
+              </SidebarProvider>
+            </StoreInitializer>
+          </AuthGuard>
           <InstallPWA />
           <Toaster />
-          <SpeedInsights 
-            debug={process.env.NODE_ENV === 'production'}
-            sampleRate={1}
-          />
-          <Analytics 
-            debug={process.env.NODE_ENV === 'production'}
-          />
+          <SpeedInsights debug={process.env.NODE_ENV === "production"} sampleRate={1} />
+          <Analytics debug={process.env.NODE_ENV === "production"} />
         </ThemeProvider>
       </body>
     </html>

@@ -83,3 +83,7 @@ Thumbs.db
 # package-lock.json
 # yarn.lock
 # pnpm-lock.yaml
+
+# AI Agent Skills (Local only, YAGNI for production repo)
+.agents/
+skills-lock.json

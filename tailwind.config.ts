@@ -25,13 +25,10 @@ const config = {
         "2xl": "1400px",
       },
     },
-    // Override default breakpoints with design tokens
     screens: breakpoints,
     extend: {
-      // Design token colors
       colors: {
         ...colors,
-        // Preserve existing CSS variable-based colors for shadcn/ui compatibility
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -66,28 +63,31 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        sidebar: {
+          DEFAULT: "hsl(var(--sidebar-background))",
+          foreground: "hsl(var(--sidebar-foreground))",
+          primary: "hsl(var(--sidebar-primary))",
+          "primary-foreground": "hsl(var(--sidebar-primary-foreground))",
+          accent: "hsl(var(--sidebar-accent))",
+          "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
+          border: "hsl(var(--sidebar-border))",
+          ring: "hsl(var(--sidebar-ring))",
+        },
       },
-      // Design token spacing
       spacing: spacing,
-      // Design token typography
       fontFamily: typography.fontFamily,
       fontSize: typography.fontSize,
       fontWeight: typography.fontWeight,
       lineHeight: typography.lineHeight,
-      // Design token border radius
       borderRadius: {
         ...borderRadius,
-        // Preserve existing CSS variable-based radius
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
-      // Design token shadows
       boxShadow: shadows,
-      // Design token transitions
       transitionDuration: transitions.duration,
       transitionTimingFunction: transitions.timing,
-      // Design token z-index
       zIndex: zIndex,
     },
   },

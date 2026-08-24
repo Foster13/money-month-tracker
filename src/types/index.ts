@@ -68,7 +68,8 @@ export interface TransactionState {
   clearSelection: () => void;
   bulkDelete: (ids: string[]) => void;
   bulkUpdateCategory: (ids: string[], categoryId: string) => void;
-  bulkExport: (ids: string[], format: 'json' | 'csv') => string;
+  bulkExport: (ids: string[], format: "json" | "csv") => string;
+  fetchData: () => Promise<void>;
 }
 
 /**
@@ -111,7 +112,7 @@ export interface BulkCategoryDialogProps {
 export interface BulkExportDialogProps {
   open: boolean;
   count: number;
-  onConfirm: (format: 'json' | 'csv') => void;
+  onConfirm: (format: "json" | "csv") => void;
   onCancel: () => void;
 }
 

@@ -30,9 +30,7 @@ export const useSimulationStore = create<SimulationState>((set, get) => ({
 
   updateTransaction: (id, updates) => {
     set((state) => ({
-      transactions: state.transactions.map((t) =>
-        t.id === id ? { ...t, ...updates } : t
-      ),
+      transactions: state.transactions.map((t) => (t.id === id ? { ...t, ...updates } : t)),
     }));
   },
 

@@ -1,16 +1,16 @@
 // File: src/hooks/useTransactions.ts
-import { useTransactionStore } from '@/stores/transactionStore';
-import { Transaction } from '@/types';
-import { useToast } from './use-toast';
+import { useTransactionStore } from "@/stores/transactionStore";
+import { Transaction } from "@/types";
+import { useToast } from "./use-toast";
 
 export function useTransactions() {
   const { toast } = useToast();
-  
+
   const transactions = useTransactionStore((state) => state.transactions);
   const categories = useTransactionStore((state) => state.categories);
   const exchangeRates = useTransactionStore((state) => state.exchangeRates);
   const lastRateUpdate = useTransactionStore((state) => state.lastRateUpdate);
-  
+
   const addTransaction = useTransactionStore((state) => state.addTransaction);
   const updateTransaction = useTransactionStore((state) => state.updateTransaction);
   const deleteTransaction = useTransactionStore((state) => state.deleteTransaction);
@@ -20,28 +20,28 @@ export function useTransactions() {
   const exportData = useTransactionStore((state) => state.exportData);
   const importData = useTransactionStore((state) => state.importData);
 
-  const handleAddTransaction = (data: Omit<Transaction, 'id'>) => {
+  const handleAddTransaction = (data: Omit<Transaction, "id">) => {
     addTransaction(data);
     toast({
-      title: 'Success',
-      description: 'Transaction added successfully',
+      title: "Success",
+      description: "Transaction added successfully",
     });
   };
 
   const handleUpdateTransaction = (id: string, data: Partial<Transaction>) => {
     updateTransaction(id, data);
     toast({
-      title: 'Success',
-      description: 'Transaction updated successfully',
+      title: "Success",
+      description: "Transaction updated successfully",
     });
   };
 
   const handleDeleteTransaction = (id: string) => {
-    if (confirm('Are you sure you want to delete this transaction?')) {
+    if (confirm("Are you sure you want to delete this transaction?")) {
       deleteTransaction(id);
       toast({
-        title: 'Success',
-        description: 'Transaction deleted successfully',
+        title: "Success",
+        description: "Transaction deleted successfully",
       });
     }
   };
@@ -50,14 +50,14 @@ export function useTransactions() {
     try {
       importData(jsonData);
       toast({
-        title: 'Success',
-        description: 'Data imported successfully',
+        title: "Success",
+        description: "Data imported successfully",
       });
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to import data',
-        variant: 'destructive',
+        title: "Error",
+        description: "Failed to import data",
+        variant: "destructive",
       });
       throw error;
     }
@@ -69,7 +69,7 @@ export function useTransactions() {
     categories,
     exchangeRates,
     lastRateUpdate,
-    
+
     // Actions
     addTransaction: handleAddTransaction,
     updateTransaction: handleUpdateTransaction,

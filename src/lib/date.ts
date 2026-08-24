@@ -1,6 +1,6 @@
 // File: src/lib/date.ts
-import { startOfMonth, endOfMonth, parseISO, format } from 'date-fns';
-import { Transaction } from '@/types';
+import { startOfMonth, endOfMonth, parseISO, format } from "date-fns";
+import { Transaction } from "@/types";
 
 /**
  * Get transactions for current month
@@ -37,16 +37,16 @@ export function getMonthTransactions(
  * Format date for display
  */
 export function formatDisplayDate(date: string | Date): string {
-  const dateObj = typeof date === 'string' ? parseISO(date) : date;
-  return format(dateObj, 'MMM dd, yyyy');
+  const dateObj = typeof date === "string" ? parseISO(date) : date;
+  return format(dateObj, "MMM dd, yyyy");
 }
 
 /**
  * Format date for input
  */
 export function formatInputDate(date: string | Date): string {
-  const dateObj = typeof date === 'string' ? parseISO(date) : date;
-  return format(dateObj, 'yyyy-MM-dd');
+  const dateObj = typeof date === "string" ? parseISO(date) : date;
+  return format(dateObj, "yyyy-MM-dd");
 }
 
 /**
@@ -54,7 +54,7 @@ export function formatInputDate(date: string | Date): string {
  */
 export function getMonthName(month: number): string {
   const date = new Date(2000, month, 1);
-  return format(date, 'MMMM');
+  return format(date, "MMMM");
 }
 
 /**
@@ -69,7 +69,7 @@ export function getLastNMonths(n: number): Array<{ year: number; month: number; 
     months.push({
       year: date.getFullYear(),
       month: date.getMonth(),
-      label: format(date, 'MMM yyyy'),
+      label: format(date, "MMM yyyy"),
     });
   }
 

@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import React from 'react';
+import React from "react";
 
 export default function ColorTestPage() {
   return (
     <div className="container-spacing py-8">
       <h1 className="text-heading-lg mb-8">Semantic Color Classes Test</h1>
-      
+
       <div className="stack-spacing-lg">
         {/* Income Colors */}
         <section className="card-base card-padding">
@@ -23,9 +23,7 @@ export default function ColorTestPage() {
               <span className="text-caption">(.bg-income .border-income)</span>
             </div>
             <div className="flex items-center gap-4">
-              <div className="border-income border-2 px-4 py-2 rounded">
-                Income Border Only
-              </div>
+              <div className="border-income border-2 px-4 py-2 rounded">Income Border Only</div>
               <span className="text-caption">(.border-income)</span>
             </div>
           </div>
@@ -46,9 +44,7 @@ export default function ColorTestPage() {
               <span className="text-caption">(.bg-expense .border-expense)</span>
             </div>
             <div className="flex items-center gap-4">
-              <div className="border-expense border-2 px-4 py-2 rounded">
-                Expense Border Only
-              </div>
+              <div className="border-expense border-2 px-4 py-2 rounded">Expense Border Only</div>
               <span className="text-caption">(.border-expense)</span>
             </div>
           </div>
@@ -69,9 +65,7 @@ export default function ColorTestPage() {
               <span className="text-caption">(.bg-budget .border-budget)</span>
             </div>
             <div className="flex items-center gap-4">
-              <div className="border-budget border-2 px-4 py-2 rounded">
-                Budget Border Only
-              </div>
+              <div className="border-budget border-2 px-4 py-2 rounded">Budget Border Only</div>
               <span className="text-caption">(.border-budget)</span>
             </div>
           </div>
