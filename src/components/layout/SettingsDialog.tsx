@@ -92,11 +92,11 @@ export function SettingsDialog({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <div
-          className="flex items-center gap-2 pl-2 text-sm text-muted-foreground whitespace-nowrap cursor-pointer hover:text-foreground transition-colors"
+          className="flex items-center gap-2 pl-2 text-sm text-muted-foreground whitespace-nowrap cursor-pointer hover:text-foreground transition-colors group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:pl-0"
           title="Settings"
         >
-          <Settings className="w-5 h-5 flex-shrink-0" />
-          <span className="group-data-[collapsible=icon]:opacity-0 transition-opacity">
+          <Settings className="w-6 h-6 flex-shrink-0" />
+          <span className="group-data-[collapsible=icon]:opacity-0 transition-opacity group-data-[collapsible=icon]:hidden">
             Settings
           </span>
         </div>

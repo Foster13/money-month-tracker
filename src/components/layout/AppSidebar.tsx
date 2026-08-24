@@ -64,19 +64,19 @@ export function AppSidebar() {
     <Sidebar collapsible="icon">
       {/* Header */}
       <SidebarHeader className="p-2 border-b border-border/10 overflow-hidden">
-        <div className="flex items-center gap-2 pl-1">
+        <div className="flex items-center gap-2 pl-1 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:pl-0">
           {logoUrl ? (
             <img
               src={logoUrl}
               alt="Logo"
-              className="w-8 h-8 rounded-lg flex-shrink-0 object-cover"
+              className="w-10 h-10 rounded-lg flex-shrink-0 object-cover"
             />
           ) : (
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center flex-shrink-0 text-white font-bold">
+            <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center flex-shrink-0 text-white font-bold text-lg">
               MM
             </div>
           )}
-          <span className="font-semibold text-lg tracking-tight whitespace-nowrap group-data-[collapsible=icon]:opacity-0 transition-opacity">
+          <span className="font-semibold text-lg tracking-tight whitespace-nowrap group-data-[collapsible=icon]:opacity-0 transition-opacity group-data-[collapsible=icon]:hidden">
             {displayName}
           </span>
         </div>
@@ -95,11 +95,11 @@ export function AppSidebar() {
                     asChild
                     isActive={pathname === item.href}
                     tooltip={item.title}
-                    className="group-data-[collapsible=icon]:!w-10 group-data-[collapsible=icon]:!h-10 group-data-[collapsible=icon]:!p-2.5"
+                    className="group-data-[collapsible=icon]:!w-12 group-data-[collapsible=icon]:!h-12 group-data-[collapsible=icon]:!p-3 group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:justify-center"
                   >
                     <Link href={item.href} className="flex items-center gap-2">
-                      <item.icon className="flex-shrink-0 w-5 h-5" />
-                      <span className="whitespace-nowrap group-data-[collapsible=icon]:opacity-0 transition-opacity">
+                      <item.icon className="flex-shrink-0 w-6 h-6" />
+                      <span className="whitespace-nowrap group-data-[collapsible=icon]:opacity-0 transition-opacity group-data-[collapsible=icon]:hidden">
                         {item.title}
                       </span>
                     </Link>
@@ -122,15 +122,19 @@ export function AppSidebar() {
 
         <div
           onClick={handleLogout}
-          className="flex items-center gap-2 pl-2 text-sm text-red-500 whitespace-nowrap cursor-pointer hover:text-red-600 transition-colors"
+          className="flex items-center gap-2 pl-2 text-sm text-red-500 whitespace-nowrap cursor-pointer hover:text-red-600 transition-colors group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:pl-0"
           title="Logout"
         >
-          <LogOut className="w-5 h-5 flex-shrink-0" />
-          <span className="group-data-[collapsible=icon]:opacity-0 transition-opacity">Logout</span>
+          <LogOut className="w-6 h-6 flex-shrink-0" />
+          <span className="group-data-[collapsible=icon]:opacity-0 transition-opacity group-data-[collapsible=icon]:hidden">
+            Logout
+          </span>
         </div>
 
         {/* Toggle Sidebar Button */}
-        <SidebarTrigger className="ml-1" />
+        <div className="flex group-data-[collapsible=icon]:justify-center">
+          <SidebarTrigger className="ml-1 group-data-[collapsible=icon]:ml-0 group-data-[collapsible=icon]:w-8 group-data-[collapsible=icon]:h-8" />
+        </div>
       </SidebarFooter>
     </Sidebar>
   );
