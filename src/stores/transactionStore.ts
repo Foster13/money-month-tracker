@@ -158,15 +158,19 @@ export const useTransactionStore = create<ExtendedTransactionState>()((set, get)
 
     // Push to DB
     if (userId) {
+      // Ponytail: Strict serverless-style validation before pushing to DB
+      const { transactionSchema } = await import("@/lib/schemas");
+      const validTx = transactionSchema.parse(newTransaction);
+
       await supabase.from("transactions").insert({
         id: newTransaction.id,
         user_id: userId,
-        type: newTransaction.type,
-        amount: newTransaction.amount,
-        category: newTransaction.categoryId, // save UI categoryId to DB category column
-        description: newTransaction.description,
-        date: newTransaction.date,
-        currency: newTransaction.currency,
+        type: validTx.type,
+        amount: validTx.amount,
+        category: validTx.categoryId, // save UI categoryId to DB category column
+        description: validTx.description,
+        date: validTx.date,
+        currency: validTx.currency,
       });
     }
   },
