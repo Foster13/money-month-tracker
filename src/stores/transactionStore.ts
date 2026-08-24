@@ -99,325 +99,299 @@ const syncPreferencesToSupabase = async (state: any) => {
   });
 };
 
-export const useTransactionStore = create<ExtendedTransactionState>()(
-  persist(
-    (set, get) => ({
-      transactions: [],
-      categories: initializeDefaultCategories(),
-      exchangeRates: DEFAULT_EXCHANGE_RATES,
-      lastRateUpdate: null,
-      selectedTransactionIds: new Set<string>(),
+export const useTransactionStore = create<ExtendedTransactionState>()((set, get) => ({
+  transactions: [],
+  categories: initializeDefaultCategories(),
+  exchangeRates: DEFAULT_EXCHANGE_RATES,
+  lastRateUpdate: null,
+  selectedTransactionIds: new Set<string>(),
 
-      // ponytail: Fetch from Supabase
-      fetchData: async () => {
-        const userId = await getUserId();
-        if (!userId) return;
+  // ponytail: Fetch from Supabase
+  fetchData: async () => {
+    const userId = await getUserId();
+    if (!userId) return;
 
-        // Fetch transactions
-        const { data: txData } = await supabase
-          .from("transactions")
-          .select("*")
-          .eq("user_id", userId);
-        // Fetch preferences
-        const { data: prefData } = await supabase
-          .from("user_preferences")
-          .select("settings")
-          .eq("user_id", userId)
-          .single();
+    // Fetch transactions
+    const { data: txData } = await supabase.from("transactions").select("*").eq("user_id", userId);
+    // Fetch preferences
+    const { data: prefData } = await supabase
+      .from("user_preferences")
+      .select("settings")
+      .eq("user_id", userId)
+      .single();
 
-        if (txData || prefData) {
-          set((state) => ({
-            transactions: txData
-              ? txData.map((t: any) => ({
-                  id: t.id,
-                  amount: t.amount,
-                  currency: t.currency,
-                  categoryId: t.category, // Map DB category to UI categoryId
-                  date: t.date,
-                  description: t.description || "",
-                  type: t.type,
-                }))
-              : state.transactions,
-            categories: prefData?.settings?.categories || state.categories,
-            exchangeRates: prefData?.settings?.exchangeRates || state.exchangeRates,
-            lastRateUpdate: prefData?.settings?.lastRateUpdate || state.lastRateUpdate,
-          }));
-        } else {
-          // First time user, sync defaults
-          syncPreferencesToSupabase(get());
-        }
-      },
-
-      addTransaction: async (transaction) => {
-        const userId = await getUserId();
-        const newTransaction: Transaction = {
-          ...transaction,
-          id: crypto.randomUUID(), // DB uses UUID
-          currency: transaction.currency || "IDR",
-        };
-
-        // Optimistic UI
-        set((state) => ({ transactions: [...state.transactions, newTransaction] }));
-
-        // Push to DB
-        if (userId) {
-          await supabase.from("transactions").insert({
-            id: newTransaction.id,
-            user_id: userId,
-            type: newTransaction.type,
-            amount: newTransaction.amount,
-            category: newTransaction.categoryId, // save UI categoryId to DB category column
-            description: newTransaction.description,
-            date: newTransaction.date,
-            currency: newTransaction.currency,
-          });
-        }
-      },
-
-      updateTransaction: async (id, updates) => {
-        // Optimistic UI
-        set((state) => ({
-          transactions: state.transactions.map((t) => (t.id === id ? { ...t, ...updates } : t)),
-        }));
-
-        const userId = await getUserId();
-        if (userId) {
-          const t = get().transactions.find((t) => t.id === id);
-          if (t) {
-            await supabase
-              .from("transactions")
-              .update({
-                type: t.type,
-                amount: t.amount,
-                category: t.categoryId,
-                description: t.description,
-                date: t.date,
-                currency: t.currency,
-              })
-              .eq("id", id)
-              .eq("user_id", userId);
-          }
-        }
-      },
-
-      deleteTransaction: async (id) => {
-        // Optimistic UI
-        set((state) => {
-          const newSelection = new Set(state.selectedTransactionIds);
-          newSelection.delete(id);
-          return {
-            transactions: state.transactions.filter((t) => t.id !== id),
-            selectedTransactionIds: newSelection,
-          };
-        });
-
-        const userId = await getUserId();
-        if (userId) {
-          await supabase.from("transactions").delete().eq("id", id).eq("user_id", userId);
-        }
-      },
-
-      addCategory: (category) => {
-        const newCategory: Category = { ...category, id: generateId() };
-        set((state) => {
-          const newState = { categories: [...state.categories, newCategory] };
-          syncPreferencesToSupabase({ ...state, ...newState });
-          return newState;
-        });
-      },
-
-      updateCategory: (id, updates) => {
-        set((state) => {
-          const newState = {
-            categories: state.categories.map((c) => (c.id === id ? { ...c, ...updates } : c)),
-          };
-          syncPreferencesToSupabase({ ...state, ...newState });
-          return newState;
-        });
-      },
-
-      deleteCategory: (id) => {
-        set((state) => {
-          const newState = {
-            categories: state.categories.filter((c) => c.id !== id),
-            transactions: state.transactions.filter((t) => t.categoryId !== id),
-          };
-          syncPreferencesToSupabase({ ...state, ...newState });
-          return newState;
-        });
-      },
-
-      updateExchangeRates: (rates) => {
-        set((state) => {
-          const newState = { exchangeRates: rates, lastRateUpdate: new Date().toISOString() };
-          syncPreferencesToSupabase({ ...state, ...newState });
-          return newState;
-        });
-      },
-
-      exportData: () => {
-        const state = get();
-        return exportTransactionsData(
-          state.transactions,
-          state.categories,
-          state.exchangeRates,
-          state.lastRateUpdate
-        );
-      },
-
-      importData: (jsonData) => {
-        const data = importTransactionsData(jsonData);
-        set((state) => {
-          const newState = {
-            transactions: data.transactions,
-            categories: migrateCategories(data.categories),
-            exchangeRates:
-              (data.exchangeRates as Record<Currency, number>) || DEFAULT_EXCHANGE_RATES,
-            lastRateUpdate: data.lastRateUpdate || null,
-          };
-          syncPreferencesToSupabase(newState);
-          return newState;
-        });
-      },
-
-      selectTransaction: (id) => {
-        set((state) => {
-          const newSelection = new Set(state.selectedTransactionIds);
-          newSelection.add(id);
-          return { selectedTransactionIds: newSelection };
-        });
-      },
-
-      deselectTransaction: (id) => {
-        set((state) => {
-          const newSelection = new Set(state.selectedTransactionIds);
-          newSelection.delete(id);
-          return { selectedTransactionIds: newSelection };
-        });
-      },
-
-      toggleTransaction: (id) => {
-        set((state) => {
-          const newSelection = new Set(state.selectedTransactionIds);
-          if (newSelection.has(id)) newSelection.delete(id);
-          else newSelection.add(id);
-          return { selectedTransactionIds: newSelection };
-        });
-      },
-
-      selectAll: (ids) => {
-        set({ selectedTransactionIds: new Set(ids) });
-      },
-
-      clearSelection: () => {
-        set({ selectedTransactionIds: new Set<string>() });
-      },
-
-      bulkDelete: async (ids) => {
-        const state = get();
-        const validIds = ids.filter((id) => state.transactions.some((t) => t.id === id));
-        if (validIds.length === 0) return;
-
-        set((state) => ({
-          transactions: state.transactions.filter((t) => !validIds.includes(t.id)),
-          selectedTransactionIds: new Set<string>(),
-        }));
-
-        const userId = await getUserId();
-        if (userId) {
-          await supabase.from("transactions").delete().in("id", validIds).eq("user_id", userId);
-        }
-      },
-
-      bulkUpdateCategory: async (ids, categoryId) => {
-        const state = get();
-        const categoryExists = state.categories.some((c) => c.id === categoryId);
-        if (!categoryExists) throw new Error(`Category with ID "${categoryId}" does not exist`);
-
-        const validIds = ids.filter((id) => state.transactions.some((t) => t.id === id));
-        if (validIds.length === 0) return;
-
-        set((state) => ({
-          transactions: state.transactions.map((t) =>
-            validIds.includes(t.id) ? { ...t, categoryId } : t
-          ),
-          selectedTransactionIds: new Set<string>(),
-        }));
-
-        const userId = await getUserId();
-        if (userId) {
-          await supabase
-            .from("transactions")
-            .update({ category: categoryId })
-            .in("id", validIds)
-            .eq("user_id", userId);
-        }
-      },
-
-      bulkExport: (ids, format) => {
-        const state = get();
-        const validIds = ids.filter((id) => state.transactions.some((t) => t.id === id));
-        const transactionsToExport = state.transactions.filter((t) => validIds.includes(t.id));
-
-        if (format === "json") {
-          return JSON.stringify(
-            {
-              transactions: transactionsToExport,
-              exportDate: new Date().toISOString(),
-              exportCount: transactionsToExport.length,
-            },
-            null,
-            2
-          );
-        } else {
-          const headers = "Date,Description,Amount,Currency,Category,Type";
-          const rows = transactionsToExport.map((t) => {
-            const category = state.categories.find((c) => c.id === t.categoryId);
-            const categoryName = category ? category.name : "Unknown";
-            const escapeCSV = (field: string) => {
-              if (field.includes(",") || field.includes('"') || field.includes("\n")) {
-                return `"${field.replace(/"/g, '""')}"`;
-              }
-              return field;
-            };
-            return [
-              t.date,
-              escapeCSV(t.description),
-              t.amount.toString(),
-              t.currency,
-              escapeCSV(categoryName),
-              t.type,
-            ].join(",");
-          });
-          return [headers, ...rows].join("\n");
-        }
-      },
-
-      canUndo: () => false,
-      canRedo: () => false,
-      undo: () => {},
-      redo: () => {},
-      clearHistory: () => {},
-    }),
-    {
-      name: "finance-storage",
-      skipHydration: false,
-      storage: createJSONStorage(() => localStorage),
-      onRehydrateStorage: () => (state) => {
-        if (state) {
-          if (!(state.selectedTransactionIds instanceof Set)) {
-            state.selectedTransactionIds = new Set();
-          }
-          const migratedCategories = migrateCategories(state.categories);
-          if (JSON.stringify(migratedCategories) !== JSON.stringify(state.categories)) {
-            state.categories = migratedCategories;
-          }
-        }
-      },
-      partialize: (state) =>
-        Object.fromEntries(
-          Object.entries(state).filter(([key]) => key !== "selectedTransactionIds")
-        ) as ExtendedTransactionState,
+    if (txData || prefData) {
+      set((state) => ({
+        transactions: txData
+          ? txData.map((t: any) => ({
+              id: t.id,
+              amount: t.amount,
+              currency: t.currency,
+              categoryId: t.category, // Map DB category to UI categoryId
+              date: t.date,
+              description: t.description || "",
+              type: t.type,
+            }))
+          : state.transactions,
+        categories: prefData?.settings?.categories
+          ? migrateCategories(prefData.settings.categories)
+          : state.categories,
+        exchangeRates: prefData?.settings?.exchangeRates || state.exchangeRates,
+        lastRateUpdate: prefData?.settings?.lastRateUpdate || state.lastRateUpdate,
+      }));
+    } else {
+      // First time user, sync defaults
+      syncPreferencesToSupabase(get());
     }
-  )
-);
+  },
+
+  addTransaction: async (transaction) => {
+    const userId = await getUserId();
+    const newTransaction: Transaction = {
+      ...transaction,
+      id: crypto.randomUUID(), // DB uses UUID
+      currency: transaction.currency || "IDR",
+    };
+
+    // Optimistic UI
+    set((state) => ({ transactions: [...state.transactions, newTransaction] }));
+
+    // Push to DB
+    if (userId) {
+      await supabase.from("transactions").insert({
+        id: newTransaction.id,
+        user_id: userId,
+        type: newTransaction.type,
+        amount: newTransaction.amount,
+        category: newTransaction.categoryId, // save UI categoryId to DB category column
+        description: newTransaction.description,
+        date: newTransaction.date,
+        currency: newTransaction.currency,
+      });
+    }
+  },
+
+  updateTransaction: async (id, updates) => {
+    // Optimistic UI
+    set((state) => ({
+      transactions: state.transactions.map((t) => (t.id === id ? { ...t, ...updates } : t)),
+    }));
+
+    const userId = await getUserId();
+    if (userId) {
+      const t = get().transactions.find((t) => t.id === id);
+      if (t) {
+        await supabase
+          .from("transactions")
+          .update({
+            type: t.type,
+            amount: t.amount,
+            category: t.categoryId,
+            description: t.description,
+            date: t.date,
+            currency: t.currency,
+          })
+          .eq("id", id)
+          .eq("user_id", userId);
+      }
+    }
+  },
+
+  deleteTransaction: async (id) => {
+    // Optimistic UI
+    set((state) => {
+      const newSelection = new Set(state.selectedTransactionIds);
+      newSelection.delete(id);
+      return {
+        transactions: state.transactions.filter((t) => t.id !== id),
+        selectedTransactionIds: newSelection,
+      };
+    });
+
+    const userId = await getUserId();
+    if (userId) {
+      await supabase.from("transactions").delete().eq("id", id).eq("user_id", userId);
+    }
+  },
+
+  addCategory: (category) => {
+    const newCategory: Category = { ...category, id: generateId() };
+    set((state) => {
+      const newState = { categories: [...state.categories, newCategory] };
+      syncPreferencesToSupabase({ ...state, ...newState });
+      return newState;
+    });
+  },
+
+  updateCategory: (id, updates) => {
+    set((state) => {
+      const newState = {
+        categories: state.categories.map((c) => (c.id === id ? { ...c, ...updates } : c)),
+      };
+      syncPreferencesToSupabase({ ...state, ...newState });
+      return newState;
+    });
+  },
+
+  deleteCategory: (id) => {
+    set((state) => {
+      const newState = {
+        categories: state.categories.filter((c) => c.id !== id),
+        transactions: state.transactions.filter((t) => t.categoryId !== id),
+      };
+      syncPreferencesToSupabase({ ...state, ...newState });
+      return newState;
+    });
+  },
+
+  updateExchangeRates: (rates) => {
+    set((state) => {
+      const newState = { exchangeRates: rates, lastRateUpdate: new Date().toISOString() };
+      syncPreferencesToSupabase({ ...state, ...newState });
+      return newState;
+    });
+  },
+
+  exportData: () => {
+    const state = get();
+    return exportTransactionsData(
+      state.transactions,
+      state.categories,
+      state.exchangeRates,
+      state.lastRateUpdate
+    );
+  },
+
+  importData: (jsonData) => {
+    const data = importTransactionsData(jsonData);
+    set((state) => {
+      const newState = {
+        transactions: data.transactions,
+        categories: migrateCategories(data.categories),
+        exchangeRates: (data.exchangeRates as Record<Currency, number>) || DEFAULT_EXCHANGE_RATES,
+        lastRateUpdate: data.lastRateUpdate || null,
+      };
+      syncPreferencesToSupabase(newState);
+      return newState;
+    });
+  },
+
+  selectTransaction: (id) => {
+    set((state) => {
+      const newSelection = new Set(state.selectedTransactionIds);
+      newSelection.add(id);
+      return { selectedTransactionIds: newSelection };
+    });
+  },
+
+  deselectTransaction: (id) => {
+    set((state) => {
+      const newSelection = new Set(state.selectedTransactionIds);
+      newSelection.delete(id);
+      return { selectedTransactionIds: newSelection };
+    });
+  },
+
+  toggleTransaction: (id) => {
+    set((state) => {
+      const newSelection = new Set(state.selectedTransactionIds);
+      if (newSelection.has(id)) newSelection.delete(id);
+      else newSelection.add(id);
+      return { selectedTransactionIds: newSelection };
+    });
+  },
+
+  selectAll: (ids) => {
+    set({ selectedTransactionIds: new Set(ids) });
+  },
+
+  clearSelection: () => {
+    set({ selectedTransactionIds: new Set<string>() });
+  },
+
+  bulkDelete: async (ids) => {
+    const state = get();
+    const validIds = ids.filter((id) => state.transactions.some((t) => t.id === id));
+    if (validIds.length === 0) return;
+
+    set((state) => ({
+      transactions: state.transactions.filter((t) => !validIds.includes(t.id)),
+      selectedTransactionIds: new Set<string>(),
+    }));
+
+    const userId = await getUserId();
+    if (userId) {
+      await supabase.from("transactions").delete().in("id", validIds).eq("user_id", userId);
+    }
+  },
+
+  bulkUpdateCategory: async (ids, categoryId) => {
+    const state = get();
+    const categoryExists = state.categories.some((c) => c.id === categoryId);
+    if (!categoryExists) throw new Error(`Category with ID "${categoryId}" does not exist`);
+
+    const validIds = ids.filter((id) => state.transactions.some((t) => t.id === id));
+    if (validIds.length === 0) return;
+
+    set((state) => ({
+      transactions: state.transactions.map((t) =>
+        validIds.includes(t.id) ? { ...t, categoryId } : t
+      ),
+      selectedTransactionIds: new Set<string>(),
+    }));
+
+    const userId = await getUserId();
+    if (userId) {
+      await supabase
+        .from("transactions")
+        .update({ category: categoryId })
+        .in("id", validIds)
+        .eq("user_id", userId);
+    }
+  },
+
+  bulkExport: (ids, format) => {
+    const state = get();
+    const validIds = ids.filter((id) => state.transactions.some((t) => t.id === id));
+    const transactionsToExport = state.transactions.filter((t) => validIds.includes(t.id));
+
+    if (format === "json") {
+      return JSON.stringify(
+        {
+          transactions: transactionsToExport,
+          exportDate: new Date().toISOString(),
+          exportCount: transactionsToExport.length,
+        },
+        null,
+        2
+      );
+    } else {
+      const headers = "Date,Description,Amount,Currency,Category,Type";
+      const rows = transactionsToExport.map((t) => {
+        const category = state.categories.find((c) => c.id === t.categoryId);
+        const categoryName = category ? category.name : "Unknown";
+        const escapeCSV = (field: string) => {
+          if (field.includes(",") || field.includes('"') || field.includes("\n")) {
+            return `"${field.replace(/"/g, '""')}"`;
+          }
+          return field;
+        };
+        return [
+          t.date,
+          escapeCSV(t.description),
+          t.amount.toString(),
+          t.currency,
+          escapeCSV(categoryName),
+          t.type,
+        ].join(",");
+      });
+      return [headers, ...rows].join("\n");
+    }
+  },
+
+  canUndo: () => false,
+  canRedo: () => false,
+  undo: () => {},
+  redo: () => {},
+  clearHistory: () => {},
+}));
