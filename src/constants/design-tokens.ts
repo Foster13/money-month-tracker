@@ -158,15 +158,16 @@ export const shadows = {
  */
 export const transitions = {
   duration: {
-    fast: "100ms",
-    DEFAULT: "200ms",
-    slow: "300ms",
+    fast: "200ms",
+    DEFAULT: "300ms",
+    slow: "500ms",
   },
   timing: {
     ease: "ease",
     easeIn: "ease-in",
-    easeOut: "ease-out",
+    easeOut: "cubic-bezier(0.22, 1, 0.36, 1)",
     easeInOut: "ease-in-out",
+    spring: "cubic-bezier(0.22, 1, 0.36, 1)",
   },
 } as const;
 

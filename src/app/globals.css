@@ -116,7 +116,6 @@
 @layer base {
   * {
     @apply border-border;
-    @apply transition-colors duration-200;
   }
 
   html {
@@ -160,21 +159,23 @@
   }
 
   .glass-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 4px 24px var(--glass-shadow);
     border-radius: var(--radius);
-    transition: all 0.2s ease-out;
+    transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   .dark .glass-card {
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
   }
 
-  /* Minimal hover interaction, no drastic jumping */
+  /* Smooth hover interaction */
   .glass-card:hover {
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
-    transform: translateY(-1px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px) scale(1.005);
   }
 
   .dark .glass-card:hover {
@@ -183,19 +184,19 @@
 
   /* Smooth animations */
   .animate-fade-in {
-    animation: fadeIn 0.4s ease-out;
+    animation: fadeIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 
   .animate-slide-up {
-    animation: slideUp 0.3s ease-out;
+    animation: slideUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 
   .animate-slide-down {
-    animation: slideDown 0.3s ease-out;
+    animation: slideDown 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 
   .animate-scale-in {
-    animation: scaleIn 0.2s ease-out;
+    animation: scaleIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 
   .animate-bounce-subtle {
@@ -204,15 +205,17 @@
 
   /* Hover effects */
   .hover-lift {
-    @apply transition-all duration-200 ease-out;
+    @apply transition-all duration-500;
+    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   .hover-lift:hover {
-    @apply -translate-y-[1px] shadow-sm;
+    @apply -translate-y-[2px] shadow-sm;
   }
 
   .hover-glow {
-    @apply transition-shadow duration-200;
+    @apply transition-shadow duration-500;
+    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   .hover-glow:hover {
@@ -220,20 +223,23 @@
   }
 
   .hover-scale {
-    @apply transition-transform duration-200 ease-out;
+    @apply transition-transform duration-500;
+    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   .hover-scale:hover {
-    @apply scale-[1.02];
+    @apply scale-[1.03];
   }
 
   /* Smooth transitions */
   .transition-smooth {
-    @apply transition-all duration-200 ease-out;
+    @apply transition-all duration-500;
+    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   .transition-fast {
-    @apply transition-all duration-100 ease-out;
+    @apply transition-all duration-300;
+    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   /* Focus effects */
@@ -398,14 +404,14 @@
   }
 
   .btn-base {
-    @apply px-4 py-2 rounded-lg font-medium transition-all duration-200;
+    @apply px-4 py-2 rounded-lg font-medium transition-all duration-[300ms];
     @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2;
   }
 
   .input-base {
     @apply px-3 py-2 rounded-lg border border-input bg-background;
     @apply focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent;
-    @apply transition-all duration-200;
+    @apply transition-all duration-[300ms];
   }
 
   .card-base {
@@ -490,7 +496,7 @@
 @keyframes slideUp {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
@@ -501,7 +507,7 @@
 @keyframes slideDown {
   from {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(-20px);
   }
   to {
     opacity: 1;
