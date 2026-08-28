@@ -26,11 +26,35 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
-      if (session) fetchData();
+      if (session) {
+        fetchData();
+      } else {
+        setPassword(""); // Clear password so they have to re-enter it
+      }
     });
 
     return () => subscription.unsubscribe();
   }, [fetchData]);
+
+  // ponytail: 5-minute idle timeout. YAGNI complex session manager. 1 native setTimeout is enough.
+  useEffect(() => {
+    if (!session) return;
+
+    let timeoutId: NodeJS.Timeout;
+    const resetTimer = () => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => supabase.auth.signOut(), 300_000); // 5 minutes
+    };
+
+    const events = ["mousemove", "keydown", "touchstart", "scroll", "click"];
+    events.forEach((e) => window.addEventListener(e, resetTimer));
+    resetTimer();
+
+    return () => {
+      clearTimeout(timeoutId);
+      events.forEach((e) => window.removeEventListener(e, resetTimer));
+    };
+  }, [session]);
 
   const handleAuth = async (e: React.FormEvent, isSignUp: boolean) => {
     e.preventDefault();
