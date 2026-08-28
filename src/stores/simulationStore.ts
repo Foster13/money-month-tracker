@@ -22,6 +22,7 @@ export const useSimulationStore = create<SimulationState>((set, get) => ({
       ...transaction,
       id: generateId(),
       currency: transaction.currency || "IDR",
+      createdAt: new Date().toISOString(),
     };
     set((state) => ({
       transactions: [...state.transactions, newTransaction],

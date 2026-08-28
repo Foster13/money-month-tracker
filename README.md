@@ -1,191 +1,79 @@
-# 💰 Personal Finance Manager
+# 💰 Money Month Tracker (Personal Finance Manager)
 
-A modern Personal Finance Management web application built with Next.js 14. Track your income, expenses, and budget with an intuitive interface and powerful features!
-
-## ✨ Features
-
-### 💰 Financial Tracking
-
-- ✅ Track income and expenses with customizable categories
-- ✅ **Multi-currency support** (IDR, USD, SGD, GBP, EUR, JPY, AUD, CNY)
-- ✅ **Real-time exchange rates** with automatic IDR conversion
-- ✅ View financial summaries (income, expenses, balance)
-- ✅ Visualize trends with interactive 6-month bar charts
-- ✅ **Bulk operations** - Select and manage multiple transactions at once
-
-### 🎯 Advanced Features
-
-- ✅ **Dedicated Income & Expenses sections** with 6 sorting options
-- ✅ **Budget tracking** with progress monitoring and alerts
-- ✅ **Top 3 categories analysis** for spending insights
-- ✅ **Latest transactions overview** on dashboard
-- ✅ **Simulation mode** for financial projections
-- ✅ **Undo/Redo support** for all operations
-- ✅ **Category management** with color coding and custom icons
-- ✅ **Dark mode** support with smooth transitions
-
-### 🚀 Bulk Operations
-
-- ✅ Select multiple transactions with checkboxes
-- ✅ Bulk delete with confirmation
-- ✅ Bulk category change
-- ✅ Bulk export (JSON/CSV)
-- ✅ Filter-aware selection
-- ✅ Full keyboard accessibility
-
-### 🔧 Technical Features
-
-- ✅ **Progressive Web App (PWA)** - Install on any device
-- ✅ **Offline-First Architecture** - Works flawlessly with spotty connections via service workers
-- ✅ **Cloud Sync & Auth** - Powered by Supabase PostgreSQL for seamless cross-device access
-- ✅ **Optimistic UI** - Interactions feel instantaneous while syncing in the background
-- ✅ **Form validation** with Zod schemas
-- ✅ **Toast notifications** for user feedback
-- ✅ **Responsive design** - Works on mobile, tablet, and desktop
-- ✅ **Accessibility** - Full keyboard navigation and ARIA support
+A modern, offline-first Personal Finance Management web application built with Next.js 14. Track your income, expenses, and budget with an intuitive interface and powerful features!
 
 ## 🚀 Quick Start
 
-### Prerequisites
-
-- Node.js 18 or higher
-- npm or yarn
-
-### Installation
-
-1. **Clone the repository**
-
-```bash
-git clone https://github.com/yourusername/personal-finance-manager.git
-cd personal-finance-manager
-```
-
-2. **Install dependencies**
-
 ```bash
 npm install
-```
-
-3. **Run development server**
-
-```bash
 npm run dev
-```
-
-4. **Open browser**
-   Navigate to [http://localhost:3000](http://localhost:3000)
-
-### Production Build
-
-```bash
-npm run build
-npm start
 ```
 
 ## 🛠️ Tech Stack
 
-- **Framework**: [Next.js 14](https://nextjs.org/) (App Router)
-- **Language**: [TypeScript](https://www.typescriptlang.org/) (strict mode)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-- **UI Components**: [Shadcn/UI](https://ui.shadcn.com/) (Radix UI)
-- **Database & Auth**: [Supabase](https://supabase.com/) (PostgreSQL)
-- **State Management**: [Zustand](https://docs.pmnd.rs/zustand) (Optimistic UI + LocalStorage)
-- **Form Handling**: [React Hook Form](https://react-hook-form.com/) + [Zod](https://zod.dev/)
-- **Charts**: [Recharts](https://recharts.org/)
-- **Date Handling**: [date-fns](https://date-fns.org/)
-- **Icons**: [Lucide React](https://lucide.dev/)
-- **Theme**: [next-themes](https://github.com/pacocoursey/next-themes)
-- **PWA**: [next-pwa](https://github.com/shadowwalker/next-pwa)
+- **Core**: Next.js 14 (App Router), React 18, TypeScript (strict mode)
+- **Styling**: Tailwind CSS v3, CSS Variables (HSL), shadcn/ui
+- **State Management**: Zustand (Optimistic UI, directly syncs to Supabase)
+- **Backend & Auth**: Supabase (PostgreSQL + RLS)
+- **PWA**: `next-pwa` with Workbox caching strategies
+- **Testing**: Vitest + React Testing Library
 
-## 🎯 Usage Guide
+## 🏗️ Architecture & Data Flow
 
-### Adding Transactions
+### Authentication & Initialization
 
-1. Click "Add Transaction" button
-2. Fill in amount, description, category, and date
-3. Select currency (optional, defaults to IDR)
-4. Click "Add" to save
+1. `AuthGuard` checks session via `supabase.auth.getSession()`.
+2. Unauthenticated users see the Login/Register form.
+3. Authenticated users trigger `fetchData()` in `StoreInitializer` to load data from Supabase.
 
-### Bulk Operations
+### State & Optimistic UI
 
-1. Select transactions using checkboxes
-2. Use "Select All" to select all filtered transactions
-3. Click bulk action buttons (Delete, Category, Export)
-4. Confirm your action in the dialog
+The app uses Zustand for state management (`transactionStore.ts`), bypassing localStorage persistence to rely directly on Supabase.
 
-### Managing Budget
+- **Optimistic Updates**: Actions (add/update/delete) instantly update the local UI state before the server responds.
+- **Background Sync**: Changes are asynchronously pushed to Supabase.
 
-1. Navigate to Budget section
-2. Set your monthly budget
-3. Track spending progress with visual indicators
-4. View top spending categories
+### Database Schema (Supabase)
 
-### Exchange Rates
+Both tables use Row Level Security (RLS) `USING (auth.uid() = user_id)` to ensure data privacy.
 
-1. Navigate to Rates section
-2. Click "Update Rates" to fetch latest rates
-3. All transactions automatically convert to IDR
+- **`transactions`**: `id` (UUID), `user_id`, `type`, `amount`, `category` (stores `categoryId` string), `description`, `date`, `currency`.
+- **`user_preferences`**: `user_id`, `settings` (JSONB: categories, exchange rates).
 
-### Data Export/Import
+## 📁 Routing & Key Components
 
-1. Go to Settings or Data Controls
-2. Click "Export Data" to download JSON backup
-3. Click "Import Data" to restore from backup
+| Route / Component       | Description                                                                  |
+| ----------------------- | ---------------------------------------------------------------------------- |
+| `/`                     | Dashboard with Summary widgets, `FinanceChart` (Recharts), and DataControls. |
+| `/income` & `/expenses` | Dedicated transaction management lists with filtering.                       |
+| `/budget`               | Monthly budget tracking and usage visualization.                             |
+| `/rates`                | Exchange rate synchronization (fetch from `open.er-api.com`).                |
+| `/simulation`           | Sandbox mode powered by a separate, non-persistent `simulationStore`.        |
+| `useTransactionFilters` | Engine for searching by text, amount range, date range, and categories.      |
 
-## 🔧 Available Scripts
+## 🎨 Design System & PWA
 
-```bash
-npm run dev          # Start development server
-npm run build        # Build for production
-npm start            # Start production server
-npm run lint         # Run ESLint
-npm run verify       # Verify all files exist
-```
+- **Theme**: Pink pastel base (`HSL 340 82% 67%`). Fully supports Dark Mode.
+- **Design Tokens**: Centralized in `src/constants/design-tokens.ts` and consumed by Tailwind.
+- **Animations**: Uses custom spring easing `cubic-bezier(0.22, 1, 0.36, 1)`.
+- **Offline-first**: Service workers cache fonts, images, and JSON data. App is fully installable via `InstallPWA` prompt.
 
-## 📁 Project Structure
+## 💡 Developer Guidelines (Ponytail Principles)
 
-```
-personal-finance-manager/
-├── src/
-│   ├── app/                 # Next.js App Router pages
-│   ├── components/          # React components
-│   │   ├── ui/             # Base UI components (shadcn/ui)
-│   │   └── ...             # Feature components
-│   ├── constants/          # Application constants
-│   ├── hooks/              # Custom React hooks
-│   ├── lib/                # Utility functions
-│   ├── stores/             # Zustand state management
-│   └── types/              # TypeScript type definitions
-├── public/                 # Static assets
-├── docs/                   # Documentation
-└── ...config files
-```
+This project embraces a "lazy senior dev" (YAGNI) philosophy, marked by `// ponytail:` comments in the codebase.
+**Target Users:** ~20-30 people. Focus on cross-device sync and data safety against browser resets.
 
-## 🐛 Troubleshooting
+**The Rules (Aturan Main):**
 
-### TypeScript Errors
-
-```bash
-npm install  # Install all dependencies
-```
-
-### Build Errors
-
-Ensure Node.js version:
-
-```bash
-node --version  # Should be >= 18
-```
-
-### Missing Dependencies
-
-```bash
-rm -rf node_modules package-lock.json
-npm install
-```
-
-## 🔒 Privacy & Data Sync
-
-Your data operates **offline-first** using local storage for instant load times, and securely syncs to your personal cloud account (powered by Supabase) when online. This ensures your financial information is backed up and accessible across all your devices while remaining private and secured by robust Authentication.
+1. **Source of Truth is Supabase:** We do not use `localStorage` for core data. If a cache clears, users just log in again.
+2. **No Heavy ORMs:** No Prisma or Drizzle. Use standard `@supabase/supabase-js` for speed and simplicity.
+3. **One Line Rules:** If we can query/compute it directly in Supabase (like comparing cashflows), do it there. Don't fetch everything and filter in Javascript.
+4. **Strict RLS:** Row Level Security is CRITICAL. `user_id = auth.uid()` must be strictly enforced.
+5. **No bloat**: Use native HTML5 validation over heavy schemas where appropriate (e.g., Auth).
+6. **Native features**: Client-side avatar compression uses the native Canvas API, avoiding heavy image manipulation libraries.
+7. **Simplification**: One-line Supabase initialization. JSONB column used for user preferences to avoid table joins.
+8. **Performance**: Heavy libraries (`lucide-react`, `recharts`, `date-fns`) are explicitly tree-shaken in `next.config.js`.
 
 ---
+
+_Run `npm run verify` before committing to ensure all required files and build steps pass._

@@ -156,6 +156,7 @@ export const useTransactionStore = create<ExtendedTransactionState>()((set, get)
               date: t.date,
               description: t.description || "",
               type: t.type,
+              createdAt: t.created_at, // ponytail: tracking input time
             }))
           : state.transactions,
         categories: prefData?.settings?.categories
@@ -176,6 +177,7 @@ export const useTransactionStore = create<ExtendedTransactionState>()((set, get)
       ...transaction,
       id: crypto.randomUUID(), // DB uses UUID
       currency: transaction.currency || "IDR",
+      createdAt: new Date().toISOString(), // ponytail: input time
     };
 
     // Optimistic UI

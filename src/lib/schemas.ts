@@ -42,6 +42,7 @@ export const transactionImportSchema = z.object({
   date: z.string(),
   description: z.string(),
   type: z.enum(["income", "expense"]),
+  createdAt: z.string().optional(),
 });
 
 export const categoryImportSchema = z.object({

@@ -30,6 +30,8 @@ export interface FilterOptions {
   dateTo: string;
   amountMin: string;
   amountMax: string;
+  sortBy: "date" | "createdAt"; // ponytail: explicit sorting
+  sortDir: "desc" | "asc";
 }
 
 interface TransactionFiltersProps {
@@ -150,6 +152,35 @@ export function TransactionFilters({
                 <SelectItem value="all">All Types</SelectItem>
                 <SelectItem value="income">Income Only</SelectItem>
                 <SelectItem value="expense">Expense Only</SelectItem>
+              </SelectContent>
+            </Select>
+
+            {/* ponytail: Sorting controls */}
+            <Label htmlFor="sort-by" className="text-sm font-medium whitespace-nowrap ml-1 sm:ml-2">
+              Sort:
+            </Label>
+            <Select
+              value={filters.sortBy}
+              onValueChange={(val: any) => onFiltersChange({ ...filters, sortBy: val })}
+            >
+              <SelectTrigger id="sort-by" className="w-full sm:w-[140px] min-h-[44px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="date">Transaction Date</SelectItem>
+                <SelectItem value="createdAt">Input Time</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select
+              value={filters.sortDir}
+              onValueChange={(val: any) => onFiltersChange({ ...filters, sortDir: val })}
+            >
+              <SelectTrigger id="sort-dir" className="w-full sm:w-[140px] min-h-[44px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="desc">New to Old</SelectItem>
+                <SelectItem value="asc">Old to New</SelectItem>
               </SelectContent>
             </Select>
           </div>

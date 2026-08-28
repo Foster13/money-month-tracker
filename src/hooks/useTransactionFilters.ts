@@ -18,6 +18,8 @@ export function useTransactionFilters(
     dateTo: "",
     amountMin: "",
     amountMax: "",
+    sortBy: "date",
+    sortDir: "desc",
   });
 
   const handleResetFilters = () => {
@@ -29,6 +31,8 @@ export function useTransactionFilters(
       dateTo: "",
       amountMin: "",
       amountMax: "",
+      sortBy: "date",
+      sortDir: "desc",
     });
     setCurrentPage(1);
   };
@@ -97,12 +101,29 @@ export function useTransactionFilters(
     }
 
     return filtered.sort((a, b) => {
-      const dateA = new Date(a.date).getTime();
-      const dateB = new Date(b.date).getTime();
-      if (dateB !== dateA) return dateB - dateA;
-      const timestampA = parseInt(a.id.split("-")[0]) || 0;
-      const timestampB = parseInt(b.id.split("-")[0]) || 0;
-      return timestampB - timestampA;
+      let diff = 0;
+
+      if (filters.sortBy === "createdAt") {
+        // Sort purely by input time
+        const timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+        const timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+        diff = timeA - timeB;
+      } else {
+        // Sort by user selected date
+        const dateA = new Date(a.date).getTime();
+        const dateB = new Date(b.date).getTime();
+        diff = dateA - dateB;
+
+        // Fallback to createdAt if date is identical
+        if (diff === 0) {
+          const timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+          const timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+          diff = timeA - timeB;
+        }
+      }
+
+      // Apply sort direction
+      return filters.sortDir === "desc" ? -diff : diff;
     });
   }, [transactions, filters, exchangeRates, getCategoryName]);
 

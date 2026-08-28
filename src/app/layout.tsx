@@ -4,7 +4,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/layout/theme-provider";
 import { InstallPWA } from "@/components/layout/InstallPWA";
-import { SidebarProvider } from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/layout/AppSidebar";
 import { AuthGuard } from "@/components/auth/AuthGuard";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -71,9 +71,9 @@ export default function RootLayout({
             <StoreInitializer>
               <SidebarProvider>
                 <AppSidebar />
-                <div className="relative min-h-screen overflow-x-hidden max-w-full flex-1 w-full flex flex-col">
+                <SidebarInset className="relative min-h-screen overflow-x-hidden max-w-full flex-col">
                   {children}
-                </div>
+                </SidebarInset>
               </SidebarProvider>
             </StoreInitializer>
           </AuthGuard>

@@ -36,6 +36,7 @@ export interface Transaction {
   date: string; // ISO date string
   description: string;
   type: "income" | "expense";
+  createdAt?: string; // ponytail: input time tracking
 }
 
 /**
