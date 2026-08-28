@@ -55,6 +55,8 @@ export function TransactionList({
     dateTo: "",
     amountMin: "",
     amountMax: "",
+    sortBy: "date",
+    sortDir: "desc",
   });
 
   // Get selection state and methods from store
@@ -82,6 +84,8 @@ export function TransactionList({
       dateTo: "",
       amountMin: "",
       amountMax: "",
+      sortBy: "date",
+      sortDir: "desc",
     });
     setCurrentPage(1);
   };
