@@ -69,7 +69,7 @@ export default function RootLayout({
           {/* ponytail: removed ThemeTransition bloat */}
           <AuthGuard>
             <StoreInitializer>
-              <SidebarProvider>
+              <SidebarProvider defaultOpen={false}>
                 <AppSidebar />
                 <SidebarInset className="relative min-h-screen overflow-x-hidden max-w-full flex-col">
                   {children}

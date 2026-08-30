@@ -21,7 +21,7 @@ export default function DashboardPage() {
   const [showChart, setShowChart] = useState(true);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [transactionToDelete, setTransactionToDelete] = useState<string | null>(null);
-  const [isFormOpen, setIsFormOpen] = useState(false);
+
   const { toast } = useToast();
 
   const transactions = useTransactionStore((state) => state.transactions);
@@ -83,50 +83,6 @@ export default function DashboardPage() {
       <PageHeader />
 
       <div className="flex flex-col space-y-6 lg:space-y-8">
-        {!isFormOpen && !editingTransaction && (
-          <div className="flex justify-start">
-            <Button
-              onClick={() => setIsFormOpen(true)}
-              className="bg-primary hover:bg-primary/90 text-primary-foreground gap-2 shadow-sm"
-            >
-              <Icon name="plus" size="sm" />
-              Add New Transaction
-            </Button>
-          </div>
-        )}
-
-        {(isFormOpen || editingTransaction) && (
-          <section
-            aria-labelledby="transaction-form-heading"
-            className="animate-in fade-in slide-in-from-top-4 duration-300"
-          >
-            <Card className="glass-card overflow-hidden">
-              <CardHeader className="px-4 sm:px-6 py-4 flex flex-row items-center justify-between">
-                <CardTitle
-                  id="transaction-form-heading"
-                  className="text-lg sm:text-xl font-semibold"
-                >
-                  {editingTransaction ? "Edit Transaction" : "Add Transaction"}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="px-4 sm:px-6 pb-6">
-                <TransactionForm
-                  categories={categories}
-                  onSubmit={(data) => {
-                    handleSubmit(data);
-                    setIsFormOpen(false);
-                  }}
-                  editingTransaction={editingTransaction}
-                  onCancel={() => {
-                    setEditingTransaction(null);
-                    setIsFormOpen(false);
-                  }}
-                />
-              </CardContent>
-            </Card>
-          </section>
-        )}
-
         <section aria-labelledby="summary-heading">
           <h2 id="summary-heading" className="sr-only">
             Financial Summary
@@ -138,6 +94,53 @@ export default function DashboardPage() {
               lastMonthTransactions={lastMonthTransactions}
             />
           </div>
+        </section>
+
+        <section
+          aria-labelledby="transaction-form-heading"
+          className="animate-in fade-in slide-in-from-top-4 duration-300"
+        >
+          <Card className="glass-card overflow-hidden">
+            <CardHeader className="px-4 sm:px-6 py-4 flex flex-row items-center justify-between">
+              <CardTitle id="transaction-form-heading" className="text-lg sm:text-xl font-semibold">
+                {editingTransaction ? "Edit Transaction" : "Add Transaction"}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="px-4 sm:px-6 pb-6">
+              <TransactionForm
+                categories={categories}
+                onSubmit={(data) => {
+                  handleSubmit(data);
+                }}
+                editingTransaction={editingTransaction}
+                onCancel={() => {
+                  setEditingTransaction(null);
+                }}
+              />
+            </CardContent>
+          </Card>
+        </section>
+
+        <section aria-labelledby="transactions-heading">
+          <Card
+            className="glass-card animate-scale-in overflow-hidden"
+            style={{ animationDelay: "0.2s" }}
+          >
+            <CardHeader className="px-4 sm:px-6 py-4">
+              <CardTitle id="transactions-heading" className="text-lg sm:text-xl font-semibold">
+                Recent Transactions
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="px-4 sm:px-6 pb-6">
+              <TransactionList
+                transactions={transactions}
+                categories={categories}
+                exchangeRates={exchangeRates}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+              />
+            </CardContent>
+          </Card>
         </section>
 
         <section aria-labelledby="chart-heading">
@@ -239,28 +242,6 @@ export default function DashboardPage() {
                   </div>
                 </div>
               )}
-            </CardContent>
-          </Card>
-        </section>
-
-        <section aria-labelledby="transactions-heading">
-          <Card
-            className="glass-card animate-scale-in overflow-hidden"
-            style={{ animationDelay: "0.2s" }}
-          >
-            <CardHeader className="px-4 sm:px-6 py-4">
-              <CardTitle id="transactions-heading" className="text-lg sm:text-xl font-semibold">
-                Recent Transactions
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="px-4 sm:px-6 pb-6">
-              <TransactionList
-                transactions={transactions}
-                categories={categories}
-                exchangeRates={exchangeRates}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-              />
             </CardContent>
           </Card>
         </section>

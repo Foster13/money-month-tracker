@@ -42,3 +42,7 @@ ON public.user_preferences
 FOR ALL 
 USING (auth.uid() = user_id) 
 WITH CHECK (auth.uid() = user_id);
+
+
+-- Add phone_number for WhatsApp Integration
+ALTER TABLE public.user_preferences ADD COLUMN phone_number TEXT UNIQUE;

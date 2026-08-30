@@ -47,7 +47,8 @@ export function AppSidebar() {
   const [logoUrl, setLogoUrl] = useState("");
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      const user = session?.user;
       if (user?.user_metadata) {
         if (user.user_metadata.display_name) setDisplayName(user.user_metadata.display_name);
         if (user.user_metadata.avatar_url) setLogoUrl(user.user_metadata.avatar_url);

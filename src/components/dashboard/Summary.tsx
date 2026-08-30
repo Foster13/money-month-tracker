@@ -1,11 +1,13 @@
 // File: src/components/dashboard/Summary.tsx
 "use client";
 
+import { useState } from "react";
+import { supabase } from "@/lib/supabase";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Transaction, Currency } from "@/types";
 import { convertToIDR } from "@/lib/currency";
-import { TrendingUp, TrendingDown, Wallet, FileDown, Activity } from "lucide-react";
+import { TrendingUp, TrendingDown, Wallet, FileDown, Activity, MessageCircle } from "lucide-react";
 import { Icon } from "@/components/icons/Icon";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
@@ -61,6 +63,13 @@ export function Summary({ transactions, exchangeRates, lastMonthTransactions }: 
     });
   };
 
+  const now = new Date();
+  const currentDay = now.getDate();
+  const expensePerDay = totalExpenses / currentDay;
+  // ponytail: hardcoded limit instead of DB schema bloat. Minimum that works.
+  const DAILY_LIMIT = 100000;
+  const isOverLimit = expensePerDay > DAILY_LIMIT;
+
   const renderComparison = (
     current: number,
     previous: number | undefined,
@@ -96,29 +105,108 @@ export function Summary({ transactions, exchangeRates, lastMonthTransactions }: 
     );
   };
 
+  const [phoneNumber, setPhoneNumber] = useState("");
+
+  const savePhoneNumber = async () => {
+    if (!phoneNumber) {
+      toast({ title: "Info", description: "Nomor WA masih kosong!" });
+      return;
+    }
+
+    let formattedPhone = phoneNumber.replace(/\D/g, "");
+    if (formattedPhone.startsWith("0")) {
+      formattedPhone = "62" + formattedPhone.slice(1);
+    }
+    formattedPhone = "+" + formattedPhone;
+
+    const {
+      data: { session },
+      error: authError,
+    } = await supabase.auth.getSession();
+    const user = session?.user;
+
+    if (authError || !user) {
+      toast({
+        title: "Error",
+        description: "Gagal dapat sesi user. Coba refresh atau relogin.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const { error } = await supabase
+      .from("user_preferences")
+      .update({ phone_number: formattedPhone })
+      .eq("user_id", user.id);
+
+    if (!error) {
+      setPhoneNumber(formattedPhone);
+      toast({ title: "Success", description: "Nomor WA berhasil di-link!" });
+    } else {
+      console.error("Supabase error:", error);
+      toast({ title: "Error", description: `Gagal: ${error.message}`, variant: "destructive" });
+    }
+  };
+
   return (
     <div className="flex flex-col gap-4">
-      {/* Export Button */}
-      <div className="flex justify-end">
-        <Button
-          onClick={exportToPDF}
-          size="sm"
-          className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm hover:shadow text-xs sm:text-sm"
-          aria-label="Export financial summary to PDF"
-        >
-          <FileDown className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" aria-hidden={true} />
-          Export PDF
-        </Button>
+      {isOverLimit && (
+        <div className="bg-red-500/10 border border-red-500/50 text-red-500 px-4 py-3 rounded-lg flex items-center justify-between text-sm sm:text-base font-medium">
+          <span>
+            ⚠️ Alert: You have exceeded your daily expense limit of {formatIDR(DAILY_LIMIT)}!
+          </span>
+        </div>
+      )}
+
+      {/* Export Button & WA Link */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-card p-3 rounded-lg shadow-sm">
+        <div className="flex items-center gap-2 w-full sm:w-auto">
+          <input
+            type="text"
+            placeholder="+62812..."
+            className="text-xs sm:text-sm p-2 border rounded-md flex-1 sm:w-32"
+            value={phoneNumber}
+            onChange={(e) => setPhoneNumber(e.target.value)}
+          />
+          <Button size="sm" variant="outline" onClick={savePhoneNumber}>
+            Link WA
+          </Button>
+        </div>
+        <div className="flex gap-2 w-full sm:w-auto justify-end">
+          <Button
+            onClick={() => {
+              const text = `Ringkasan Keuangan:\nIncome: ${formatIDR(totalIncome)}\nExpense: ${formatIDR(totalExpenses)}\nBalance: ${formatIDR(balance)}\nExpense/Day: ${formatIDR(expensePerDay)}`;
+              window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank");
+            }}
+            size="sm"
+            className="bg-green-600 hover:bg-green-700 text-white shadow-sm hover:shadow text-xs sm:text-sm flex-1 sm:flex-none"
+            aria-label="Share to WhatsApp"
+          >
+            <MessageCircle className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" aria-hidden={true} />
+            <span className="hidden sm:inline">Share to WA</span>
+            <span className="sm:hidden">Share</span>
+          </Button>
+          <Button
+            onClick={exportToPDF}
+            size="sm"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm hover:shadow text-xs sm:text-sm flex-1 sm:flex-none"
+            aria-label="Export financial summary to PDF"
+          >
+            <FileDown className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" aria-hidden={true} />
+            <span className="hidden sm:inline">Export PDF</span>
+            <span className="sm:hidden">PDF</span>
+          </Button>
+        </div>
       </div>
 
       {/* Summary Cards */}
-      <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-        <Card className="bg-card border-income h-full shadow-sm">
+      <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
+        <Card className="bg-gradient-to-br from-card to-card/50 border-income h-full shadow-sm group hover:border-income/50">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 px-3 sm:px-6 pt-3 sm:pt-6">
             <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground flex items-center gap-1 sm:gap-1.5">
               Total Income
             </CardTitle>
-            <div className="p-1.5 sm:p-2 rounded-md bg-income/10">
+            <div className="p-1.5 sm:p-2 rounded-xl bg-income/10 transition-transform duration-300 group-hover:scale-110 group-hover:bg-income/20">
               <TrendingUp className="h-4 w-4 text-income" aria-hidden={true} />
             </div>
           </CardHeader>
@@ -130,12 +218,12 @@ export function Summary({ transactions, exchangeRates, lastMonthTransactions }: 
           </CardContent>
         </Card>
 
-        <Card className="bg-card border-expense h-full shadow-sm">
+        <Card className="bg-gradient-to-br from-card to-card/50 border-expense h-full shadow-sm group hover:border-expense/50">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 px-3 sm:px-6 pt-3 sm:pt-6">
             <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground flex items-center gap-1 sm:gap-1.5">
               Total Expenses
             </CardTitle>
-            <div className="p-1.5 sm:p-2 rounded-md bg-expense/10">
+            <div className="p-1.5 sm:p-2 rounded-xl bg-expense/10 transition-transform duration-300 group-hover:scale-110 group-hover:bg-expense/20">
               <TrendingDown className="h-4 w-4 text-expense" aria-hidden={true} />
             </div>
           </CardHeader>
@@ -147,12 +235,12 @@ export function Summary({ transactions, exchangeRates, lastMonthTransactions }: 
           </CardContent>
         </Card>
 
-        <Card className="bg-card border-budget h-full shadow-sm sm:col-span-2 lg:col-span-1">
+        <Card className="bg-gradient-to-br from-card to-card/50 border-budget h-full shadow-sm group hover:border-budget/50">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 px-3 sm:px-6 pt-3 sm:pt-6">
             <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground flex items-center gap-1 sm:gap-1.5">
               Balance
             </CardTitle>
-            <div className="p-1.5 sm:p-2 rounded-md bg-budget/10">
+            <div className="p-1.5 sm:p-2 rounded-xl bg-budget/10 transition-transform duration-300 group-hover:scale-110 group-hover:bg-budget/20">
               <Activity className="h-4 w-4 text-budget" aria-hidden={true} />
             </div>
           </CardHeader>
@@ -163,6 +251,32 @@ export function Summary({ transactions, exchangeRates, lastMonthTransactions }: 
               {formatIDR(balance)}
             </div>
             {renderComparison(balance, lastMonthBalance, false)}
+          </CardContent>
+        </Card>
+
+        <Card
+          className={`bg-gradient-to-br from-card to-card/50 border h-full shadow-sm group ${isOverLimit ? "border-red-500 hover:border-red-500/50" : "border-blue-500 hover:border-blue-500/50"}`}
+        >
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 px-3 sm:px-6 pt-3 sm:pt-6">
+            <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground flex items-center gap-1 sm:gap-1.5">
+              Expense / Day
+            </CardTitle>
+            <div
+              className={`p-1.5 sm:p-2 rounded-xl transition-transform duration-300 group-hover:scale-110 ${isOverLimit ? "bg-red-500/10" : "bg-blue-500/10"}`}
+            >
+              <TrendingDown
+                className={`h-4 w-4 ${isOverLimit ? "text-red-500" : "text-blue-500"}`}
+                aria-hidden={true}
+              />
+            </div>
+          </CardHeader>
+          <CardContent className="px-3 sm:px-6 pb-3 sm:pb-6">
+            <div
+              className={`text-xl sm:text-2xl md:text-3xl font-bold break-words ${isOverLimit ? "text-red-500" : "text-blue-500"}`}
+            >
+              {formatIDR(expensePerDay)}
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">Avg this month</p>
           </CardContent>
         </Card>
       </div>

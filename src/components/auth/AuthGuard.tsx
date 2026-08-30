@@ -120,9 +120,8 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
               </div>
               <div className="flex flex-col gap-2 pt-2">
                 <Button
-                  type="button"
+                  type="submit"
                   className="w-full"
-                  onClick={(e) => handleAuth(e, false)}
                   disabled={loading || !email || password.length < 6}
                 >
                   {loading ? "Please wait..." : "Login"}

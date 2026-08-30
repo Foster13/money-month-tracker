@@ -104,9 +104,9 @@ const initializeDefaultCategories = (): Category[] => {
 // ponytail helper: get current user id safely
 const getUserId = async () => {
   const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  return user?.id;
+    data: { session },
+  } = await supabase.auth.getSession();
+  return session?.user?.id;
 };
 
 // ponytail helper: sync preferences
@@ -172,6 +172,15 @@ export const useTransactionStore = create<ExtendedTransactionState>()((set, get)
   },
 
   addTransaction: async (transaction) => {
+    const isDuplicate = get().transactions.some(
+      (t) =>
+        t.amount === transaction.amount &&
+        t.description === transaction.description &&
+        t.date === transaction.date &&
+        t.type === transaction.type
+    );
+    if (isDuplicate) return; // ponytail: silent reject duplicate input
+
     const userId = await getUserId();
     const newTransaction: Transaction = {
       ...transaction,
