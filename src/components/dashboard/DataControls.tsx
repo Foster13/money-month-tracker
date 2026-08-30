@@ -75,7 +75,7 @@ export function DataControls({ onExport, onImport }: DataControlsProps) {
           await addTransaction({
             amount: t.amount,
             categoryId: t.category,
-            currency: t.currency,
+            currency: t.currency as any,
             date: t.date,
             description: t.description,
             type: t.type as "income" | "expense",
@@ -103,7 +103,7 @@ export function DataControls({ onExport, onImport }: DataControlsProps) {
           await addTransaction({
             type,
             amount,
-            currency: r.Currency || "IDR",
+            currency: (r.Currency || "IDR") as any,
             description: r.Description || r.Deskripsi || "",
             date: r.Date || r.Tanggal || new Date().toISOString().split("T")[0],
             categoryId: cat ? cat.id : fallbackCat,
