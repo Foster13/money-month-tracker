@@ -6,7 +6,7 @@ export function parseWhatsAppMessage(
 ) {
   const lines = text.split("\n");
   let currentDate = new Date().toISOString();
-  const transactions = [];
+  const transactions: any[] = [];
 
   for (const line of lines) {
     const trimmed = line.trim();
