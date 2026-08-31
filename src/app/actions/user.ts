@@ -11,6 +11,9 @@ export async function linkWhatsAppNumber(userId: string, phoneNumber: string) {
       .select();
 
     if (error) {
+      if (error.code === "23505" || error.message.includes("duplicate")) {
+        return { success: false, error: "Nomor WA ini udah dipake akun lain." };
+      }
       return { success: false, error: error.message };
     }
 
@@ -20,7 +23,12 @@ export async function linkWhatsAppNumber(userId: string, phoneNumber: string) {
         .from("user_preferences")
         .insert({ user_id: userId, phone_number: phoneNumber });
 
-      if (insertError) return { success: false, error: insertError.message };
+      if (insertError) {
+        if (insertError.code === "23505" || insertError.message.includes("duplicate")) {
+          return { success: false, error: "Nomor WA ini udah dipake akun lain." };
+        }
+        return { success: false, error: insertError.message };
+      }
     }
 
     return { success: true };
