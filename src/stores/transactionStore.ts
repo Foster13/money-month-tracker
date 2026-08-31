@@ -141,7 +141,12 @@ export const useTransactionStore = create<ExtendedTransactionState>()((set, get)
       .from("transactions")
       .select("*")
       .eq("user_id", userId);
-    if (txError) console.error("Supabase Fetch Transactions Error:", txError);
+    if (txError)
+      alert(
+        "Gagal mengambil data dari database! Error: " +
+          txError.message +
+          "\n\nIni biasanya karena kamu belum jalankan SQL RLS di Supabase Dashboard."
+      );
 
     // Fetch preferences
     const { data: prefData, error: prefError } = await supabase
