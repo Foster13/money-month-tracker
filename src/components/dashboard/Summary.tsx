@@ -11,6 +11,7 @@ import { TrendingUp, TrendingDown, Wallet, FileDown, Activity, MessageCircle } f
 import { Icon } from "@/components/icons/Icon";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
+import { linkWhatsAppNumber } from "@/app/actions/user";
 
 interface SummaryProps {
   transactions: Transaction[];
@@ -134,17 +135,14 @@ export function Summary({ transactions, exchangeRates, lastMonthTransactions }: 
       return;
     }
 
-    const { error } = await supabase
-      .from("user_preferences")
-      .update({ phone_number: formattedPhone })
-      .eq("user_id", user.id);
+    const result = await linkWhatsAppNumber(user.id, formattedPhone);
 
-    if (!error) {
+    if (result.success) {
       setPhoneNumber(formattedPhone);
       toast({ title: "Success", description: "Nomor WA berhasil di-link!" });
     } else {
-      console.error("Supabase error:", error);
-      toast({ title: "Error", description: `Gagal: ${error.message}`, variant: "destructive" });
+      console.error("Supabase error:", result.error);
+      toast({ title: "Error", description: `Gagal: ${result.error}`, variant: "destructive" });
     }
   };
 
