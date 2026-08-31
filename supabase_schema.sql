@@ -22,8 +22,8 @@ ALTER TABLE public.transactions ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can manage their own transactions" 
 ON public.transactions 
 FOR ALL 
-USING ((select auth.uid()) = user_id) 
-WITH CHECK ((select auth.uid()) = user_id);
+USING (auth.uid() = user_id) 
+WITH CHECK (auth.uid() = user_id);
 
 
 -- 2. Create USER_PREFERENCES Table
@@ -40,8 +40,8 @@ ALTER TABLE public.user_preferences ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can manage their own preferences" 
 ON public.user_preferences 
 FOR ALL 
-USING ((select auth.uid()) = user_id) 
-WITH CHECK ((select auth.uid()) = user_id);
+USING (auth.uid() = user_id) 
+WITH CHECK (auth.uid() = user_id);
 
 
 -- Add phone_number for WhatsApp Integration

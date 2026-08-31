@@ -137,13 +137,20 @@ export const useTransactionStore = create<ExtendedTransactionState>()((set, get)
     if (!userId) return;
 
     // Fetch transactions
-    const { data: txData } = await supabase.from("transactions").select("*").eq("user_id", userId);
+    const { data: txData, error: txError } = await supabase
+      .from("transactions")
+      .select("*")
+      .eq("user_id", userId);
+    if (txError) console.error("Supabase Fetch Transactions Error:", txError);
+
     // Fetch preferences
-    const { data: prefData } = await supabase
+    const { data: prefData, error: prefError } = await supabase
       .from("user_preferences")
       .select("settings")
       .eq("user_id", userId)
       .single();
+    if (prefError && prefError.code !== "PGRST116")
+      console.error("Supabase Fetch Preferences Error:", prefError);
 
     set((state) => ({
       transactions: txData
