@@ -64,16 +64,54 @@ export function SettingsDialog({
           canvas.height = height;
           canvas.getContext("2d")?.drawImage(img, 0, 0, width, height);
 
-          const base64 = canvas.toDataURL("image/jpeg", 0.7);
+          canvas.toBlob(
+            async (blob) => {
+              if (!blob) {
+                setLoading(false);
+                return alert("Failed to compress image");
+              }
 
-          // FIX: DO NOT store base64 in Supabase user_metadata!
-          // It bloats the JWT session token and causes REQUEST_HEADER_TOO_LARGE.
-          // For now, we save it to localStorage. The ideal way is Supabase Storage.
-          localStorage.setItem("user_avatar", base64);
+              const {
+                data: { user },
+              } = await supabase.auth.getUser();
+              if (!user) {
+                setLoading(false);
+                return alert("User not logged in");
+              }
 
-          setLoading(false);
-          alert("Logo updated & compressed (saved locally)!");
-          onProfileUpdate(name, base64);
+              const filePath = `${user.id}/profile.jpeg`;
+
+              // Upload to Supabase Storage (requires RLS policies we created)
+              const { error: uploadError } = await supabase.storage
+                .from("avatars")
+                .upload(filePath, blob, { upsert: true, contentType: "image/jpeg" });
+
+              if (uploadError) {
+                setLoading(false);
+                return alert("Upload failed: " + uploadError.message);
+              }
+
+              // Get the public URL
+              const {
+                data: { publicUrl },
+              } = supabase.storage.from("avatars").getPublicUrl(filePath);
+
+              // Save the short URL string to user_metadata (safe, won't bloat JWT)
+              const { error: updateError } = await supabase.auth.updateUser({
+                data: { avatar_url: publicUrl },
+              });
+
+              setLoading(false);
+              if (updateError) {
+                alert("Error updating profile: " + updateError.message);
+              } else {
+                alert("Logo updated and saved to Storage!");
+                onProfileUpdate(name, publicUrl);
+              }
+            },
+            "image/jpeg",
+            0.7
+          );
         };
         img.src = event.target?.result as string;
       };
