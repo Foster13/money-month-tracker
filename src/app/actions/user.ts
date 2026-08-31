@@ -4,13 +4,21 @@ import { supabaseAdmin } from "@/lib/supabase-admin";
 
 export async function linkWhatsAppNumber(userId: string, phoneNumber: string) {
   try {
-    const { error } = await supabaseAdmin
+    const { error, data } = await supabaseAdmin
       .from("user_preferences")
       .update({ phone_number: phoneNumber })
-      .eq("user_id", userId);
+      .eq("user_id", userId)
+      .select();
 
     if (error) {
       return { success: false, error: error.message };
+    }
+    if (!data || data.length === 0) {
+      // ponytail: if no row updated, user_preferences doesn't exist yet.
+      return {
+        success: false,
+        error: "Silakan refresh halaman 1x dulu agar data profil terbuat, baru link WA.",
+      };
     }
     return { success: true };
   } catch (err: any) {

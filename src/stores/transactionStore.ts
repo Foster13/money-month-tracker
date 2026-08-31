@@ -145,28 +145,28 @@ export const useTransactionStore = create<ExtendedTransactionState>()((set, get)
       .eq("user_id", userId)
       .single();
 
-    if (txData || prefData) {
-      set((state) => ({
-        transactions: txData
-          ? txData.map((t: any) => ({
-              id: t.id,
-              amount: t.amount,
-              currency: t.currency,
-              categoryId: t.category, // Map DB category to UI categoryId
-              date: t.date,
-              description: t.description || "",
-              type: t.type,
-              createdAt: t.created_at, // ponytail: tracking input time
-            }))
-          : state.transactions,
-        categories: prefData?.settings?.categories
-          ? migrateCategories(prefData.settings.categories)
-          : state.categories,
-        exchangeRates: prefData?.settings?.exchangeRates || state.exchangeRates,
-        lastRateUpdate: prefData?.settings?.lastRateUpdate || state.lastRateUpdate,
-      }));
-    } else {
-      // First time user, sync defaults
+    set((state) => ({
+      transactions: txData
+        ? txData.map((t: any) => ({
+            id: t.id,
+            amount: t.amount,
+            currency: t.currency,
+            categoryId: t.category, // Map DB category to UI categoryId
+            date: t.date,
+            description: t.description || "",
+            type: t.type,
+            createdAt: t.created_at, // ponytail: tracking input time
+          }))
+        : state.transactions,
+      categories: prefData?.settings?.categories
+        ? migrateCategories(prefData.settings.categories)
+        : state.categories,
+      exchangeRates: prefData?.settings?.exchangeRates || state.exchangeRates,
+      lastRateUpdate: prefData?.settings?.lastRateUpdate || state.lastRateUpdate,
+    }));
+
+    // ponytail: [] is truthy in JS! If prefData is missing (PGRST116), we must create it.
+    if (!prefData) {
       syncPreferencesToSupabase(get());
     }
   },
