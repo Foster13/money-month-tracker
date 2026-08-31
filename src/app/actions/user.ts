@@ -13,13 +13,16 @@ export async function linkWhatsAppNumber(userId: string, phoneNumber: string) {
     if (error) {
       return { success: false, error: error.message };
     }
+
     if (!data || data.length === 0) {
-      // ponytail: if no row updated, user_preferences doesn't exist yet.
-      return {
-        success: false,
-        error: "Silakan refresh halaman 1x dulu agar data profil terbuat, baru link WA.",
-      };
+      // Row didn't exist, insert it!
+      const { error: insertError } = await supabaseAdmin
+        .from("user_preferences")
+        .insert({ user_id: userId, phone_number: phoneNumber });
+
+      if (insertError) return { success: false, error: insertError.message };
     }
+
     return { success: true };
   } catch (err: any) {
     return { success: false, error: err.message || "Failed to link number" };
