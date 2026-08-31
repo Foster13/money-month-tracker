@@ -30,6 +30,7 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
         fetchData();
       } else {
         setPassword(""); // Clear password so they have to re-enter it
+        useTransactionStore.setState({ transactions: [], selectedTransactionIds: new Set() });
       }
     });
 

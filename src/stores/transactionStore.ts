@@ -92,7 +92,7 @@ const DEFAULT_EXCHANGE_RATES: Record<Currency, number> = {
   CNY: 2100,
 };
 
-const generateId = (): string => `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+const generateId = (): string => crypto.randomUUID();
 
 const initializeDefaultCategories = (): Category[] => {
   return [
@@ -164,7 +164,7 @@ export const useTransactionStore = create<ExtendedTransactionState>()((set, get)
             type: t.type,
             createdAt: t.created_at, // ponytail: tracking input time
           }))
-        : state.transactions,
+        : [], // Don't fall back to RAM if fetch fails or is empty
       categories: prefData?.settings?.categories
         ? migrateCategories(prefData.settings.categories)
         : state.categories,
@@ -201,25 +201,34 @@ export const useTransactionStore = create<ExtendedTransactionState>()((set, get)
 
     // Push to DB
     if (userId) {
-      // Ponytail: Strict serverless-style validation before pushing to DB
-      const { transactionSchema } = await import("@/lib/schemas");
-      const validTx = transactionSchema.parse(newTransaction);
+      try {
+        // Ponytail: Strict serverless-style validation before pushing to DB
+        const { transactionSchema } = await import("@/lib/schemas");
+        const validTx = transactionSchema.parse(newTransaction);
 
-      const { error } = await supabase.from("transactions").insert({
-        id: newTransaction.id,
-        user_id: userId,
-        type: validTx.type,
-        amount: validTx.amount,
-        category: validTx.categoryId, // save UI categoryId to DB category column
-        description: validTx.description,
-        date: validTx.date,
-        currency: validTx.currency,
-      });
+        const { error } = await supabase.from("transactions").insert({
+          id: newTransaction.id,
+          user_id: userId,
+          type: validTx.type,
+          amount: validTx.amount,
+          category: validTx.categoryId, // save UI categoryId to DB category column
+          description: validTx.description,
+          date: validTx.date,
+          currency: validTx.currency,
+        });
 
-      if (error) {
-        console.error("Supabase Insert Error:", error);
-        const { supabaseUrl } = await import("@/lib/supabase");
-        alert("Gagal menyimpan ke database: " + error.message + "\nURL Target: " + supabaseUrl);
+        if (error) {
+          console.error("Supabase Insert Error:", error);
+          const { supabaseUrl } = await import("@/lib/supabase");
+          alert("Gagal menyimpan ke database: " + error.message + "\nURL Target: " + supabaseUrl);
+          // Revert optimistic UI
+          set((state) => ({
+            transactions: state.transactions.filter((t) => t.id !== newTransaction.id),
+          }));
+        }
+      } catch (err: any) {
+        console.error("Transaction processing error:", err);
+        alert("Terjadi kesalahan saat memproses data: " + (err.message || String(err)));
         // Revert optimistic UI
         set((state) => ({
           transactions: state.transactions.filter((t) => t.id !== newTransaction.id),
