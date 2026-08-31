@@ -139,6 +139,14 @@ const nextConfig = {
   experimental: {
     optimizePackageImports: ["lucide-react", "recharts", "date-fns"],
   },
+  async rewrites() {
+    return [
+      {
+        source: "/api/supabase/:path*",
+        destination: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/:path*`,
+      },
+    ];
+  },
 };
 
 module.exports = withPWA(nextConfig);
