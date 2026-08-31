@@ -198,7 +198,7 @@ export const useTransactionStore = create<ExtendedTransactionState>()((set, get)
       const { transactionSchema } = await import("@/lib/schemas");
       const validTx = transactionSchema.parse(newTransaction);
 
-      await supabase.from("transactions").insert({
+      const { error } = await supabase.from("transactions").insert({
         id: newTransaction.id,
         user_id: userId,
         type: validTx.type,
@@ -208,6 +208,15 @@ export const useTransactionStore = create<ExtendedTransactionState>()((set, get)
         date: validTx.date,
         currency: validTx.currency,
       });
+
+      if (error) {
+        console.error("Supabase Insert Error:", error);
+        alert("Gagal menyimpan ke database: " + error.message);
+        // Revert optimistic UI
+        set((state) => ({
+          transactions: state.transactions.filter((t) => t.id !== newTransaction.id),
+        }));
+      }
     }
   },
 
