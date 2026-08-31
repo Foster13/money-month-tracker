@@ -211,7 +211,8 @@ export const useTransactionStore = create<ExtendedTransactionState>()((set, get)
 
       if (error) {
         console.error("Supabase Insert Error:", error);
-        alert("Gagal menyimpan ke database: " + error.message);
+        const { supabaseUrl } = await import("@/lib/supabase");
+        alert("Gagal menyimpan ke database: " + error.message + "\nURL Target: " + supabaseUrl);
         // Revert optimistic UI
         set((state) => ({
           transactions: state.transactions.filter((t) => t.id !== newTransaction.id),
