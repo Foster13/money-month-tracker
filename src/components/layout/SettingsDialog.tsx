@@ -65,14 +65,15 @@ export function SettingsDialog({
           canvas.getContext("2d")?.drawImage(img, 0, 0, width, height);
 
           const base64 = canvas.toDataURL("image/jpeg", 0.7);
-          const { error } = await supabase.auth.updateUser({ data: { avatar_url: base64 } });
+
+          // FIX: DO NOT store base64 in Supabase user_metadata!
+          // It bloats the JWT session token and causes REQUEST_HEADER_TOO_LARGE.
+          // For now, we save it to localStorage. The ideal way is Supabase Storage.
+          localStorage.setItem("user_avatar", base64);
 
           setLoading(false);
-          if (error) alert("Error uploading logo");
-          else {
-            alert("Logo updated & compressed!");
-            onProfileUpdate(name, base64);
-          }
+          alert("Logo updated & compressed (saved locally)!");
+          onProfileUpdate(name, base64);
         };
         img.src = event.target?.result as string;
       };
