@@ -9,10 +9,24 @@ export async function POST(req: NextRequest) {
 
   const targetUrl = `${supabaseUrl}${path}`;
 
-  // Clone headers but strip cookies
-  const headers = new Headers(req.headers);
-  headers.delete("cookie");
-  headers.delete("host"); // Let fetch set the correct host
+  // Whitelist headers to prevent REQUEST_HEADER_TOO_LARGE from Next.js internal headers
+  const headers = new Headers();
+  const allowedHeaders = [
+    "authorization",
+    "apikey",
+    "content-type",
+    "prefer",
+    "x-client-info",
+    "accept",
+    "content-profile",
+  ];
+
+  allowedHeaders.forEach((key) => {
+    const value = req.headers.get(key);
+    if (value) {
+      headers.set(key, value);
+    }
+  });
 
   const body = await req.text();
 
