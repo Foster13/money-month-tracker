@@ -34,7 +34,7 @@ export function PageHeader({
       <div className="flex flex-col sm:flex-row items-start justify-between gap-4 sm:gap-3">
         <div className="flex-1 min-w-0 w-full sm:w-auto">
           <div className="flex items-center gap-2 sm:gap-4 md:gap-6">
-            <SidebarTrigger className="-ml-1" />
+            <SidebarTrigger className="-ml-1 md:hidden" />
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-foreground flex items-center gap-2">
               {title}
             </h1>
