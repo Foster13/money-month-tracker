@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
+export const dynamic = "force-dynamic";
+
 export async function POST(req: NextRequest) {
   // Read target path from search params, e.g. /api/proxy?path=/rest/v1/transactions
   const path = req.nextUrl.searchParams.get("path") || "";
@@ -28,13 +30,15 @@ export async function POST(req: NextRequest) {
     }
   });
 
-  const body = await req.text();
+  const bodyText = await req.text();
+  const body = req.method === "GET" || req.method === "HEAD" ? undefined : bodyText || undefined;
 
   try {
     const response = await fetch(targetUrl, {
       method: req.method,
       headers,
       body,
+      cache: "no-store",
     });
 
     const data = await response.text();
