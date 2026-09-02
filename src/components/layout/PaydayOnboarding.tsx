@@ -46,12 +46,12 @@ export function PaydayOnboarding() {
           <div className="flex flex-col gap-2">
             <label className="text-sm font-medium">Payday Date (1-31)</label>
             <Input
-              type="number"
-              min={1}
-              max={31}
+              type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
               value={date}
               onChange={(e) => {
-                setDate(e.target.value);
+                setDate(e.target.value.replace(/\D/g, ""));
                 setError("");
               }}
               placeholder="e.g. 25"
