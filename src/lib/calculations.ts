@@ -1,6 +1,44 @@
 // File: src/lib/calculations.ts
 import { Transaction, Currency } from "@/types";
 import { convertToIDR } from "./currency";
+import { set, getDaysInMonth, isBefore, subMonths, addMonths } from "date-fns";
+
+/**
+ * Calculates the custom Money Month boundaries based on the user's payday.
+ */
+export function getMoneyMonthBounds(now: Date, paydayDate: number): { start: Date; end: Date } {
+  const currentMonthDays = getDaysInMonth(now);
+  const clampedPayday = Math.min(paydayDate, currentMonthDays);
+
+  let start = set(now, { date: clampedPayday, hours: 0, minutes: 0, seconds: 0, milliseconds: 0 });
+
+  // If today is before payday, the current money month started last month.
+  if (isBefore(now, start)) {
+    const prevMonth = subMonths(now, 1);
+    const prevMonthDays = getDaysInMonth(prevMonth);
+    start = set(prevMonth, {
+      date: Math.min(paydayDate, prevMonthDays),
+      hours: 0,
+      minutes: 0,
+      seconds: 0,
+      milliseconds: 0,
+    });
+  }
+
+  // The end is the day before the NEXT payday
+  const nextMonth = addMonths(start, 1);
+  const nextMonthDays = getDaysInMonth(nextMonth);
+  const nextPayday = set(nextMonth, {
+    date: Math.min(paydayDate, nextMonthDays),
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+    milliseconds: 0,
+  });
+  const end = new Date(nextPayday.getTime() - 1); // 23:59:59.999 of the day before
+
+  return { start, end };
+}
 
 /**
  * Calculate total income
@@ -83,43 +121,45 @@ export function calculateMonthlyData(
  */
 export function calculateLastSixMonthsData(
   transactions: Transaction[],
-  exchangeRates: Record<Currency, number>
+  exchangeRates: Record<Currency, number>,
+  paydayDate: number = 1
 ): Record<string, { income: number; expenses: number; monthName: string }> {
   const monthlyData: Record<string, { income: number; expenses: number; monthName: string }> = {};
 
-  const startDate = new Date(2026, 1, 1);
+  const startDate = new Date(2026, 1, 1); // Feb 2026
   const now = new Date();
   const baseDate = startDate > now ? startDate : now;
 
   for (let i = 5; i >= 0; i--) {
     const date = new Date(baseDate.getFullYear(), baseDate.getMonth() - i, 1);
     if (date >= startDate) {
+      // Use the new bounds logic instead of calendar month
+      const { start, end } = getMoneyMonthBounds(date, paydayDate);
+
       const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
       const monthName = date.toLocaleDateString("en-US", {
         month: "short",
         year: "numeric",
       });
-      monthlyData[key] = { income: 0, expenses: 0, monthName };
+
+      // Calculate totals for this custom month
+      const income = transactions
+        .filter((t) => {
+          const tDate = new Date(t.date);
+          return t.type === "income" && tDate >= start && tDate <= end;
+        })
+        .reduce((sum, t) => sum + convertToIDR(t.amount, t.currency, exchangeRates), 0);
+
+      const expenses = transactions
+        .filter((t) => {
+          const tDate = new Date(t.date);
+          return t.type === "expense" && tDate >= start && tDate <= end;
+        })
+        .reduce((sum, t) => sum + convertToIDR(t.amount, t.currency, exchangeRates), 0);
+
+      monthlyData[key] = { income, expenses, monthName };
     }
   }
-
-  transactions.forEach((t) => {
-    // Basic parse to handle YYYY-MM-DD
-    const [year, month] = t.date.split("-").map(Number);
-    const date = new Date(year, month - 1, 1);
-
-    if (date >= startDate) {
-      const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
-      if (monthlyData[key]) {
-        const amount = convertToIDR(t.amount, t.currency, exchangeRates);
-        if (t.type === "income") {
-          monthlyData[key].income += amount;
-        } else {
-          monthlyData[key].expenses += amount;
-        }
-      }
-    }
-  });
 
   return monthlyData;
 }

@@ -65,11 +65,27 @@ export function Summary({ transactions, exchangeRates, lastMonthTransactions }: 
   };
 
   const now = new Date();
-  const currentDay = now.getDate();
-  const expensePerDay = totalExpenses / currentDay;
+  const startOfTodayDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const endOfTodayDate = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate(),
+    23,
+    59,
+    59,
+    999
+  );
+
+  const expenseToday = transactions
+    .filter((t) => {
+      const d = new Date(t.date);
+      return t.type === "expense" && d >= startOfTodayDate && d <= endOfTodayDate;
+    })
+    .reduce((sum, t) => sum + convertToIDR(t.amount, t.currency, exchangeRates), 0);
+
   // ponytail: hardcoded limit instead of DB schema bloat. Minimum that works.
   const DAILY_LIMIT = 100000;
-  const isOverLimit = expensePerDay > DAILY_LIMIT;
+  const isOverLimit = expenseToday > DAILY_LIMIT;
 
   const renderComparison = (
     current: number,
@@ -173,7 +189,7 @@ export function Summary({ transactions, exchangeRates, lastMonthTransactions }: 
         <div className="flex gap-2 w-full sm:w-auto justify-end">
           <Button
             onClick={() => {
-              const text = `Ringkasan Keuangan:\nIncome: ${formatIDR(totalIncome)}\nExpense: ${formatIDR(totalExpenses)}\nBalance: ${formatIDR(balance)}\nExpense/Day: ${formatIDR(expensePerDay)}`;
+              const text = `Ringkasan Keuangan:\nIncome: ${formatIDR(totalIncome)}\nExpense: ${formatIDR(totalExpenses)}\nBalance: ${formatIDR(balance)}\nExpense Today: ${formatIDR(expenseToday)}`;
               window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank");
             }}
             size="sm"
@@ -257,7 +273,7 @@ export function Summary({ transactions, exchangeRates, lastMonthTransactions }: 
         >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 px-3 sm:px-6 pt-3 sm:pt-6">
             <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground flex items-center gap-1 sm:gap-1.5">
-              Expense / Day
+              Expense Today
             </CardTitle>
             <div
               className={`p-1.5 sm:p-2 rounded-xl transition-transform duration-300 group-hover:scale-110 ${isOverLimit ? "bg-red-500/10" : "bg-blue-500/10"}`}
@@ -272,9 +288,9 @@ export function Summary({ transactions, exchangeRates, lastMonthTransactions }: 
             <div
               className={`text-xl sm:text-2xl md:text-3xl font-bold break-words ${isOverLimit ? "text-red-500" : "text-blue-500"}`}
             >
-              {formatIDR(expensePerDay)}
+              {formatIDR(expenseToday)}
             </div>
-            <p className="text-xs text-muted-foreground mt-1">Avg this month</p>
+            <p className="text-xs text-muted-foreground mt-1">Resets at midnight</p>
           </CardContent>
         </Card>
       </div>

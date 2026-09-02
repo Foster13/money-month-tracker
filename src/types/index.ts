@@ -71,6 +71,9 @@ export interface TransactionState {
   bulkUpdateCategory: (ids: string[], categoryId: string) => void;
   bulkExport: (ids: string[], format: "json" | "csv") => string;
   fetchData: () => Promise<void>;
+  paydayDate: number | null;
+  lastPaydayChange: string | null;
+  setPaydayDate: (date: number) => void;
 }
 
 /**

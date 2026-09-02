@@ -10,6 +10,8 @@ import {
 } from "@/components/ui/dialog";
 import { Settings } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { useTransactionStore } from "@/stores/transactionStore";
+import { isSameMonth, parseISO } from "date-fns";
 
 export function SettingsDialog({
   onProfileUpdate,
@@ -20,6 +22,13 @@ export function SettingsDialog({
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const paydayDate = useTransactionStore((state) => state.paydayDate);
+  const lastPaydayChange = useTransactionStore((state) => state.lastPaydayChange);
+  const setPaydayDateStore = useTransactionStore((state) => state.setPaydayDate);
+  const [paydayInput, setPaydayInput] = useState("");
+
+  const canChangePayday = !lastPaydayChange || !isSameMonth(parseISO(lastPaydayChange), new Date());
+
   useEffect(() => {
     if (open) {
       supabase.auth.getUser().then(({ data: { user } }) => {
@@ -27,8 +36,9 @@ export function SettingsDialog({
           setName(user.user_metadata.display_name || "Money Month");
         }
       });
+      if (paydayDate) setPaydayInput(paydayDate.toString());
     }
-  }, [open]);
+  }, [open, paydayDate]);
 
   const handleSaveName = async () => {
     setLoading(true);
@@ -176,6 +186,41 @@ export function SettingsDialog({
               disabled={loading}
               className="text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-primary file:text-primary-foreground hover:file:bg-primary/90 cursor-pointer"
             />
+          </div>
+
+          <div className="flex flex-col gap-2 pt-4 border-t">
+            <label className="text-sm font-medium">Payday Date (1-31)</label>
+            <div className="flex gap-2">
+              <input
+                type="number"
+                min={1}
+                max={31}
+                value={paydayInput}
+                onChange={(e) => setPaydayInput(e.target.value)}
+                disabled={!canChangePayday}
+                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+              />
+              <button
+                onClick={() => {
+                  const val = parseInt(paydayInput);
+                  if (val >= 1 && val <= 31) {
+                    setPaydayDateStore(val);
+                    alert("Payday updated successfully!");
+                  } else {
+                    alert("Invalid date");
+                  }
+                }}
+                disabled={!canChangePayday || loading}
+                className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2 disabled:opacity-50"
+              >
+                Save
+              </button>
+            </div>
+            {!canChangePayday && (
+              <p className="text-xs text-destructive">
+                You have already changed your payday this month.
+              </p>
+            )}
           </div>
 
           <div className="flex flex-col gap-2 pt-4 border-t">

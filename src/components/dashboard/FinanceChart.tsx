@@ -3,6 +3,8 @@
 
 import { Transaction, Currency } from "@/types";
 import { convertToIDR } from "@/lib/currency";
+import { useTransactionStore } from "@/stores/transactionStore";
+import { getMoneyMonthBounds } from "@/lib/calculations";
 import {
   BarChart,
   Bar,
@@ -101,12 +103,13 @@ export function FinanceChart({ transactions, exchangeRates }: FinanceChartProps)
 
   const months = eachMonthOfInterval({ start: effectiveStartDate, end: endDate });
 
+  const { paydayDate } = useTransactionStore();
+
   const chartData = months.map((month) => {
-    const monthStart = startOfMonth(month);
-    const monthEnd = endOfMonth(month);
+    const { start: monthStart, end: monthEnd } = getMoneyMonthBounds(month, paydayDate || 1);
 
     const monthTransactions = transactions.filter((t) => {
-      const transactionDate = parseISO(t.date);
+      const transactionDate = new Date(t.date);
       // Only include transactions from February 2026 onwards
       return (
         transactionDate >= feb2026 && transactionDate >= monthStart && transactionDate <= monthEnd

@@ -119,6 +119,8 @@ const syncPreferencesToSupabase = async (state: any) => {
       categories: state.categories,
       exchangeRates: state.exchangeRates,
       lastRateUpdate: state.lastRateUpdate,
+      paydayDate: state.paydayDate,
+      lastPaydayChange: state.lastPaydayChange,
     },
     updated_at: new Date().toISOString(),
   });
@@ -129,7 +131,14 @@ export const useTransactionStore = create<ExtendedTransactionState>()((set, get)
   categories: initializeDefaultCategories(),
   exchangeRates: DEFAULT_EXCHANGE_RATES,
   lastRateUpdate: null,
+  paydayDate: null,
+  lastPaydayChange: null,
   selectedTransactionIds: new Set<string>(),
+
+  setPaydayDate: (date: number) => {
+    set({ paydayDate: date, lastPaydayChange: new Date().toISOString() });
+    syncPreferencesToSupabase(get());
+  },
 
   // ponytail: Fetch from Supabase
   fetchData: async () => {
@@ -175,6 +184,8 @@ export const useTransactionStore = create<ExtendedTransactionState>()((set, get)
         : state.categories,
       exchangeRates: prefData?.settings?.exchangeRates || state.exchangeRates,
       lastRateUpdate: prefData?.settings?.lastRateUpdate || state.lastRateUpdate,
+      paydayDate: prefData?.settings?.paydayDate ?? null,
+      lastPaydayChange: prefData?.settings?.lastPaydayChange ?? null,
     }));
 
     // ponytail: [] is truthy in JS! If prefData is missing (PGRST116), we must create it.

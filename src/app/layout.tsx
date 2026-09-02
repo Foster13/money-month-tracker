@@ -36,6 +36,8 @@ export const metadata: Metadata = {
   },
 };
 
+import { PaydayOnboarding } from "@/components/layout/PaydayOnboarding";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -69,6 +71,7 @@ export default function RootLayout({
           {/* ponytail: removed ThemeTransition bloat */}
           <AuthGuard>
             <StoreInitializer>
+              <PaydayOnboarding />
               <SidebarProvider defaultOpen={false}>
                 <AppSidebar />
                 <SidebarInset className="relative min-h-screen overflow-x-hidden max-w-full flex-col">

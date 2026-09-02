@@ -12,8 +12,8 @@ import { Icon } from "@/components/icons/Icon";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { useToast } from "@/hooks/use-toast";
-import { calculateLastSixMonthsData } from "@/lib/calculations";
-import { startOfMonth, endOfMonth, parseISO, subMonths } from "date-fns";
+import { calculateLastSixMonthsData, getMoneyMonthBounds } from "@/lib/calculations";
+import { parseISO, subMonths } from "date-fns";
 import { Transaction } from "@/types";
 
 export default function DashboardPage() {
@@ -27,21 +27,25 @@ export default function DashboardPage() {
   const transactions = useTransactionStore((state) => state.transactions);
   const categories = useTransactionStore((state) => state.categories);
   const exchangeRates = useTransactionStore((state) => state.exchangeRates);
+  const paydayDate = useTransactionStore((state) => state.paydayDate) || 1; // Fallback to 1 if not set
   const addTransaction = useTransactionStore((state) => state.addTransaction);
   const updateTransaction = useTransactionStore((state) => state.updateTransaction);
   const deleteTransaction = useTransactionStore((state) => state.deleteTransaction);
 
   const now = new Date();
-  const monthStart = startOfMonth(now);
-  const monthEnd = endOfMonth(now);
+  const { start: monthStart, end: monthEnd } = getMoneyMonthBounds(now, paydayDate);
 
   const currentMonthTransactions = transactions.filter((t) => {
     const transactionDate = parseISO(t.date);
     return transactionDate >= monthStart && transactionDate <= monthEnd;
   });
 
-  const lastMonthStart = startOfMonth(subMonths(now, 1));
-  const lastMonthEnd = endOfMonth(subMonths(now, 1));
+  // Calculate last month by passing a date from last month
+  const prevMonthDate = subMonths(monthStart, 1);
+  const { start: lastMonthStart, end: lastMonthEnd } = getMoneyMonthBounds(
+    prevMonthDate,
+    paydayDate
+  );
 
   const lastMonthTransactions = transactions.filter((t) => {
     const transactionDate = parseISO(t.date);
@@ -203,7 +207,8 @@ export default function DashboardPage() {
                         {(() => {
                           const monthlyData = calculateLastSixMonthsData(
                             transactions,
-                            exchangeRates
+                            exchangeRates,
+                            paydayDate
                           );
                           return Object.entries(monthlyData).map(([key, data], index) => {
                             const balance = data.income - data.expenses;

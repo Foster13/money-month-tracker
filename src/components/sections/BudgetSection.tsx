@@ -21,6 +21,9 @@ interface BudgetSectionProps {
   exchangeRates: Record<Currency, number>;
 }
 
+import { getMoneyMonthBounds } from "@/lib/calculations";
+import { useTransactionStore } from "@/stores/transactionStore";
+
 export function BudgetSection({ transactions, categories, exchangeRates }: BudgetSectionProps) {
   const [monthlyBudget, setMonthlyBudget] = useState<number>(() => {
     if (typeof window !== "undefined") {
@@ -32,14 +35,14 @@ export function BudgetSection({ transactions, categories, exchangeRates }: Budge
   const [isEditing, setIsEditing] = useState(false);
   const [tempBudget, setTempBudget] = useState(monthlyBudget.toString());
   const { toast } = useToast();
+  const paydayDate = useTransactionStore((state) => state.paydayDate) || 1;
 
   // Get current month transactions
   const now = new Date();
-  const monthStart = startOfMonth(now);
-  const monthEnd = endOfMonth(now);
+  const { start: monthStart, end: monthEnd } = getMoneyMonthBounds(now, paydayDate);
 
   const currentMonthTransactions = transactions.filter((t) => {
-    const transactionDate = parseISO(t.date);
+    const transactionDate = new Date(t.date);
     return transactionDate >= monthStart && transactionDate <= monthEnd;
   });
 
