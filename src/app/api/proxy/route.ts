@@ -56,5 +56,7 @@ export async function POST(req: NextRequest) {
 // Support other methods if needed
 export const GET = POST;
 export const PATCH = POST;
+export const PUT = POST;
 export const DELETE = POST;
 export const OPTIONS = POST;
+export const HEAD = POST;
