@@ -13,12 +13,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 export function PaydayOnboarding() {
-  const { paydayDate, setPaydayDate } = useTransactionStore();
+  const { paydayDate, setPaydayDate, isInitialized } = useTransactionStore() as any;
   const [date, setDate] = useState<string>("");
   const [error, setError] = useState<string>("");
 
-  // Only show if paydayDate is literally null (not fetched yet, or newly registered)
-  const open = paydayDate === null;
+  // Only show if data is fetched and paydayDate is actually missing
+  const open = isInitialized && paydayDate === null;
 
   const handleSave = () => {
     const parsed = parseInt(date, 10);

@@ -12,6 +12,8 @@ import { Icon } from "@/components/icons/Icon";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 import { linkWhatsAppNumber } from "@/app/actions/user";
+import { getTopExpenseCategory } from "@/lib/calculations";
+import { useTransactionStore } from "@/stores/transactionStore";
 
 interface SummaryProps {
   transactions: Transaction[];
@@ -21,6 +23,12 @@ interface SummaryProps {
 
 export function Summary({ transactions, exchangeRates, lastMonthTransactions }: SummaryProps) {
   const { toast } = useToast();
+  const categories = useTransactionStore((state) => state.categories);
+
+  const topExpense = getTopExpenseCategory(transactions, exchangeRates);
+  const topExpenseCategory = topExpense
+    ? categories.find((c) => c.id === topExpense.categoryId)
+    : null;
 
   const totalIncome = transactions
     .filter((t) => t.type === "income")
@@ -168,6 +176,17 @@ export function Summary({ transactions, exchangeRates, lastMonthTransactions }: 
         <div className="bg-red-500/10 border border-red-500/50 text-red-500 px-4 py-3 rounded-lg flex items-center justify-between text-sm sm:text-base font-medium">
           <span>
             ⚠️ Alert: You have exceeded your daily expense limit of {formatIDR(DAILY_LIMIT)}!
+          </span>
+        </div>
+      )}
+
+      {/* Roasting Widget */}
+      {topExpenseCategory && topExpense && topExpense.amount > 0 && (
+        <div className="bg-orange-500/10 border border-orange-500/30 text-orange-700 dark:text-orange-400 px-4 py-3 rounded-lg flex items-center text-sm font-medium">
+          <span className="mr-2 text-lg">🔥</span>
+          <span>
+            Bulan ini lu paling boros di <strong>{topExpenseCategory.name}</strong> (
+            {formatIDR(topExpense.amount)}). Kurang-kurangin lah boss.
           </span>
         </div>
       )}

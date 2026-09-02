@@ -5,6 +5,7 @@ import { AnimatedThemeToggle } from "@/components/layout/AnimatedThemeToggle";
 import { CategoryManager } from "@/components/categories/CategoryManager";
 import { DataControls } from "@/components/dashboard/DataControls";
 import { useTransactionStore } from "@/stores/transactionStore";
+import { InstallPrompt } from "@/components/layout/InstallPrompt";
 
 interface PageHeaderProps {
   title?: string;
@@ -41,7 +42,8 @@ export function PageHeader({
           </div>
           <p className="text-sm sm:text-base text-muted-foreground mt-1">{description}</p>
         </div>
-        <div className="w-full sm:w-auto flex justify-end">
+        <div className="w-full sm:w-auto flex justify-end gap-2 items-center">
+          <InstallPrompt />
           <AnimatedThemeToggle />
         </div>
       </div>

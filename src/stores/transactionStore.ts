@@ -7,7 +7,9 @@ import { supabase } from "@/lib/supabase";
 /**
  * Extended transaction state without the history/crypto bloat
  */
-interface ExtendedTransactionState extends TransactionState {}
+interface ExtendedTransactionState extends TransactionState {
+  isInitialized: boolean;
+}
 
 const CATEGORY_ICON_MAP: Record<string, string> = {
   Salary: "Briefcase",
@@ -95,9 +97,11 @@ const DEFAULT_EXCHANGE_RATES: Record<Currency, number> = {
 const generateId = (): string => crypto.randomUUID();
 
 const initializeDefaultCategories = (): Category[] => {
+  // ponytail: Use deterministic IDs for default categories so they survive cross-device without sync
+  const slugify = (name: string) => name.toLowerCase().replace(/[^a-z0-9]/g, "-");
   return [
-    ...DEFAULT_INCOME_CATEGORIES.map((cat) => ({ ...cat, id: generateId() })),
-    ...DEFAULT_EXPENSE_CATEGORIES.map((cat) => ({ ...cat, id: generateId() })),
+    ...DEFAULT_INCOME_CATEGORIES.map((cat) => ({ ...cat, id: slugify(cat.name) })),
+    ...DEFAULT_EXPENSE_CATEGORIES.map((cat) => ({ ...cat, id: slugify(cat.name) })),
   ];
 };
 
@@ -113,7 +117,7 @@ const getUserId = async () => {
 const syncPreferencesToSupabase = async (state: any) => {
   const userId = await getUserId();
   if (!userId) return;
-  await supabase.from("user_preferences").upsert({
+  const { error } = await supabase.from("user_preferences").upsert({
     user_id: userId,
     settings: {
       categories: state.categories,
@@ -124,9 +128,11 @@ const syncPreferencesToSupabase = async (state: any) => {
     },
     updated_at: new Date().toISOString(),
   });
+  if (error) console.error("Supabase Upsert Preferences Error:", error);
 };
 
 export const useTransactionStore = create<ExtendedTransactionState>()((set, get) => ({
+  isInitialized: false,
   transactions: [],
   categories: initializeDefaultCategories(),
   exchangeRates: DEFAULT_EXCHANGE_RATES,
@@ -186,6 +192,7 @@ export const useTransactionStore = create<ExtendedTransactionState>()((set, get)
       lastRateUpdate: prefData?.settings?.lastRateUpdate || state.lastRateUpdate,
       paydayDate: prefData?.settings?.paydayDate ?? null,
       lastPaydayChange: prefData?.settings?.lastPaydayChange ?? null,
+      isInitialized: true,
     }));
 
     // ponytail: [] is truthy in JS! If prefData is missing (PGRST116), we must create it.

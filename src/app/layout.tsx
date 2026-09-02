@@ -10,6 +10,7 @@ import { AuthGuard } from "@/components/auth/AuthGuard";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
 import { StoreInitializer } from "@/components/layout/StoreInitializer";
+import { QuickAdd } from "@/components/layout/QuickAdd";
 
 export const metadata: Metadata = {
   title: "Personal Finance Manager",
@@ -79,6 +80,7 @@ export default function RootLayout({
                 </SidebarInset>
               </SidebarProvider>
             </StoreInitializer>
+            <QuickAdd />
           </AuthGuard>
           <InstallPWA />
           <Toaster />

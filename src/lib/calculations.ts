@@ -189,3 +189,18 @@ export function calculateBudgetUsage(
 
   return { percentage, remaining, isOverBudget };
 }
+
+/**
+ * Get the top expense category for roasting widget
+ */
+export function getTopExpenseCategory(
+  transactions: Transaction[],
+  exchangeRates: Record<Currency, number>
+): { categoryId: string; amount: number } | null {
+  const totals = calculateCategoryTotals(transactions, exchangeRates, "expense");
+  const entries = Object.entries(totals);
+  if (entries.length === 0) return null;
+
+  const top = entries.reduce((max, current) => (current[1] > max[1] ? current : max));
+  return { categoryId: top[0], amount: top[1] };
+}
