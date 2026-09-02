@@ -117,17 +117,20 @@ const getUserId = async () => {
 const syncPreferencesToSupabase = async (state: any) => {
   const userId = await getUserId();
   if (!userId) return;
-  const { error } = await supabase.from("user_preferences").upsert({
-    user_id: userId,
-    settings: {
-      categories: state.categories,
-      exchangeRates: state.exchangeRates,
-      lastRateUpdate: state.lastRateUpdate,
-      paydayDate: state.paydayDate,
-      lastPaydayChange: state.lastPaydayChange,
+  const { error } = await supabase.from("user_preferences").upsert(
+    {
+      user_id: userId,
+      settings: {
+        categories: state.categories,
+        exchangeRates: state.exchangeRates,
+        lastRateUpdate: state.lastRateUpdate,
+        paydayDate: state.paydayDate,
+        lastPaydayChange: state.lastPaydayChange,
+      },
+      updated_at: new Date().toISOString(),
     },
-    updated_at: new Date().toISOString(),
-  });
+    { onConflict: "user_id" }
+  );
   if (error) console.error("Supabase Upsert Preferences Error:", error);
 };
 
@@ -163,14 +166,17 @@ export const useTransactionStore = create<ExtendedTransactionState>()((set, get)
           "\n\nIni biasanya karena kamu belum jalankan SQL RLS di Supabase Dashboard."
       );
 
-    // Fetch preferences
-    const { data: prefData, error: prefError } = await supabase
+    // Fetch preferences safely (in case of duplicate rows due to previous missing UNIQUE constraint)
+    const { data: prefDataArray, error: prefError } = await supabase
       .from("user_preferences")
       .select("settings")
       .eq("user_id", userId)
-      .single();
-    if (prefError && prefError.code !== "PGRST116")
-      console.error("Supabase Fetch Preferences Error:", prefError);
+      .order("updated_at", { ascending: false })
+      .limit(1);
+
+    if (prefError) console.error("Supabase Fetch Preferences Error:", prefError);
+
+    const prefData = prefDataArray && prefDataArray.length > 0 ? prefDataArray[0] : null;
 
     set((state) => ({
       transactions: txData
