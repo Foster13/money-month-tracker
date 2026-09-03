@@ -7,7 +7,7 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.trim() || "";
 // This bypasses adblockers on HP/PC and strips cookies to prevent 494 Header Too Large.
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
-    storage: typeof window !== "undefined" ? window.sessionStorage : undefined,
+    storage: typeof window !== "undefined" ? window.localStorage : undefined,
   },
   global: {
     fetch: (url, options) => {

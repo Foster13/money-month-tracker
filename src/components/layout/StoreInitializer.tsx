@@ -7,11 +7,14 @@ import { useHydration } from "@/hooks/useHydration";
 
 export function StoreInitializer({ children }: { children: React.ReactNode }) {
   const isHydrated = useHydration();
+  const isInitialized = useTransactionStore((state) => state.isInitialized);
   const lastRateUpdate = useTransactionStore((state) => state.lastRateUpdate);
   const updateExchangeRates = useTransactionStore((state) => state.updateExchangeRates);
 
-  // Fetch exchange rates on mount if not updated recently
+  // Fetch exchange rates only AFTER store is initialized from DB and not updated recently
   useEffect(() => {
+    if (!isInitialized) return;
+
     const fetchRates = async () => {
       if (!lastRateUpdate) {
         try {
@@ -23,7 +26,7 @@ export function StoreInitializer({ children }: { children: React.ReactNode }) {
       }
     };
     fetchRates();
-  }, [lastRateUpdate, updateExchangeRates]);
+  }, [isInitialized, lastRateUpdate, updateExchangeRates]);
 
   if (!isHydrated) {
     return (

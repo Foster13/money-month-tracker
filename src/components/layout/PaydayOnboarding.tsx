@@ -16,17 +16,27 @@ export function PaydayOnboarding() {
   const { paydayDate, setPaydayDate, isInitialized } = useTransactionStore() as any;
   const [date, setDate] = useState<string>("");
   const [error, setError] = useState<string>("");
+  const [isSaving, setIsSaving] = useState(false);
 
   // Only show if data is fetched and paydayDate is actually missing
   const open = isInitialized && paydayDate === null;
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const parsed = parseInt(date, 10);
     if (isNaN(parsed) || parsed < 1 || parsed > 31) {
       setError("Please enter a valid date between 1 and 31");
       return;
     }
-    setPaydayDate(parsed);
+
+    setIsSaving(true);
+    setError("");
+    const res = await setPaydayDate(parsed);
+    setIsSaving(false);
+
+    if (!res?.success) {
+      useTransactionStore.setState({ paydayDate: null });
+      setError("Gagal menyimpan ke database: " + (res?.error?.message || "Silakan coba lagi."));
+    }
   };
 
   if (!open) return null;
@@ -50,6 +60,7 @@ export function PaydayOnboarding() {
               inputMode="numeric"
               pattern="[0-9]*"
               value={date}
+              disabled={isSaving}
               onChange={(e) => {
                 setDate(e.target.value.replace(/\D/g, ""));
                 setError("");
@@ -58,8 +69,8 @@ export function PaydayOnboarding() {
             />
             {error && <p className="text-sm text-destructive">{error}</p>}
           </div>
-          <Button onClick={handleSave} className="w-full">
-            Save and Continue
+          <Button onClick={handleSave} disabled={isSaving || !date} className="w-full">
+            {isSaving ? "Saving..." : "Save and Continue"}
           </Button>
         </div>
       </DialogContent>

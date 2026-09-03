@@ -114,9 +114,14 @@ const getUserId = async () => {
 };
 
 // ponytail helper: sync preferences
-const syncPreferencesToSupabase = async (state: any) => {
+const syncPreferencesToSupabase = async (
+  state: any
+): Promise<{ success: boolean; error?: any }> => {
+  if (!state.isInitialized) return { success: false, error: "Store not initialized" };
+
   const userId = await getUserId();
-  if (!userId) return;
+  if (!userId) return { success: false, error: "User not authenticated" };
+
   const { error } = await supabase.from("user_preferences").upsert(
     {
       user_id: userId,
@@ -131,7 +136,11 @@ const syncPreferencesToSupabase = async (state: any) => {
     },
     { onConflict: "user_id" }
   );
-  if (error) console.error("Supabase Upsert Preferences Error:", error);
+  if (error) {
+    console.error("Supabase Upsert Preferences Error:", error);
+    return { success: false, error };
+  }
+  return { success: true };
 };
 
 export const useTransactionStore = create<ExtendedTransactionState>()((set, get) => ({
@@ -144,9 +153,9 @@ export const useTransactionStore = create<ExtendedTransactionState>()((set, get)
   lastPaydayChange: null,
   selectedTransactionIds: new Set<string>(),
 
-  setPaydayDate: (date: number) => {
+  setPaydayDate: async (date: number) => {
     set({ paydayDate: date, lastPaydayChange: new Date().toISOString() });
-    syncPreferencesToSupabase(get());
+    return await syncPreferencesToSupabase(get());
   },
 
   // ponytail: Fetch from Supabase
@@ -365,8 +374,10 @@ export const useTransactionStore = create<ExtendedTransactionState>()((set, get)
         categories: migrateCategories(data.categories),
         exchangeRates: (data.exchangeRates as Record<Currency, number>) || DEFAULT_EXCHANGE_RATES,
         lastRateUpdate: data.lastRateUpdate || null,
+        paydayDate: state.paydayDate,
+        lastPaydayChange: state.lastPaydayChange,
       };
-      syncPreferencesToSupabase(newState);
+      syncPreferencesToSupabase({ ...state, ...newState });
       return newState;
     });
   },

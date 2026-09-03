@@ -73,7 +73,7 @@ export interface TransactionState {
   fetchData: () => Promise<void>;
   paydayDate: number | null;
   lastPaydayChange: string | null;
-  setPaydayDate: (date: number) => void;
+  setPaydayDate: (date: number) => Promise<{ success: boolean; error?: any }>;
 }
 
 /**
