@@ -91,7 +91,7 @@ export function Summary({ transactions, exchangeRates, lastMonthTransactions }: 
     })
     .reduce((sum, t) => sum + convertToIDR(t.amount, t.currency, exchangeRates), 0);
 
-  // ponytail: hardcoded limit instead of DB schema bloat. Minimum that works.
+  // note: hardcoded limit instead of DB schema bloat. Minimum that works.
   const DAILY_LIMIT = 100000;
   const isOverLimit = expenseToday > DAILY_LIMIT;
 

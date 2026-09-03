@@ -97,7 +97,7 @@ const DEFAULT_EXCHANGE_RATES: Record<Currency, number> = {
 const generateId = (): string => crypto.randomUUID();
 
 const initializeDefaultCategories = (): Category[] => {
-  // ponytail: Use deterministic IDs for default categories so they survive cross-device without sync
+  // note: Use deterministic IDs for default categories so they survive cross-device without sync
   const slugify = (name: string) => name.toLowerCase().replace(/[^a-z0-9]/g, "-");
   return [
     ...DEFAULT_INCOME_CATEGORIES.map((cat) => ({ ...cat, id: slugify(cat.name) })),
@@ -105,7 +105,7 @@ const initializeDefaultCategories = (): Category[] => {
   ];
 };
 
-// ponytail helper: get current user id safely
+// helper: get current user id safely
 const getUserId = async () => {
   const {
     data: { session },
@@ -113,7 +113,7 @@ const getUserId = async () => {
   return session?.user?.id;
 };
 
-// ponytail helper: sync preferences
+// helper: sync preferences
 const syncPreferencesToSupabase = async (
   state: any
 ): Promise<{ success: boolean; error?: any }> => {
@@ -158,7 +158,7 @@ export const useTransactionStore = create<ExtendedTransactionState>()((set, get)
     return await syncPreferencesToSupabase(get());
   },
 
-  // ponytail: Fetch from Supabase
+  // note: Fetch from Supabase
   fetchData: async () => {
     const userId = await getUserId();
     if (!userId) return;
@@ -197,7 +197,7 @@ export const useTransactionStore = create<ExtendedTransactionState>()((set, get)
             date: t.date,
             description: t.description || "",
             type: t.type,
-            createdAt: t.created_at, // ponytail: tracking input time
+            createdAt: t.created_at, // note: tracking input time
           }))
         : [], // Don't fall back to RAM if fetch fails or is empty
       categories: prefData?.settings?.categories
@@ -210,7 +210,7 @@ export const useTransactionStore = create<ExtendedTransactionState>()((set, get)
       isInitialized: true,
     }));
 
-    // ponytail: [] is truthy in JS! If prefData is missing (PGRST116), we must create it.
+    // note: [] is truthy in JS! If prefData is missing (PGRST116), we must create it.
     if (!prefData) {
       syncPreferencesToSupabase(get());
     }
@@ -224,14 +224,14 @@ export const useTransactionStore = create<ExtendedTransactionState>()((set, get)
         t.date === transaction.date &&
         t.type === transaction.type
     );
-    if (isDuplicate) return; // ponytail: silent reject duplicate input
+    if (isDuplicate) return; // note: silent reject duplicate input
 
     const userId = await getUserId();
     const newTransaction: Transaction = {
       ...transaction,
       id: crypto.randomUUID(), // DB uses UUID
       currency: transaction.currency || "IDR",
-      createdAt: new Date().toISOString(), // ponytail: input time
+      createdAt: new Date().toISOString(), // note: input time
     };
 
     // Optimistic UI
@@ -240,7 +240,7 @@ export const useTransactionStore = create<ExtendedTransactionState>()((set, get)
     // Push to DB
     if (userId) {
       try {
-        // Ponytail: Strict serverless-style validation before pushing to DB
+        // note: Strict serverless-style validation before pushing to DB
         const { transactionSchema } = await import("@/lib/schemas");
         const validTx = transactionSchema.parse(newTransaction);
 

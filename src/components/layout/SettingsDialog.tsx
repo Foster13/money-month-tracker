@@ -42,7 +42,7 @@ export function SettingsDialog({
 
   const handleSaveName = async () => {
     setLoading(true);
-    // ponytail: frontend cannot truly enforce uniqueness securely without a DB table or Edge Function.
+    // note: frontend cannot truly enforce uniqueness securely without a DB table or Edge Function.
     const { error } = await supabase.auth.updateUser({
       data: { display_name: name },
     });
@@ -62,7 +62,7 @@ export function SettingsDialog({
       reader.onload = (event) => {
         const img = new Image();
         img.onload = async () => {
-          // ponytail: native canvas compression, no libs, fits in metadata
+          // note: native canvas compression, no libs, fits in metadata
           const canvas = document.createElement("canvas");
           let { width, height } = img;
           if (width > 128 || height > 128) {

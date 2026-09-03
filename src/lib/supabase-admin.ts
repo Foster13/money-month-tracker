@@ -1,6 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 
-// ponytail: use service role to bypass RLS for webhooks
+// note: use service role to bypass RLS for webhooks
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
 

@@ -47,7 +47,7 @@ export function parseWhatsAppMessage(
       );
       if (matchedCat) catId = matchedCat.id;
 
-      // ponytail: prevent duplicates in the same WA message payload
+      // note: prevent duplicates in the same WA message payload
       const isDuplicate = transactions.some(
         (t) => t.amount === amount && t.description === desc && t.date === currentDate
       );

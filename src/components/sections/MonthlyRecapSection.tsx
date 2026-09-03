@@ -184,7 +184,7 @@ export function MonthlyRecapSection({
       </CardHeader>
       <CardContent>
         <div className="flex flex-col gap-4">
-          {/* ponytail: Native HTML5 details/summary. YAGNI complex third-party accordion bloat */}
+          {/* note: Native HTML5 details/summary. YAGNI complex third-party accordion bloat */}
           {recaps.map((recap) => (
             <details
               key={recap.startDate.toISOString()}

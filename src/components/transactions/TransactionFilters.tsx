@@ -30,7 +30,7 @@ export interface FilterOptions {
   dateTo: string;
   amountMin: string;
   amountMax: string;
-  sortBy: "date" | "createdAt"; // ponytail: explicit sorting
+  sortBy: "date" | "createdAt"; // note: explicit sorting
   sortDir: "desc" | "asc";
 }
 
@@ -155,7 +155,7 @@ export function TransactionFilters({
               </SelectContent>
             </Select>
 
-            {/* ponytail: Sorting controls */}
+            {/* note: Sorting controls */}
             <Label htmlFor="sort-by" className="text-sm font-medium whitespace-nowrap ml-1 sm:ml-2">
               Sort:
             </Label>

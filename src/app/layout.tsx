@@ -61,7 +61,7 @@ export default function RootLayout({
         <link rel="icon" type="image/png" sizes="16x16" href="/icon-192x192.png" />
         <link rel="manifest" href="/manifest.json" />
       </head>
-      {/* ponytail: removed next/font/google bloat, using native system fonts */}
+      {/* note: removed next/font/google bloat, using native system fonts */}
       <body className="font-sans antialiased text-foreground bg-background">
         <ThemeProvider
           attribute="class"
@@ -69,7 +69,7 @@ export default function RootLayout({
           enableSystem={false}
           disableTransitionOnChange
         >
-          {/* ponytail: removed ThemeTransition bloat */}
+          {/* note: removed ThemeTransition bloat */}
           <AuthGuard>
             <StoreInitializer>
               <PaydayOnboarding />

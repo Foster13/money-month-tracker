@@ -37,7 +37,7 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
     return () => subscription.unsubscribe();
   }, [fetchData]);
 
-  // ponytail: 5-minute idle timeout. YAGNI complex session manager. 1 native setTimeout is enough.
+  // note: 5-minute idle timeout. YAGNI complex session manager. 1 native setTimeout is enough.
   useEffect(() => {
     if (!session) return;
 
@@ -73,12 +73,12 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
     setLoading(false);
   };
 
-  // ponytail: Minimalist loading state. YAGNI complex skeleton.
+  // note: Minimalist loading state. YAGNI complex skeleton.
   if (loading) {
     return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
   }
 
-  // ponytail: If not logged in, hijacking the entire render tree to show login.
+  // note: If not logged in, hijacking the entire render tree to show login.
   // No need for Next.js middleware or route groups boilerplate.
   if (!session) {
     return (
@@ -109,7 +109,7 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
                 />
               </div>
               <div className="space-y-2">
-                {/* ponytail: Native HTML5 validation instead of Regex/Zod bloat */}
+                {/* note: Native HTML5 validation instead of Regex/Zod bloat */}
                 <Input
                   type="password"
                   placeholder="Password (min. 6 characters)"
