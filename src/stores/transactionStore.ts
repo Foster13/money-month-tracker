@@ -1,5 +1,4 @@
 import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
 import { Transaction, Category, TransactionState, Currency } from "@/types";
 import { exportTransactionsData, importTransactionsData } from "@/services/transactionService";
 import { supabase } from "@/lib/supabase";

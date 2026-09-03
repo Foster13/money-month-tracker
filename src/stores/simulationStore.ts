@@ -5,9 +5,7 @@ import { Transaction, Category, SimulationState, Currency } from "@/types";
 /**
  * Generate a unique ID for simulation transactions
  */
-const generateId = (): string => {
-  return `sim-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-};
+const generateId = (): string => `sim-${crypto.randomUUID()}`;
 
 /**
  * Simulation store - non-persistent, for financial projections

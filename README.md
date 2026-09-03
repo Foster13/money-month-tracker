@@ -18,8 +18,10 @@ npm run dev
 - **Tailwind CSS + shadcn/ui** - Minimalist styling
 - **Zustand** - For lightweight UI state only (no heavy client-side data syncing)
 
-## 🆕 Recent Updates (v0.2.0)
+## 🆕 Recent Updates (v0.2.1)
 
+- **Native Platform Features**: Switched to `crypto.randomUUID()` for generating simulation IDs.
+- **YAGNI Cleanup**: Removed unused `jspdf` typings and obsolete Zustand persist middleware imports.
 - **Supabase Integration**: Migrated from local storage to Supabase for reliable cross-device sync.
 - **Supabase Auth**: Secure user login with Row Level Security (RLS).
 - **API Proxy**: Built-in proxy route to bypass aggressive adblockers blocking Supabase requests.
