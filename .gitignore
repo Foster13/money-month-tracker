@@ -88,3 +88,8 @@ Thumbs.db
 # AI Agent Skills (Local only, YAGNI for production repo)
 .agents/
 skills-lock.json
+# Playwright E2E
+/e2e/
+playwright.config.ts
+playwright-report/
+test-results/
