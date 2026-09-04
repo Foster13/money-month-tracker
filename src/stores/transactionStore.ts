@@ -182,7 +182,13 @@ export const useTransactionStore = create<ExtendedTransactionState>()((set, get)
       .order("updated_at", { ascending: false })
       .limit(1);
 
-    if (prefError) console.error("Supabase Fetch Preferences Error:", prefError);
+    if (prefError) {
+      console.error("Supabase Fetch Preferences Error:", prefError);
+      alert(
+        "Gagal memuat pengaturan pengguna! Mencegah penulisan data agar tidak hilang. Silakan muat ulang (refresh) halaman."
+      );
+      return; // note: ponytail - halt immediately to prevent overwriting user preferences with defaults if DB is down
+    }
 
     const prefData = prefDataArray && prefDataArray.length > 0 ? prefDataArray[0] : null;
 
@@ -336,7 +342,7 @@ export const useTransactionStore = create<ExtendedTransactionState>()((set, get)
     });
   },
 
-  deleteCategory: (id) => {
+  deleteCategory: async (id) => {
     set((state) => {
       const newState = {
         categories: state.categories.filter((c) => c.id !== id),
@@ -345,6 +351,12 @@ export const useTransactionStore = create<ExtendedTransactionState>()((set, get)
       syncPreferencesToSupabase({ ...state, ...newState });
       return newState;
     });
+
+    const userId = await getUserId();
+    if (userId) {
+      // note: ponytail - delete associated transactions from DB so they don't come back as "Unknown" on next login
+      await supabase.from("transactions").delete().eq("category", id).eq("user_id", userId);
+    }
   },
 
   updateExchangeRates: (rates) => {

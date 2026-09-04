@@ -53,7 +53,7 @@ export interface TransactionState {
   deleteTransaction: (id: string) => void;
   addCategory: (category: Omit<Category, "id">) => void;
   updateCategory: (id: string, category: Partial<Category>) => void;
-  deleteCategory: (id: string) => void;
+  deleteCategory: (id: string) => Promise<void>;
   updateExchangeRates: (rates: Record<Currency, number>) => void;
   exportData: () => string;
   importData: (jsonData: string) => void;
