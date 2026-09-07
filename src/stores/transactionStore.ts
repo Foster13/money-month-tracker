@@ -44,8 +44,12 @@ const CATEGORY_ICON_MAP: Record<string, string> = {
 
 const migrateCategories = (categories: Category[]): Category[] => {
   return categories.map((category) => {
-    if (category.icon) return category;
-    return { ...category, icon: CATEGORY_ICON_MAP[category.name] || "Circle" };
+    const icon = category.icon || CATEGORY_ICON_MAP[category.name] || "Circle";
+    // ponytail: auto-patch missing type from old data
+    const type =
+      category.type ||
+      (DEFAULT_INCOME_CATEGORIES.some((c) => c.name === category.name) ? "income" : "expense");
+    return { ...category, icon, type };
   });
 };
 
