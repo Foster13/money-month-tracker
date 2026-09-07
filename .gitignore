@@ -93,3 +93,9 @@ skills-lock.json
 playwright.config.ts
 playwright-report/
 test-results/
+
+# Testing configs & local scripts
+vitest.config.ts
+vitest.setup.ts
+test_*.mjs
+test_*.js

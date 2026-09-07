@@ -7,7 +7,6 @@ import { Download, Upload } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useTransactionStore } from "@/stores/transactionStore";
 import { parseWhatsAppMessage } from "@/lib/whatsapp-parser";
-import * as xlsx from "xlsx";
 import { supabase } from "@/lib/supabase";
 
 interface DataControlsProps {
@@ -85,6 +84,8 @@ export function DataControls({ onExport, onImport }: DataControlsProps) {
       // Excel & CSV (Standard tabular data)
       else if (fileName.endsWith(".xlsx") || fileName.endsWith(".csv")) {
         const buffer = await file.arrayBuffer();
+        // note: ponytail - dynamically import massive xlsx library only when needed (bundle-dynamic-imports)
+        const xlsx = await import("xlsx");
         const workbook = xlsx.read(buffer);
         const sheetName = workbook.SheetNames[0];
         const rows = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]) as any[];
