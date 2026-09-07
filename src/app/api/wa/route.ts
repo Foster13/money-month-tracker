@@ -11,13 +11,37 @@ const twimlResponse = (message: string) => {
 
 export async function POST(req: Request) {
   try {
+    // 1. Webhook Authentication: Check secret token
+    const url = new URL(req.url);
+    const tokenParam = url.searchParams.get("token");
+    const secretHeader = req.headers.get("x-webhook-secret");
+    const configuredSecret = process.env.WA_WEBHOOK_SECRET;
+
+    if (process.env.NODE_ENV === "production" && !configuredSecret) {
+      console.error("[CRITICAL] WA_WEBHOOK_SECRET is not configured in production.");
+      return new NextResponse("Server configuration error", { status: 500 });
+    }
+
+    if (configuredSecret) {
+      const providedToken = tokenParam || secretHeader;
+      if (!providedToken || providedToken !== configuredSecret) {
+        return new NextResponse("Unauthorized webhook call", { status: 401 });
+      }
+    }
+
     const formData = await req.formData();
-    const text = formData.get("Body")?.toString() || "";
-    const sender = formData.get("From")?.toString() || "";
+    const text = formData.get("Body")?.toString()?.trim() || "";
+    const sender = formData.get("From")?.toString()?.trim() || "";
 
     if (!text) return twimlResponse("Pesan kosong.");
 
-    const phoneNumber = sender.replace("whatsapp:", "");
+    const phoneNumber = sender
+      .replace("whatsapp:", "")
+      .replace(/[^\d+]/g, "")
+      .trim();
+    if (!phoneNumber) {
+      return twimlResponse("Nomor pengirim tidak valid.");
+    }
 
     const { data: userPref } = await supabaseAdmin
       .from("user_preferences")

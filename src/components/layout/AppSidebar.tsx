@@ -1,17 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import {
-  Home,
-  PieChart,
-  Plus,
-  Wallet,
-  Settings,
-  FileText,
-  Activity,
-  LineChart,
-  LogOut,
-} from "lucide-react";
+import { Home, PieChart, Plus, Wallet, Activity, LineChart, LogOut } from "lucide-react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";

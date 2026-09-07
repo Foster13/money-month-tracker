@@ -1,5 +1,6 @@
 // File: src/lib/currency.ts
 import { Currency } from "@/types";
+export type { Currency };
 
 /**
  * Currency information
@@ -112,4 +113,70 @@ export function getCurrencySymbol(currency: Currency): string {
  */
 export function getCurrencyName(currency: Currency): string {
   return CURRENCIES[currency].name;
+}
+
+/**
+ * Format user input as currency string in real time
+ */
+export function formatCurrencyInput(value: string, currency: Currency): string {
+  if (!value) return "";
+
+  if (currency === "IDR") {
+    const digitsOnly = value.replace(/\D/g, "");
+    if (!digitsOnly) return "";
+    return parseInt(digitsOnly, 10).toLocaleString("id-ID");
+  }
+
+  if (currency === "JPY") {
+    const digitsOnly = value.replace(/\D/g, "");
+    if (!digitsOnly) return "";
+    return parseInt(digitsOnly, 10).toLocaleString("en-US");
+  }
+
+  if (currency === "EUR") {
+    let clean = value.replace(/[^\d,]/g, "");
+    const parts = clean.split(",");
+    if (parts.length > 2) {
+      clean = parts[0] + "," + parts.slice(1).join("");
+    }
+    const [integerPart, decimalPart] = clean.split(",");
+    const hasComma = clean.includes(",");
+    const formattedInteger = integerPart ? parseInt(integerPart, 10).toLocaleString("de-DE") : "";
+    if (hasComma) {
+      return `${formattedInteger},${(decimalPart || "").slice(0, 2)}`;
+    }
+    return formattedInteger;
+  }
+
+  // USD, SGD, GBP, AUD, CNY
+  let clean = value.replace(/[^\d.]/g, "");
+  const parts = clean.split(".");
+  if (parts.length > 2) {
+    clean = parts[0] + "." + parts.slice(1).join("");
+  }
+  const [integerPart, decimalPart] = clean.split(".");
+  const hasDot = clean.includes(".");
+  const formattedInteger = integerPart ? parseInt(integerPart, 10).toLocaleString("en-US") : "";
+  if (hasDot) {
+    return `${formattedInteger}.${(decimalPart || "").slice(0, 2)}`;
+  }
+  return formattedInteger;
+}
+
+/**
+ * Parse formatted currency input string into numeric amount
+ */
+export function parseCurrencyAmount(formattedValue: string, currency: Currency): number {
+  if (!formattedValue) return 0;
+  if (currency === "IDR") {
+    return parseInt(formattedValue.replace(/\./g, ""), 10) || 0;
+  }
+  if (currency === "JPY") {
+    return parseInt(formattedValue.replace(/,/g, ""), 10) || 0;
+  }
+  if (currency === "EUR") {
+    const normalized = formattedValue.replace(/\./g, "").replace(",", ".");
+    return parseFloat(normalized) || 0;
+  }
+  return parseFloat(formattedValue.replace(/,/g, "")) || 0;
 }

@@ -9,7 +9,42 @@ export async function POST(req: NextRequest) {
 
   if (!supabaseUrl) return NextResponse.json({ error: "Missing Supabase URL" }, { status: 500 });
 
-  const targetUrl = `${supabaseUrl}${path}`;
+  // 1. Path Safety & SSRF Validation
+  if (
+    !path.startsWith("/") ||
+    path.includes("..") ||
+    path.includes("@") ||
+    path.includes("://") ||
+    path.includes("\\")
+  ) {
+    return NextResponse.json({ error: "Invalid proxy path" }, { status: 400 });
+  }
+
+  // Whitelist allowable Supabase service prefixes
+  const allowedPrefixes = [
+    "/rest/v1/",
+    "/auth/v1/",
+    "/storage/v1/",
+    "/realtime/v1/",
+    "/functions/v1/",
+  ];
+
+  const isAllowedPrefix = allowedPrefixes.some((prefix) => path.startsWith(prefix));
+  if (!isAllowedPrefix) {
+    return NextResponse.json({ error: "Forbidden proxy path" }, { status: 403 });
+  }
+
+  let targetUrl: URL;
+  try {
+    const baseUrl = new URL(supabaseUrl);
+    targetUrl = new URL(path, baseUrl);
+    // Ensure origin cannot be spoofed
+    if (targetUrl.origin !== baseUrl.origin) {
+      return NextResponse.json({ error: "Origin mismatch" }, { status: 403 });
+    }
+  } catch {
+    return NextResponse.json({ error: "Malformed URL" }, { status: 400 });
+  }
 
   // Whitelist headers to prevent REQUEST_HEADER_TOO_LARGE from Next.js internal headers
   const headers = new Headers();
@@ -21,6 +56,8 @@ export async function POST(req: NextRequest) {
     "x-client-info",
     "accept",
     "content-profile",
+    "accept-profile",
+    "range",
   ];
 
   allowedHeaders.forEach((key) => {
@@ -30,7 +67,10 @@ export async function POST(req: NextRequest) {
     }
   });
 
-  const bodyText = await req.text();
+  let bodyText = "";
+  if (req.method !== "GET" && req.method !== "HEAD") {
+    bodyText = await req.text();
+  }
   const body = req.method === "GET" || req.method === "HEAD" ? undefined : bodyText || undefined;
 
   try {

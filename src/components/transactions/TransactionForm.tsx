@@ -87,7 +87,10 @@ export function TransactionForm({
   const selectedType = form.watch("type");
   const selectedCurrency = form.watch("currency");
   const amount = form.watch("amount");
-  const filteredCategories = categories.filter((c) => c.type === selectedType);
+  const filteredCategories = (categories || []).filter((c) => {
+    if (!c || !c.type) return false;
+    return c.type.toLowerCase() === selectedType?.toLowerCase();
+  });
 
   // Get currency symbol for the selected currency
   const currencySymbol = CURRENCIES[selectedCurrency as Currency]?.symbol || "Rp";
@@ -392,23 +395,31 @@ export function TransactionForm({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {filteredCategories.map((category) => (
-                        <SelectItem key={category.id} value={category.id}>
-                          <div className="flex items-center gap-2">
-                            <IconRenderer
-                              name={category.icon || "Circle"}
-                              className="w-4 h-4 flex-shrink-0"
-                              style={{ color: category.color }}
-                              aria-hidden={true}
-                            />
-                            <span
-                              className="w-3 h-3 rounded-full flex-shrink-0"
-                              style={{ backgroundColor: category.color }}
-                            />
-                            <span>{category.name}</span>
-                          </div>
+                      {filteredCategories.length > 0 ? (
+                        filteredCategories.map((category) => (
+                          <SelectItem key={category.id} value={category.id}>
+                            <div className="flex items-center gap-2">
+                              <IconRenderer
+                                name={category.icon || "Circle"}
+                                className="w-4 h-4 flex-shrink-0"
+                                style={{ color: category.color }}
+                                aria-hidden={true}
+                              />
+                              <span
+                                className="w-3 h-3 rounded-full flex-shrink-0"
+                                style={{ backgroundColor: category.color }}
+                              />
+                              <span>{category.name}</span>
+                            </div>
+                          </SelectItem>
+                        ))
+                      ) : (
+                        <SelectItem value="empty-categories-placeholder" disabled>
+                          <span className="text-muted-foreground italic">
+                            No {selectedType} categories available
+                          </span>
                         </SelectItem>
-                      ))}
+                      )}
                     </SelectContent>
                   </Select>
                   <FormMessage />

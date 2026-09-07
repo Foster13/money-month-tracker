@@ -16,11 +16,17 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
   const fetchData = useTransactionStore((state) => state.fetchData);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      if (session) fetchData();
-      setLoading(false);
-    });
+    supabase.auth
+      .getSession()
+      .then(({ data: { session } }) => {
+        setSession(session);
+        if (session) fetchData();
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("getSession error:", err);
+        setLoading(false);
+      });
 
     const {
       data: { subscription },

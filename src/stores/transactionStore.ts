@@ -43,13 +43,23 @@ const CATEGORY_ICON_MAP: Record<string, string> = {
 };
 
 const migrateCategories = (categories: Category[]): Category[] => {
+  if (!Array.isArray(categories)) return [];
+  const slugify = (name: string) => name.toLowerCase().replace(/[^a-z0-9]/g, "-");
   return categories.map((category) => {
     const icon = category.icon || CATEGORY_ICON_MAP[category.name] || "Circle";
-    // ponytail: auto-patch missing type from old data
-    const type =
-      category.type ||
-      (DEFAULT_INCOME_CATEGORIES.some((c) => c.name === category.name) ? "income" : "expense");
-    return { ...category, icon, type };
+    // Normalize type to lowercase and fallback properly
+    const rawType = typeof category.type === "string" ? category.type.toLowerCase() : "";
+    const type: "income" | "expense" =
+      rawType === "income" || rawType === "expense"
+        ? (rawType as "income" | "expense")
+        : DEFAULT_INCOME_CATEGORIES.some(
+              (c) => c.name.toLowerCase() === category.name?.toLowerCase()
+            )
+          ? "income"
+          : "expense";
+    const id =
+      category.id && category.id.trim() !== "" ? category.id : slugify(category.name || "category");
+    return { ...category, id, icon, type };
   });
 };
 
@@ -209,9 +219,12 @@ export const useTransactionStore = create<ExtendedTransactionState>()((set, get)
             createdAt: t.created_at, // note: tracking input time
           }))
         : [], // Don't fall back to RAM if fetch fails or is empty
-      categories: prefData?.settings?.categories
-        ? migrateCategories(prefData.settings.categories)
-        : state.categories,
+      categories:
+        Array.isArray(prefData?.settings?.categories) && prefData.settings.categories.length > 0
+          ? migrateCategories(prefData.settings.categories)
+          : state.categories && state.categories.length > 0
+            ? state.categories
+            : initializeDefaultCategories(),
       exchangeRates: prefData?.settings?.exchangeRates || state.exchangeRates,
       lastRateUpdate: prefData?.settings?.lastRateUpdate || state.lastRateUpdate,
       paydayDate: prefData?.settings?.paydayDate ?? null,
@@ -219,9 +232,11 @@ export const useTransactionStore = create<ExtendedTransactionState>()((set, get)
       isInitialized: true,
     }));
 
-    // note: [] is truthy in JS! If prefData is missing (PGRST116), we must create it.
-    if (!prefData) {
-      syncPreferencesToSupabase(get());
+    // note: [] is truthy in JS! If prefData is missing or categories is empty, self-heal by syncing defaults
+    const hasValidCategories =
+      Array.isArray(prefData?.settings?.categories) && prefData.settings.categories.length > 0;
+    if (!prefData || !hasValidCategories) {
+      await syncPreferencesToSupabase(get());
     }
   },
 
@@ -235,7 +250,6 @@ export const useTransactionStore = create<ExtendedTransactionState>()((set, get)
     );
     if (isDuplicate) return; // note: silent reject duplicate input
 
-    const userId = await getUserId();
     const newTransaction: Transaction = {
       ...transaction,
       id: crypto.randomUUID(), // DB uses UUID
@@ -246,6 +260,7 @@ export const useTransactionStore = create<ExtendedTransactionState>()((set, get)
     // Optimistic UI
     set((state) => ({ transactions: [...state.transactions, newTransaction] }));
 
+    const userId = await getUserId();
     // Push to DB
     if (userId) {
       try {
@@ -509,10 +524,4 @@ export const useTransactionStore = create<ExtendedTransactionState>()((set, get)
       return [headers, ...rows].join("\n");
     }
   },
-
-  canUndo: () => false,
-  canRedo: () => false,
-  undo: () => {},
-  redo: () => {},
-  clearHistory: () => {},
 }));

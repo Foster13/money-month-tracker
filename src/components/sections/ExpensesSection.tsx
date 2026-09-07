@@ -15,7 +15,6 @@ import {
 import { format, parseISO } from "date-fns";
 import { formatCurrency, convertToIDR } from "@/lib/currency";
 import { TrendingDown, ArrowUpDown, Calendar, Tag, DollarSign, Plus } from "lucide-react";
-import { Icon } from "@/components/icons/Icon";
 import { IconRenderer } from "@/components/icons/IconRenderer";
 
 interface ExpensesSectionProps {

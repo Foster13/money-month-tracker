@@ -3,11 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbo",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "verify": "node verify-build.js",
     "test": "vitest --run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
