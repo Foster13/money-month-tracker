@@ -138,11 +138,9 @@ export function Summary({ transactions, exchangeRates, lastMonthTransactions }: 
       return;
     }
 
-    let formattedPhone = phoneNumber.replace(/\D/g, "");
-    if (formattedPhone.startsWith("0")) {
-      formattedPhone = "62" + formattedPhone.slice(1);
-    }
-    formattedPhone = "+" + formattedPhone;
+    // ponytail: auto-prepend 62 for local numbers
+    const formattedPhone =
+      "+" + phoneNumber.replace(/\D/g, "").replace(/^0/, "62").replace(/^8/, "628");
 
     const {
       data: { session },
